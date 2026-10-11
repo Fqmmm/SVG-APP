@@ -41,7 +41,7 @@ test("Repl skips blank and comment lines and prompts for the next line", async (
   assert.equal(text, welcome + "svg> ".repeat(4));
 });
 
-test("Repl reports unfinished command support and continues reading", async () => {
+test("Repl dispatches commands from CRLF input and continues reading", async () => {
   const input = Readable.from(["init 400 200\r\ncreate rect r1 0 0 10 10\r\n"]);
   const output = new PassThrough();
   let text = "";
@@ -49,6 +49,38 @@ test("Repl reports unfinished command support and continues reading", async () =
 
   await new Repl(input, output).run();
 
-  const response = "error: command handling is not available yet\nsvg> ";
-  assert.equal(text, welcome + "svg> " + response.repeat(2));
+  const response = "canvas 400x200 created\nsvg> rect#r1 created\nsvg> ";
+  assert.equal(text, welcome + "svg> " + response);
+});
+
+test("Repl reports one error per line and continues through parser and domain failures", async () => {
+  const input = Readable.from([
+    'tree\ninit 400 200\ncreate rect r 1 2 3 4\ncreate text t 1 2 "open\nmove r NaN 0\nmove r 5 6\nundo\nshow r\n',
+  ]);
+  const output = new PassThrough();
+  let text = "";
+  output.on("data", (chunk: Buffer) => { text += chunk.toString("utf8"); });
+  await new Repl(input, output).run();
+  assert.equal(text, welcome + "svg> " + [
+    "error: no document. use 'init' or 'read' first",
+    "canvas 400x200 created", "rect#r created",
+    "error: unterminated quoted argument", "error: invalid number: dx",
+    "rect#r moved to (6,8)", "rect#r moved back to (1,2)",
+    "rect#r  parent=svg\n  x=1 y=2 w=3 h=4",
+  ].join("\nsvg> ") + "\nsvg> ");
+});
+
+test("Repl builds nested Chinese text, moves a group and prints its restored subtree", async () => {
+  const input = Readable.from([
+    'init\ncreate g node\ncreate text label 10 20 "开始 # end" in node\nmove node 0 100\nundo\ntree node\n',
+  ]);
+  const output = new PassThrough();
+  let text = "";
+  output.on("data", (chunk: Buffer) => { text += chunk.toString("utf8"); });
+  await new Repl(input, output).run();
+  assert.equal(text, welcome + "svg> " + [
+    "canvas 800x600 created", "g#node created",
+    "text#label created in g#node", "g#node moved by (0,100)",
+    "g#node moved back by (0,-100)", 'g#node\n└── text#label  (10,20) "开始 # end"',
+  ].join("\nsvg> ") + "\nsvg> ");
 });
