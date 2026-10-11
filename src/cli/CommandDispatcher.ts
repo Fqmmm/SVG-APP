@@ -2,6 +2,8 @@ import { EditorSession } from "../application/EditorSession.js";
 import { ShapeFactory } from "../application/ShapeFactory.js";
 import { CreateCommand } from "../application/CreateCommand.js";
 import { MoveCommand } from "../application/MoveCommand.js";
+import { ScaleCommand } from "../application/ScaleCommand.js";
+import { SetCommand } from "../application/SetCommand.js";
 import { DeleteCommand } from "../application/DeleteCommand.js";
 import type { EditCommand } from "../application/EditCommand.js";
 import { AttributeValidator } from "../domain/AttributeValidator.js";
@@ -9,6 +11,7 @@ import type { Shape } from "../domain/Shape.js";
 import { Tokenizer } from "./Tokenizer.js";
 import { ShapeFormatter } from "./ShapeFormatter.js";
 import { PositionFormatter } from "./PositionFormatter.js";
+import { AttributeFormatter } from "./AttributeFormatter.js";
 import { TreeFormatter } from "./TreeFormatter.js";
 
 export class CommandDispatcher {
@@ -26,6 +29,8 @@ export class CommandDispatcher {
     ["init", args => this.initialize(args)],
     ["create", args => this.create(args)],
     ["move", args => this.move(args)],
+    ["scale", args => this.scale(args)],
+    ["set", args => this.set(args)],
     ["delete", args => this.delete(args)],
     ["tree", args => this.tree(args)],
     ["show", args => this.show(args)],
@@ -81,6 +86,24 @@ export class CommandDispatcher {
     return this.execute(new MoveCommand(shape.id, dx, dy),
       () => this.movement(shape, dx, dy, false),
       () => this.movement(shape, dx, dy, true));
+  }
+
+  private scale(args: readonly string[]): string {
+    this.requireCount(args, 2, 2, "scale <id> <factor>");
+    const shape = this.session.document.get(args[0]!);
+    const factor = AttributeValidator.number(args[1]!, "factor");
+    return this.execute(new ScaleCommand(shape.id, factor),
+      () => this.label(shape) + " scaled by " + factor,
+      () => this.label(shape) + " scale restored");
+  }
+
+  private set(args: readonly string[]): string {
+    this.requireCount(args, 3, 3, "set <id> <attr> <value>");
+    const shape = this.session.document.get(args[0]!);
+    const attribute = args[1]!;
+    const formatter = new AttributeFormatter(attribute);
+    const updated = (): string => this.label(shape) + " updated: " + attribute + "=" + formatter.format(shape);
+    return this.execute(new SetCommand(shape.id, attribute, args[2]!), updated, updated);
   }
 
   private delete(args: readonly string[]): string {
@@ -150,6 +173,8 @@ export class CommandDispatcher {
       '  text <id> <x> <y> "content"',
       "  g <id>",
       "move <id> <dx> <dy>",
+      "scale <id> <factor>",
+      "set <id> <attr> <value>",
       "delete <id>",
       "tree [id]",
       "show <id>",

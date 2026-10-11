@@ -51,7 +51,7 @@ export class ShapeFormatter implements ShapeVisitor<string> {
 
   private styles(shape: Shape): string {
     return Object.entries(shape.styles).map(([key, value]) => {
-      const displayed = typeof value === "string" && /\s|"/u.test(value) ? JSON.stringify(value) : String(value);
+      const displayed = typeof value === "string" && (value === "" || /\s|"/u.test(value)) ? JSON.stringify(value) : String(value);
       return key + "=" + displayed;
     }).join(" ");
   }

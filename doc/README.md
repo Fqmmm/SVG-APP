@@ -1,8 +1,8 @@
 # SVG 编辑器 Phase 1 开发记录
 
-本项目按 [Phase 1 实验要求](Phase1/phase_cli_1.md)实现一个 TypeScript 命令行 SVG 编辑器。目前已完成阶段 4 的 CLI 接入，支持 init、六种图形的 create、move、delete、tree、show、help 和 undo/redo，create 可用 in 指定父容器。scale/set、分组重排与文件读写按后续阶段实现。下文列出目标架构，实际完成的部分见过程记录。功能范围是 rect、circle、ellipse、line、text 和 g；box 留到后续插件化阶段。
+本项目按 [Phase 1 实验要求](Phase1/phase_cli_1.md)实现一个 TypeScript 命令行 SVG 编辑器。目前已完成阶段 5，CLI 支持 init、六种图形的 create、move、scale、set、delete、tree、show、help 和 undo/redo，create 可用 in 指定父容器。分组重排与文件读写按后续阶段实现。下文列出目标架构，实际完成的部分见过程记录。功能范围是 rect、circle、ellipse、line、text 和 g；box 留到后续插件化阶段。
 
-开发分支为 `dev/phase1`。采用测试驱动开发，每个功能先写测试、确认失败，再实现和重构。阶段成果先交人工审核，审核后再提交。阶段 0 至 3 已审核并提交；阶段 4 经独立审查后，按人工授权修正尾随 in 语义和测试，并提交。
+开发分支为 `dev/phase1`。采用测试驱动开发，每个功能先写测试、确认失败，再实现和重构。阶段成果先交人工审核，审核后再提交。阶段 0 至 4 已审核并提交；阶段 5 经独立审查和显示修正后，按人工授权提交。
 
 ## 架构方案
 
@@ -13,8 +13,8 @@
 | 目录 | 职责 | 计划中的主要类或接口 |
 | --- | --- | --- |
 | `src/domain/` | 图形几何行为、样式、父子关系、唯一 id 和文档尺寸 | Shape、Rect、Circle、Ellipse、Line、Text、Group、SvgDocument |
-| `src/application/` | 编辑器会话、编辑命令、历史管理；定义文件访问接口 | EditorSession、EditCommand、CommandHistory、ShapeFactory、DocumentRepository |
-| `src/cli/` | 分词、命令分发、逐行输入和结果显示 | Tokenizer、CommandDispatcher、Repl、TreeFormatter、ShapeFormatter、PositionFormatter |
+| `src/application/` | 编辑器会话、编辑命令、历史管理；定义文件访问接口 | EditorSession、EditCommand、ShapeEditCommand、CommandHistory、ShapeFactory、DocumentRepository |
+| `src/cli/` | 分词、命令分发、逐行输入和结果显示 | Tokenizer、CommandDispatcher、Repl、TreeFormatter、ShapeFormatter、PositionFormatter、AttributeFormatter |
 | `src/infrastructure/` | XML 与领域对象的转换、磁盘文件读写 | SvgParser、SvgSerializer、FileDocumentRepository |
 | `src/main.ts` | 创建对象、注入依赖并启动 REPL | 程序入口 |
 | `tests/` | 领域、应用、解析和完整会话测试 | 按被测模块组织 |
@@ -341,13 +341,47 @@ show start
 
 修复后 npm test 为 139 个全部通过，npm run typecheck 通过。阶段 4 的初版和审查修正按人工授权一起提交，没有推送或创建 tag。
 
+### 2026-10-11：阶段 5 缩放与属性修改
+
+阶段 4 经审查修正后提交为 852d011。本阶段先新增 ScaleCommand、SetCommand 和 CLI 行为的 20 个测试。最初测试数组的几何字段索引有静态类型错误，改为通过 Shape 接口读取后编译成功；这次编译错误没有计作 Red。随后 npm test 为原有 139 个通过、新增 20 个失败。实现后共 159 个全部通过，npm run typecheck 通过。
+
+本轮曾临时保存运行输出摘录；提交前按人工决定删除，本文保留实际 Red/Green 结果，没有补造此前阶段的失败输出。
+
+移动、缩放和 set 都需要保存同一个图形的操作前后状态，因此把 MoveCommand 原有的快照与目标校验抽成 ShapeEditCommand。三个具体命令只分别调用 Shape.move、scale、set。首次修改成功后保存两份快照，undo 恢复前值，redo 恢复后值；修改失败时恢复操作前状态，不让失败命令进入历史。已有移动测试仍全部通过。
+
+ScaleCommand 对位置和尺寸同时乘因子，Group 递归作用于子孙，stroke-width 与文字内容保持原值。测试覆盖五种叶子的全部几何字段和嵌套组，通过历史连续十轮撤销、重做，并把会溢出的子节点放在后面，检查先前节点也恢复原值。一次组缩放只占一个历史单元。
+
+SetCommand 不复制属性白名单，仍由图形类验证自身属性。测试逐一设置五种叶子的几何字段，并覆盖六种类型的 fill、stroke、stroke-width。Group 只设置自身样式，不覆盖子节点显式颜色，也不把继承颜色写入子节点。几何、文字和样式都通过同一份快照恢复；原来省略的样式在撤销后重新缺省，不写入默认黑色。
+
+CLI 接入两条命令并补入 help。AttributeFormatter 通过 Visitor 读取文字内容，通过公开只读查询读取几何与样式，不按图形标签判断。set 的成功、撤销与重做都显示当时实际值：数值显示规范化结果，字符串带引号，缺省属性显示 (unset)。例如 set r stroke-width 2e0 反馈 stroke-width=2；新设 fill 的撤销反馈 fill=(unset)；文字为空则显示 text=""，两种情况不会混淆。
+
+scale 的成功与重做反馈 scaled by <factor>，撤销反馈 scale restored；实际几何可经 show/tree 核对。失败缩放和属性设置保留 redo；缺少文档时优先报 no document，参数数量错误与白名单错误明确反馈。真实入口测试覆盖中文、空文字、无效因子、非法属性，以及报错后继续撤销和查询。
+
+| 检查 | 实际结果 |
+| --- | --- |
+| Red：npm test | 编译成功，139 个通过、20 个失败 |
+| Green：npm test | 159 个全部通过 |
+| npm run typecheck | 通过 |
+| npm run cli 回放 | 整组缩放、样式设置、文字修改、撤销/重做与失败后恢复正常 |
+| 依赖与分派检查 | 新应用类仅依赖自身和 domain；属性反馈通过 Visitor；没有新增类型名分派 |
+
+本阶段未修改 domain，也未接入分组重排和文件读写。Group 的递归快照仍可能在多个层级重复保存子孙状态，本次只收拢命令层的重复代码，没有做性能优化。初版先交人工审核，当时未执行提交、推送或 tag；根目录 README 仍留到最终阶段。
+
+### 2026-10-11：阶段 5 审查修正
+
+独立审查没有发现阻断性问题，但指出空字符串样式在 show/tree 中显示为 fill=，不够清楚。按人工决定修正 ShapeFormatter，让空串显示为 fill="" 或 stroke=""；真正缺省的样式仍不输出。
+
+先补一个 CLI 回归测试，覆盖 fill 和 stroke 的设置、show/tree、撤销到空串、继续撤销到缺省以及重做。Red 为 159 个通过、1 个失败；修复后 160 个全部通过，npm run typecheck 通过。审查报告举例中“空串改成 x 后撤销得到 unset”的说法不准确，测试固定的是先恢复空串，再撤销才恢复缺省。
+
+共用命令层的失败恢复保持原样。按人工决定删除临时 test-logs 及文档链接，代码、测试和开发记录随阶段 5 一起提交，没有推送或创建 tag。
+
 ### 后续记录方式
 
 每条记录说明当时发现了什么、如何复现或确认、最终改了什么，并附实际执行的检查及结果。修改依赖方向、分组规则或 SVG 支持范围时，在这里说明理由，同时更新对应方案。暂未执行的检查保留为待验收。
 
 ## 一致性自查
 
-阶段 4 已接入基础 CLI 命令、工厂与查询。其他编辑命令和文件访问仍待实现，下表记录当前检查范围。
+阶段 5 已接入 scale/set。分组重排和文件访问仍待实现，下表记录当前检查范围。
 
 | 检查项 | 当前结果 | 实现后如何核对 |
 | --- | --- | --- |
@@ -355,7 +389,7 @@ show start
 | 依赖方向 | domain 仅依赖域内模块；application 只依赖自身和 domain；Repl 依赖 Node 流与逐行读取；未发现跨层反向依赖 | 检查 import，尤其是 domain 的外部依赖与 application 到 infrastructure 的反向引用 |
 | 类封装与一类一文件 | 图形状态、文档索引、命令恢复信息、历史栈及会话字段封装；只读查询冻结副本；类文件名一致 | 检查公开可修改字段、子节点数组和文件命名 |
 | 类型分派位置 | 按名字查找集中在 CommandDispatcher 和 ShapeFactory；格式化走 Visitor；两处入口已标记为待重构 | 检查 switch、类型字符串条件链及注册查找，确认集中在两个指定入口 |
-| Command 与 Composite | 创建、移动、删除经 CLI 接入 EditCommand 和历史；嵌套 Group 操作及撤销/重做已验证 | 检查命令的恢复数据及调用关系，验证叶子和分组使用统一操作 |
+| Command 与 Composite | 创建、移动、缩放、set、删除经 CLI 接入命令与历史；嵌套 Group 操作及撤销/重做已验证 | 检查命令的恢复数据及调用关系，验证叶子和分组使用统一操作 |
 | 功能与错误约定 | 待验收 | 对照命令表、错误表和会话回放结果 |
 
 ## 质量保证手段
@@ -383,4 +417,4 @@ show start
 
 ### 最终交付检查
 
-完成实现后补充实际运行命令和结果、示例路径及已知限制。最终提交与 final tag 应在截止时间前完成并推送到远程；当前尚未确定截止时间。阶段 0 至 3 已提交，阶段 4 按人工授权提交；尚未执行推送或创建 tag。
+完成实现后补充实际运行命令和结果、示例路径及已知限制。最终提交与 final tag 应在截止时间前完成并推送到远程；当前尚未确定截止时间。阶段 0 至 4 已提交，阶段 5 按人工授权提交；尚未执行推送或创建 tag。
