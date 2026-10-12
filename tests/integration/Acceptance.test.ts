@@ -24,9 +24,13 @@ test("experiment section 6 replays all feedback and both trees through the real 
     assert.equal(doc.get("c1").geometry["cx"], 130);
     assert.equal(doc.parentOf("box")?.id, "markers");
     assert.equal(doc.indexOf("box"), 1);
-    assert.equal(doc.get("title").accept({ visitRect: () => "", visitCircle: () => "", visitEllipse: () => "",
-      visitLine: () => "", visitGroup: () => "", visitText: shape => shape.content }), "My Diagram");
-  } finally { replay.close(); }
+    assert.equal(doc.get("title").accept({
+      visitRect: () => "", visitCircle: () => "", visitEllipse: () => "",
+      visitLine: () => "", visitGroup: () => "", visitText: shape => shape.content
+    }), "My Diagram");
+  } finally {
+    replay.close();
+  }
 });
 
 test("experiment flowchart version A saves unchanged geometry and updated Chinese text", () => {
@@ -48,7 +52,9 @@ test("experiment flowchart version A saves unchanged geometry and updated Chines
     assert.deepEqual(doc.get("process-label").geometry, { x: 545, y: 135 });
     assert.deepEqual(doc.get("arrow1").geometry, { x1: 280, y1: 130, x2: 520, y2: 130 });
     assert.match(replay.xml("phase8-flowchart.svg"), /处理数据 v2/);
-  } finally { replay.close(); }
+  } finally {
+    replay.close();
+  }
 });
 
 test("mixed transforms structural edits and failed imports leave the expected saved document", () => {
@@ -80,7 +86,9 @@ test("mixed transforms structural edits and failed imports leave the expected sa
     assert.equal(doc.indexOf("final"), 1);
     assert.match(replay.xml("phase8-edges.svg"), /更新 &amp; &lt;内容&gt;/);
     assert.equal(replay.responses().filter(response => response.startsWith("saved to examples/phase8-edges.svg")).length, 3);
-  } finally { replay.close(); }
+  } finally {
+    replay.close();
+  }
 });
 
 test("complete session outputs remain stable across repeated parse and serialize", () => {
@@ -96,7 +104,9 @@ test("complete session outputs remain stable across repeated parse and serialize
       const parsed = parser.parse(xml);
       assert.deepEqual(parsed.warnings, []);
       assert.equal(serializer.serialize(parsed.document), xml);
-    } finally { replay.close(); }
+    } finally {
+      replay.close();
+    }
   }
 });
 
@@ -125,5 +135,7 @@ test("visual acceptance files preserve sibling order and explicit group-style se
     assert.equal(restored.parentOf("r")?.id, "paint");
     assert.deepEqual(restored.get("paint").styles, { fill: "blue" });
     assert.equal(replay.xml("phase8-style-restored.svg"), replay.xml("phase8-style-grouped.svg"));
-  } finally { replay.close(); }
+  } finally {
+    replay.close();
+  }
 });

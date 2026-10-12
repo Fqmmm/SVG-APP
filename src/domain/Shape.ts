@@ -17,8 +17,12 @@ export abstract class Shape {
     }
   }
 
-  get id(): string { return this.shapeId; }
+  get id(): string {
+    return this.shapeId;
+  }
+
   abstract get type(): string;
+
   abstract get geometry(): Readonly<Record<string, number>>;
 
   get styles(): Readonly<Record<string, string | number>> {
@@ -29,7 +33,9 @@ export abstract class Shape {
     return Object.freeze([]);
   }
 
-  asContainer(): Group | undefined { return undefined; }
+  asContainer(): Group | undefined {
+    return undefined;
+  }
 
   abstract accept<R>(visitor: ShapeVisitor<R>): R;
 
@@ -64,8 +70,11 @@ export abstract class Shape {
   }
 
   protected abstract moveGeometry(dx: number, dy: number): void;
+
   protected abstract scaleGeometry(factor: number): void;
+
   protected abstract setOwnAttribute(attribute: string, value: string | number): void;
+
   protected abstract captureOwnState(): () => void;
 
   private setStyle(attribute: string, value: string | number): void {

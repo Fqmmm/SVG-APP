@@ -20,7 +20,7 @@ test("tokenizer decodes escaped quotes and backslashes inside quotes", () => {
 });
 test("tokenizer rejects unterminated quotes, invalid escapes and joined quoted tokens", () => {
   const tokenizer = new Tokenizer();
-  for (const line of ["create text t 1 2 \"open","x \"a\\q\"","x \"a\"b","x a\"b\"","x \"trailing\\"]) {
+  for (const line of ["create text t 1 2 \"open", "x \"a\\q\"", "x \"a\"b", "x a\"b\"", "x \"trailing\\"]) {
     assert.throws(() => tokenizer.tokenize(line), /quote|escape/);
   }
 });

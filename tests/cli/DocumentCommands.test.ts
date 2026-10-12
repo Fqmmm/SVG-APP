@@ -39,7 +39,9 @@ test("CLI read works before init, reports assigned ids and uses the remembered s
     assert.throws(() => dispatcher.dispatch("redo"), /undo not allowed after io command/);
     assert.throws(() => dispatcher.dispatch("read"), /usage:/);
     assert.throws(() => dispatcher.dispatch("save a b"), /usage:/);
-  } finally { rmSync(directory, { recursive: true, force: true }); }
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
 
 test("failed read or save preserves current tree, default path and redo", () => {
@@ -59,7 +61,9 @@ test("failed read or save preserves current tree, default path and redo", () => 
     assert.equal(dispatcher.dispatch("tree"), before);
     assert.equal(session.path, file);
     assert.equal(dispatcher.dispatch("redo"), "rect#r created");
-  } finally { rmSync(directory, { recursive: true, force: true }); }
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
 
 test("serialized ungroup loses inherited fill and undo restores the original group style", () => {
@@ -81,7 +85,9 @@ test("serialized ungroup loses inherited fill and undo restores the original gro
     assert.equal(ungrouped.find("g"), undefined);
     assert.equal(ungrouped.parentOf("r")?.id, "parent");
     assert.deepEqual(ungrouped.get("r").styles, {});
-  } finally { rmSync(directory, { recursive: true, force: true }); }
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
 
 test("real CLI reads and writes SVG paths with spaces and continues after file failure", () => {
@@ -92,7 +98,7 @@ test("real CLI reads and writes SVG paths with spaces and continues after file f
     const result = spawnSync(process.execPath, [entry], {
       input: ["read " + JSON.stringify(join(directory, "missing.svg")), "init 400 200",
         'create text t 10 20 "中文 & 内容"', "save " + JSON.stringify(file),
-        "read " + JSON.stringify(file), "show t", "undo"].join("\n") + "\n",
+      "read " + JSON.stringify(file), "show t", "undo"].join("\n") + "\n",
       encoding: "utf8", timeout: 5_000,
     });
     assert.equal(result.error, undefined); assert.equal(result.status, 0);
@@ -101,7 +107,9 @@ test("real CLI reads and writes SVG paths with spaces and continues after file f
     assert.match(result.stdout, /中文 & 内容/);
     assert.match(result.stdout, /error: undo not allowed after io command/);
     assert.match(readFileSync(file, "utf8"), /中文 &amp; 内容/);
-  } finally { rmSync(directory, { recursive: true, force: true }); }
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
 
 test("canvas resize is saved as matching width height and viewBox without scaling shapes", () => {
@@ -119,7 +127,9 @@ test("canvas resize is saved as matching width height and viewBox without scalin
     assert.equal(restored.width, 800);
     assert.equal(restored.height, 300);
     assert.deepEqual(restored.get("r").geometry, { x: 1, y: 2, width: 3, height: 4 });
-  } finally { rmSync(directory, { recursive: true, force: true }); }
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
 
 test("invalid references and absent namespace leave the current document path and redo intact", () => {
@@ -145,5 +155,7 @@ test("invalid references and absent namespace leave the current document path an
     }
     dispatcher.dispatch("redo");
     assert.equal(session.document.get("r").id, "r");
-  } finally { rmSync(directory, { recursive: true, force: true }); }
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });

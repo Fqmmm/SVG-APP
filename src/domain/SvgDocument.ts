@@ -20,9 +20,17 @@ export class SvgDocument {
     this.canvasHeight = height;
   }
 
-  get width(): number { return this.canvasWidth; }
-  get height(): number { return this.canvasHeight; }
-  get children(): readonly Shape[] { return Object.freeze([...this.rootNodes]); }
+  get width(): number {
+    return this.canvasWidth;
+  }
+
+  get height(): number {
+    return this.canvasHeight;
+  }
+
+  get children(): readonly Shape[] {
+    return Object.freeze([...this.rootNodes]);
+  }
 
   resize(width: number, height: number): void {
     this.validateSize(width, height);
@@ -65,7 +73,9 @@ export class SvgDocument {
 
   get(id: string): Shape {
     const shape = this.find(id);
-    if (shape === undefined) throw new Error("no such shape: " + id);
+    if (shape === undefined) {
+      throw new Error("no such shape: " + id);
+    }
     return shape;
   }
 
@@ -115,7 +125,9 @@ export class SvgDocument {
     this.validateIndex(position, nextChildren.length);
     nextChildren.splice(position, 0, shape);
 
-    if (previousParent !== nextParent) this.setChildren(previousParent, previousChildren);
+    if (previousParent !== nextParent) {
+      this.setChildren(previousParent, previousChildren);
+    }
     this.setChildren(nextParent, nextChildren);
     this.parents.set(shape, nextParent);
   }
@@ -183,11 +195,17 @@ export class SvgDocument {
   }
 
   private resolveParent(id: string | undefined): Group | null {
-    if (id === undefined) return null;
+    if (id === undefined) {
+      return null;
+    }
     const shape = this.find(id);
-    if (shape === undefined) throw new Error("no such container: " + id);
+    if (shape === undefined) {
+      throw new Error("no such container: " + id);
+    }
     const container = shape.asContainer();
-    if (container === undefined) throw new Error("not a container: " + id);
+    if (container === undefined) {
+      throw new Error("not a container: " + id);
+    }
     return container;
   }
 
@@ -200,7 +218,9 @@ export class SvgDocument {
       this.rootNodes = [...children];
     } else {
       const access = this.#groupAccess.get(parent);
-      if (access === undefined) throw new Error("missing group tree access: " + parent.id);
+      if (access === undefined) {
+        throw new Error("missing group tree access: " + parent.id);
+      }
       access.replaceChildren(children);
     }
   }
@@ -210,7 +230,9 @@ export class SvgDocument {
     try {
       for (const node of nodes) {
         const group = node.asContainer();
-        if (group !== undefined) acquired.set(group, group[acquireTreeAccess]());
+        if (group !== undefined) {
+          acquired.set(group, group[acquireTreeAccess]());
+        }
       }
     } catch (error) {
       for (const access of acquired.values()) access.release();

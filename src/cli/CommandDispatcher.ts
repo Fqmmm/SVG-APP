@@ -53,15 +53,22 @@ export class CommandDispatcher {
     ["redo", args => this.redo(args)],
   ]);
 
-  constructor(private readonly session = new EditorSession()) {}
+  constructor(private readonly session = new EditorSession()) {
+  }
 
   dispatch(line: string): string {
     const [name, ...args] = this.tokenizer.tokenize(line);
-    if (name === undefined) return "";
+    if (name === undefined) {
+      return "";
+    }
     const handler = this.handlers.get(name);
-    if (handler === undefined) throw new Error("unknown command: " + name);
+    if (handler === undefined) {
+      throw new Error("unknown command: " + name);
+    }
     // Document errors take precedence over argument errors for document commands.
-    if (name !== "init" && name !== "read" && name !== "help") void this.session.document;
+    if (name !== "init" && name !== "read" && name !== "help") {
+      void this.session.document;
+    }
     return handler(args);
   }
 
@@ -86,7 +93,9 @@ export class CommandDispatcher {
   }
 
   private canvas(args: readonly string[]): string {
-    if (args.length !== 0 && args.length !== 2) throw new Error("usage: canvas [w] [h]");
+    if (args.length !== 0 && args.length !== 2) {
+      throw new Error("usage: canvas [w] [h]");
+    }
     if (args.length === 2) {
       this.session.resize(AttributeValidator.number(args[0]!, "width"), AttributeValidator.number(args[1]!, "height"));
     }
@@ -98,7 +107,9 @@ export class CommandDispatcher {
   }
 
   private create(args: readonly string[]): string {
-    if (args.length < 2) throw new Error("usage: create <type> <id> [params] [in <containerId>]");
+    if (args.length < 2) {
+      throw new Error("usage: create <type> <id> [params] [in <containerId>]");
+    }
     const [type, id] = args;
     const parameters = args.slice(2);
     let parentId: string | undefined;
@@ -236,10 +247,14 @@ export class CommandDispatcher {
       + (undone ? -dx : dx) + "," + (undone ? -dy : dy) + ")";
   }
 
-  private label(shape: Shape): string { return shape.type + "#" + shape.id; }
+  private label(shape: Shape): string {
+    return shape.type + "#" + shape.id;
+  }
 
   private requireCount(args: readonly string[], minimum: number, maximum: number, usage: string): void {
-    if (args.length < minimum || args.length > maximum) throw new Error("usage: " + usage);
+    if (args.length < minimum || args.length > maximum) {
+      throw new Error("usage: " + usage);
+    }
   }
 
   private help(args: readonly string[]): string {

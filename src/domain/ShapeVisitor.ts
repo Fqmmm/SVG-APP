@@ -7,9 +7,14 @@ import type { Group } from "./Group.js";
 
 export interface ShapeVisitor<R> {
   visitRect(shape: Rect): R;
+
   visitCircle(shape: Circle): R;
+
   visitEllipse(shape: Ellipse): R;
+
   visitLine(shape: Line): R;
+
   visitText(shape: Text): R;
+
   visitGroup(shape: Group): R;
 }

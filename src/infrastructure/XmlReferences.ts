@@ -27,13 +27,17 @@ export class XmlReferences {
       if (character === "&") {
         referencePattern.lastIndex = index;
         const reference = referencePattern.exec(xml)?.[0];
-        if (reference === undefined) throw new Error("invalid XML reference at offset " + index);
+        if (reference === undefined) {
+          throw new Error("invalid XML reference at offset " + index);
+        }
         this.validateCharacterReference(reference);
         index += reference.length;
         continue;
       }
       if (quote !== undefined) {
-        if (character === quote) quote = undefined;
+        if (character === quote) {
+          quote = undefined;
+        }
       } else if (inMarkup && (character === '"' || character === "'")) {
         quote = character;
       } else if (character === "<") {
@@ -47,12 +51,16 @@ export class XmlReferences {
 
   private static afterSection(xml: string, start: number, ending: string): number {
     const end = xml.indexOf(ending, start);
-    if (end < 0) throw new Error("unterminated XML section");
+    if (end < 0) {
+      throw new Error("unterminated XML section");
+    }
     return end + ending.length;
   }
 
   private static validateCharacterReference(reference: string): void {
-    if (!reference.startsWith("&#")) return;
+    if (!reference.startsWith("&#")) {
+      return;
+    }
     const hexadecimal = reference.startsWith("&#x");
     const code = Number.parseInt(reference.slice(hexadecimal ? 3 : 2, -1), hexadecimal ? 16 : 10);
     if (!Number.isInteger(code) || code < 0 || code > 0x10ffff) {

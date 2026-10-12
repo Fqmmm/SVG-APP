@@ -8,6 +8,7 @@ import * as treeAccess from "../../src/domain/TreeAccess.js";
 
 interface WriteAccess {
   replaceChildren(children: readonly Shape[]): void;
+
   release(): void;
 }
 
@@ -29,7 +30,9 @@ test("exported tree hooks cannot replace children or grant access to an attached
 
   for (const target of [group, inner]) {
     for (const key of Object.values(treeAccess)) {
-      if (typeof key !== "symbol") continue;
+      if (typeof key !== "symbol") {
+        continue;
+      }
       for (const argumentsList of [[[]], [], [doc, []], [{}, []]]) {
         assert.throws(
           () => Reflect.apply(Reflect.get(target, key), target, argumentsList),

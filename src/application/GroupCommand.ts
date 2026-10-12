@@ -15,9 +15,15 @@ export class GroupCommand extends StructureCommand {
 
   protected override buildEdit(document: SvgDocument): StructureEdit {
     const group = new Group(this.id);
-    if (document.find(this.id) !== undefined) throw new Error("id already exists: " + this.id);
-    if (this.targets.length === 0) throw new Error("group requires at least one target");
-    if (new Set(this.targets).size !== this.targets.length) throw new Error("duplicate group target");
+    if (document.find(this.id) !== undefined) {
+      throw new Error("id already exists: " + this.id);
+    }
+    if (this.targets.length === 0) {
+      throw new Error("group requires at least one target");
+    }
+    if (new Set(this.targets).size !== this.targets.length) {
+      throw new Error("duplicate group target");
+    }
     const selected = new Set(this.targets.map(id => document.get(id)));
     for (const shape of selected) {
       for (let parent = document.parentOf(shape.id); parent !== null; parent = document.parentOf(parent.id)) {

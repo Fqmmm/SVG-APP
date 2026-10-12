@@ -12,13 +12,19 @@ class MemoryRepository implements DocumentRepository {
   readonly reads: string[] = [];
   readonly writes: string[] = [];
   readonly incoming = new SvgDocument(40, 20);
+
   read(path: string): DocumentReadResult {
-    if (this.failure) throw new Error("cannot read file: " + path);
+    if (this.failure) {
+      throw new Error("cannot read file: " + path);
+    }
     this.reads.push(path);
     return { document: this.incoming, warnings: ["warning: example"] };
   }
+
   write(path: string, _document: SvgDocument): void {
-    if (this.failure) throw new Error("cannot write file: " + path);
+    if (this.failure) {
+      throw new Error("cannot write file: " + path);
+    }
     this.writes.push(path);
   }
 }

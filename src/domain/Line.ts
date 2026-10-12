@@ -11,7 +11,9 @@ export class Line extends Shape {
     AttributeValidator.geometry(this.state, []);
   }
 
-  override get type(): string { return "line"; }
+  override get type(): string {
+    return "line";
+  }
 
   override get geometry(): Readonly<{ x1: number; y1: number; x2: number; y2: number }> {
     return Object.freeze({ ...this.state });

@@ -17,8 +17,12 @@ export class ShapeFormatter implements ShapeVisitor<string> {
     const lines = [shape.type + "#" + shape.id + "  parent=" + (parent === null ? "svg" : parent.type + "#" + parent.id)];
     const geometry = shape.accept(this);
     const styles = this.styles(shape);
-    if (geometry !== "") lines.push("  " + geometry);
-    if (styles !== "") lines.push("  " + styles);
+    if (geometry !== "") {
+      lines.push("  " + geometry);
+    }
+    if (styles !== "") {
+      lines.push("  " + styles);
+    }
     return lines.join("\n");
   }
 
@@ -47,7 +51,9 @@ export class ShapeFormatter implements ShapeVisitor<string> {
     return "(" + x + "," + y + ") " + JSON.stringify(shape.content);
   }
 
-  visitGroup(_shape: Group): string { return ""; }
+  visitGroup(_shape: Group): string {
+    return "";
+  }
 
   private styles(shape: Shape): string {
     return Object.entries(shape.styles).map(([key, value]) => {

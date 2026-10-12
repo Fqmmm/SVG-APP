@@ -9,7 +9,9 @@ export class DeleteCommand extends EditCommand {
   private position: number | undefined;
   private savedState: ShapeState | undefined;
 
-  constructor(private readonly id: string) { super(); }
+  constructor(private readonly id: string) {
+    super();
+  }
 
   protected override executeEdit(document: SvgDocument): void {
     const shape = document.get(this.id);

@@ -8,7 +8,9 @@ export abstract class ShapeEditCommand extends EditCommand {
   private before: ShapeState | undefined;
   private after: ShapeState | undefined;
 
-  protected constructor(private readonly id: string) { super(); }
+  protected constructor(private readonly id: string) {
+    super();
+  }
 
   protected override executeEdit(document: SvgDocument): void {
     const shape = document.get(this.id);
@@ -38,6 +40,8 @@ export abstract class ShapeEditCommand extends EditCommand {
   protected abstract changeShape(shape: Shape): void;
 
   private checkTarget(shape: Shape): void {
-    if (shape !== this.target) throw new Error("command target changed: " + this.id);
+    if (shape !== this.target) {
+      throw new Error("command target changed: " + this.id);
+    }
   }
 }

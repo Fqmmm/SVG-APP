@@ -19,13 +19,26 @@ export class SvgSerializer implements ShapeVisitor<string> {
       + '</svg>\n';
   }
 
-  visitRect(shape: Rect): string { return this.emptyElement(shape); }
-  visitCircle(shape: Circle): string { return this.emptyElement(shape); }
-  visitEllipse(shape: Ellipse): string { return this.emptyElement(shape); }
-  visitLine(shape: Line): string { return this.emptyElement(shape); }
+  visitRect(shape: Rect): string {
+    return this.emptyElement(shape);
+  }
+
+  visitCircle(shape: Circle): string {
+    return this.emptyElement(shape);
+  }
+
+  visitEllipse(shape: Ellipse): string {
+    return this.emptyElement(shape);
+  }
+
+  visitLine(shape: Line): string {
+    return this.emptyElement(shape);
+  }
+
   visitText(shape: Text): string {
     return '<text' + this.attributes(shape) + '>' + XmlText.text(shape.content) + '</text>\n';
   }
+
   visitGroup(shape: Group): string {
     return '<g' + this.attributes(shape) + '>\n'
       + shape.children.map(child => child.accept(this)).join("") + '</g>\n';

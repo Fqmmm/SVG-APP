@@ -9,12 +9,17 @@ export class EditorSession {
   private history: CommandHistory | undefined;
   private currentPath: string | undefined;
 
-  constructor(private readonly repository?: DocumentRepository) {}
+  constructor(private readonly repository?: DocumentRepository) {
+  }
 
-  get path(): string | undefined { return this.currentPath; }
+  get path(): string | undefined {
+    return this.currentPath;
+  }
 
   get document(): SvgDocument {
-    if (this.currentDocument === undefined) throw new Error("no document. use 'init' or 'read' first");
+    if (this.currentDocument === undefined) {
+      throw new Error("no document. use 'init' or 'read' first");
+    }
     return this.currentDocument;
   }
 
@@ -34,7 +39,9 @@ export class EditorSession {
   save(path?: string): void {
     const document = this.document;
     const target = path ?? this.currentPath;
-    if (target === undefined) throw new Error("no file path. use 'save <file.svg>' first");
+    if (target === undefined) {
+      throw new Error("no file path. use 'save <file.svg>' first");
+    }
     this.validatePath(target);
     this.requireRepository().write(target, document);
     this.currentPath = target;
@@ -46,10 +53,21 @@ export class EditorSession {
     this.establishBarrier();
   }
 
-  execute(command: EditCommand): void { this.requireHistory().execute(command); }
-  undo(): EditCommand { return this.requireHistory().undo(); }
-  redo(): EditCommand { return this.requireHistory().redo(); }
-  establishBarrier(): void { this.requireHistory().establishBarrier(); }
+  execute(command: EditCommand): void {
+    this.requireHistory().execute(command);
+  }
+
+  undo(): EditCommand {
+    return this.requireHistory().undo();
+  }
+
+  redo(): EditCommand {
+    return this.requireHistory().redo();
+  }
+
+  establishBarrier(): void {
+    this.requireHistory().establishBarrier();
+  }
 
   private activate(document: SvgDocument): void {
     const history = new CommandHistory(document);
@@ -59,16 +77,22 @@ export class EditorSession {
   }
 
   private validatePath(path: string): void {
-    if (path.trim() === "" || path.includes("\u0000")) throw new Error("invalid file path");
+    if (path.trim() === "" || path.includes("\u0000")) {
+      throw new Error("invalid file path");
+    }
   }
 
   private requireRepository(): DocumentRepository {
-    if (this.repository === undefined) throw new Error("document repository is not configured");
+    if (this.repository === undefined) {
+      throw new Error("document repository is not configured");
+    }
     return this.repository;
   }
 
   private requireHistory(): CommandHistory {
-    if (this.history === undefined) throw new Error("no document. use 'init' or 'read' first");
+    if (this.history === undefined) {
+      throw new Error("no document. use 'init' or 'read' first");
+    }
     return this.history;
   }
 }

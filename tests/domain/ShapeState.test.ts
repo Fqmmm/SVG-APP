@@ -5,7 +5,10 @@ import { Rect } from "../../src/domain/Rect.js";
 test("captured state rejects replacement of its restore method and remains reusable", () => {
   const rect = new Rect("r", 0.1, 0.2, 3, 4);
   const state = rect.captureState();
-  assert.throws(() => Object.assign(state, { restore: () => {} }), TypeError);
+  assert.throws(() => Object.assign(state, {
+    restore: () => {
+    }
+  }), TypeError);
   assert.equal(Object.isFrozen(state), true);
 
   for (let round = 0; round < 2; round += 1) {

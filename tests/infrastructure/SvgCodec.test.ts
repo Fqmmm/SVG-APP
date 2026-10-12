@@ -34,9 +34,11 @@ test("SVG roundtrip preserves all shapes, nested order, geometry and explicit st
     assert.equal(restored.indexOf(id), original.document.indexOf(id));
   }
   assert.deepEqual(restored.get("r").styles, {});
-  assert.ok(restored.get("t").accept({ visitRect: () => false, visitCircle: () => false,
+  assert.ok(restored.get("t").accept({
+    visitRect: () => false, visitCircle: () => false,
     visitEllipse: () => false, visitLine: () => false, visitGroup: () => false,
-    visitText: shape => shape.content === "开始 & <结束>" }));
+    visitText: shape => shape.content === "开始 & <结束>"
+  }));
 });
 
 test("missing ids are assigned in preorder after reserving every explicit id", () => {
@@ -52,7 +54,7 @@ test("missing ids are assigned in preorder after reserving every explicit id", (
 });
 
 test("SVG rejects duplicate or invalid explicit ids instead of repairing them", () => {
-  assert.equal(new SvgParser().parse(wrap('<rect id="valid"/>' )).document.get("valid").id, "valid");
+  assert.equal(new SvgParser().parse(wrap('<rect id="valid"/>')).document.get("valid").id, "valid");
   for (const body of ['<rect id="a"/><g id="a"/>', '<rect id=""/>', '<rect id="a b"/>']) {
     assert.throws(() => new SvgParser().parse(wrap(body)));
   }
@@ -96,8 +98,10 @@ test("XML comments and CDATA text are accepted, text whitespace and escapes surv
   const output = new SvgSerializer().serialize(doc);
   const restored = new SvgParser().parse(output).document.get("t");
   assert.deepEqual(restored.styles, text.styles);
-  assert.equal(restored.accept({ visitRect: () => "", visitCircle: () => "", visitEllipse: () => "",
-    visitLine: () => "", visitGroup: () => "", visitText: shape => shape.content }), content);
+  assert.equal(restored.accept({
+    visitRect: () => "", visitCircle: () => "", visitEllipse: () => "",
+    visitLine: () => "", visitGroup: () => "", visitText: shape => shape.content
+  }), content);
   const parsed = new SvgParser().parse('<!-- comment -->' + wrap('<text id="t"><![CDATA[<内容>]]><!--skip-->&amp;</text>'));
   assert.match(new SvgSerializer().serialize(parsed.document), /&lt;内容&gt;&amp;/);
 });
@@ -209,6 +213,8 @@ test("text containing a CDATA closing sequence is escaped and restored exactly",
   const xml = new SvgSerializer().serialize(doc);
   assert.match(xml, /a]]&gt;b/);
   const restored = new SvgParser().parse(xml).document.get("t");
-  assert.equal(restored.accept({ visitRect: () => "", visitCircle: () => "", visitEllipse: () => "",
-    visitLine: () => "", visitGroup: () => "", visitText: shape => shape.content }), "a]]>b");
+  assert.equal(restored.accept({
+    visitRect: () => "", visitCircle: () => "", visitEllipse: () => "",
+    visitLine: () => "", visitGroup: () => "", visitText: shape => shape.content
+  }), "a]]>b");
 });

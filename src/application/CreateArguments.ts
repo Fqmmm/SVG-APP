@@ -21,6 +21,11 @@ export class CreateArguments {
     return AttributeValidator.number(this.values[index]!, name);
   }
 
-  text(index: number): string { return this.values[index]!; }
-  optional(index: number): string | undefined { return this.values[index]; }
+  text(index: number): string {
+    return this.values[index]!;
+  }
+
+  optional(index: number): string | undefined {
+    return this.values[index];
+  }
 }

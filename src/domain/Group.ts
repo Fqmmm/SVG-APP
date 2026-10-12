@@ -14,10 +14,21 @@ export class Group extends Shape {
     TreeValidator.nodes(this);
   }
 
-  override get type(): string { return "g"; }
-  override get geometry(): Readonly<Record<string, number>> { return Object.freeze({}); }
-  override get children(): readonly Shape[] { return Object.freeze([...this.#childNodes]); }
-  override asContainer(): Group { return this; }
+  override get type(): string {
+    return "g";
+  }
+
+  override get geometry(): Readonly<Record<string, number>> {
+    return Object.freeze({});
+  }
+
+  override get children(): readonly Shape[] {
+    return Object.freeze([...this.#childNodes]);
+  }
+
+  override asContainer(): Group {
+    return this;
+  }
 
   override accept<R>(visitor: ShapeVisitor<R>): R {
     return visitor.visitGroup(this);

@@ -50,7 +50,9 @@ export class ShapeFactory {
 
   private definition(type: string): ShapeDefinition {
     const definition = this.definitions.get(type);
-    if (definition === undefined) throw new Error("unknown shape type: " + type + " (is the plugin loaded?)");
+    if (definition === undefined) {
+      throw new Error("unknown shape type: " + type + " (is the plugin loaded?)");
+    }
     return definition;
   }
 }

@@ -20,7 +20,9 @@ test("file repository writes UTF-8 SVG and reads it back from a path with spaces
     assert.deepEqual(readdirSync(directory), ["中文 diagram.svg"]);
     repository.write(file, new SvgDocument(100, 200));
     assert.equal(repository.read(file).document.width, 100);
-  } finally { rmSync(directory, { recursive: true, force: true }); }
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
 
 test("filesystem errors use prescribed read and write messages", () => {
@@ -32,7 +34,9 @@ test("filesystem errors use prescribed read and write messages", () => {
     assert.throws(() => repository.write(join(directory, "absent", "out.svg"), new SvgDocument()), /cannot write file:/);
     assert.throws(() => repository.write(directory, new SvgDocument()), { message: "cannot write file: " + directory });
     assert.deepEqual(readdirSync(directory), []);
-  } finally { rmSync(directory, { recursive: true, force: true }); }
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
 
 test("serialization failure preserves existing bytes and leaves no temporary file", () => {
@@ -44,7 +48,9 @@ test("serialization failure preserves existing bytes and leaves no temporary fil
     assert.throws(() => new FileDocumentRepository().write(file, doc), /XML character/);
     assert.equal(readFileSync(file, "utf8"), "original bytes");
     assert.deepEqual(readdirSync(directory), ["out.svg"]);
-  } finally { rmSync(directory, { recursive: true, force: true }); }
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
 
 test("bad XML and invalid UTF-8 are rejected rather than loaded with replacement characters", () => {
@@ -55,5 +61,7 @@ test("bad XML and invalid UTF-8 are rejected rather than loaded with replacement
     assert.throws(() => new FileDocumentRepository().read(file), /invalid SVG/);
     writeFileSync(file, Buffer.from([0xff, 0xfe, 0x3c]));
     assert.throws(() => new FileDocumentRepository().read(file));
-  } finally { rmSync(directory, { recursive: true, force: true }); }
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });

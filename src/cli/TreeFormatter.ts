@@ -3,7 +3,8 @@ import type { SvgDocument } from "../domain/SvgDocument.js";
 import { ShapeFormatter } from "./ShapeFormatter.js";
 
 export class TreeFormatter {
-  constructor(private readonly shapes = new ShapeFormatter()) {}
+  constructor(private readonly shapes = new ShapeFormatter()) {
+  }
 
   document(document: SvgDocument): string {
     const lines = ["svg (" + document.width + "x" + document.height + ")"];

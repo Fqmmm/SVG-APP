@@ -23,8 +23,12 @@ export class TreeValidator {
     nodes: Shape[],
     childrenOf: (shape: Shape) => readonly Shape[],
   ): void {
-    if (references.has(shape)) throw new Error("shape occurs more than once: " + shape.id);
-    if (ids.has(shape.id)) throw new Error("id already exists: " + shape.id);
+    if (references.has(shape)) {
+      throw new Error("shape occurs more than once: " + shape.id);
+    }
+    if (ids.has(shape.id)) {
+      throw new Error("id already exists: " + shape.id);
+    }
     references.add(shape);
     ids.add(shape.id);
     nodes.push(shape);

@@ -23,7 +23,9 @@ export class StructureEdit {
     if (parent === null) {
       this.afterRoots = copy;
     } else {
-      if (!this.before.has(parent)) this.before.set(parent, parent.children);
+      if (!this.before.has(parent)) {
+        this.before.set(parent, parent.children);
+      }
       this.after.set(parent, copy);
     }
   }
@@ -40,7 +42,9 @@ export class StructureEdit {
       throw new Error("invalid child index: " + position);
     }
     destination.splice(position, 0, shape);
-    if (oldParent !== parent) this.replace(oldParent, remaining);
+    if (oldParent !== parent) {
+      this.replace(oldParent, remaining);
+    }
     this.replace(parent, destination);
   }
 

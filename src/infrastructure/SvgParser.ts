@@ -17,15 +17,23 @@ export class SvgParser {
       XmlReferences.validate(xml);
       const dom = new DOMParser({ onError: onWarningStopParsing }).parseFromString(xml, "application/xml");
       for (let node = dom.firstChild; node !== null; node = node.nextSibling) {
-        if (node.nodeType === 10) throw new Error("unsupported DOCTYPE");
-        if (node.nodeType === 7) this.processingInstruction(node);
+        if (node.nodeType === 10) {
+          throw new Error("unsupported DOCTYPE");
+        }
+        if (node.nodeType === 7) {
+          this.processingInstruction(node);
+        }
       }
       const root = dom.documentElement;
-      if (root === null || root.localName !== "svg") throw new Error("expected svg root");
+      if (root === null || root.localName !== "svg") {
+        throw new Error("expected svg root");
+      }
       this.validateNamespace(root);
       const attributes = this.attributes(root);
       for (const name of attributes.keys()) {
-        if (!["width", "height", "viewBox"].includes(name)) throw new Error("unsupported svg attribute: " + name);
+        if (!["width", "height", "viewBox"].includes(name)) {
+          throw new Error("unsupported svg attribute: " + name);
+        }
       }
       const box = attributes.get("viewBox")?.trim().split(/[\s,]+/u).map(value => AttributeValidator.number(value, "viewBox"));
       if (box !== undefined && (box.length !== 4 || box[0] !== 0 || box[1] !== 0)) {
@@ -45,7 +53,9 @@ export class SvgParser {
         if (element.hasAttribute("id")) {
           const id = element.getAttribute("id")!;
           AttributeValidator.id(id);
-          if (used.has(id)) throw new Error("id already exists: " + id);
+          if (used.has(id)) {
+            throw new Error("id already exists: " + id);
+          }
           used.add(id);
         }
       }
@@ -86,7 +96,9 @@ export class SvgParser {
       const content = this.directText(child);
       const shape = this.factory.createFromAttributes(child.localName!, id, attributes, content);
       if (kind !== undefined) {
-        if (shape.asContainer() === undefined || kind !== "box") throw new Error("unsupported data-kind: " + kind);
+        if (shape.asContainer() === undefined || kind !== "box") {
+          throw new Error("unsupported data-kind: " + kind);
+        }
         warnings.push("warning: treating box " + id + " as an ordinary group");
       }
       const children = this.childElements(child);
@@ -108,18 +120,28 @@ export class SvgParser {
   private childElements(parent: Element): Element[] {
     const result: Element[] = [];
     for (let node = parent.firstChild; node !== null; node = node.nextSibling) {
-      if (node.nodeType === 1) result.push(node as Element);
-      else if (node.nodeType === 7) this.processingInstruction(node);
-      else if (![3, 4, 8].includes(node.nodeType)) throw new Error("unsupported XML node");
+      if (node.nodeType === 1) {
+        result.push(node as Element);
+      }
+      else if (node.nodeType === 7) {
+        this.processingInstruction(node);
+      }
+      else if (![3, 4, 8].includes(node.nodeType)) {
+        throw new Error("unsupported XML node");
+      }
     }
-    if (parent.localName === "svg" && this.directText(parent).trim() !== "") throw new Error("unexpected text in svg");
+    if (parent.localName === "svg" && this.directText(parent).trim() !== "") {
+      throw new Error("unexpected text in svg");
+    }
     return result;
   }
 
   private directText(parent: Element): string {
     let text = "";
     for (let node = parent.firstChild; node !== null; node = node.nextSibling) {
-      if (node.nodeType === 3 || node.nodeType === 4) text += node.nodeValue ?? "";
+      if (node.nodeType === 3 || node.nodeType === 4) {
+        text += node.nodeValue ?? "";
+      }
     }
     XmlText.validate(text);
     return text;
@@ -129,8 +151,12 @@ export class SvgParser {
     const attributes = new Map<string, string>();
     for (let index = 0; index < element.attributes.length; index += 1) {
       const attribute = element.attributes.item(index)!;
-      if (attribute.namespaceURI === "http://www.w3.org/2000/xmlns/") continue;
-      if (attribute.namespaceURI !== null) throw new Error("unsupported attribute namespace: " + attribute.name);
+      if (attribute.namespaceURI === "http://www.w3.org/2000/xmlns/") {
+        continue;
+      }
+      if (attribute.namespaceURI !== null) {
+        throw new Error("unsupported attribute namespace: " + attribute.name);
+      }
       XmlText.validate(attribute.value);
       attributes.set(attribute.name, attribute.value);
     }
@@ -138,7 +164,9 @@ export class SvgParser {
   }
 
   private validateNamespace(element: Element): void {
-    if (element.namespaceURI !== this.namespace) throw new Error("unsupported SVG namespace: " + element.namespaceURI);
+    if (element.namespaceURI !== this.namespace) {
+      throw new Error("unsupported SVG namespace: " + element.namespaceURI);
+    }
   }
 
   private length(value: string | undefined, fallback: number, name: string): number {
@@ -146,8 +174,12 @@ export class SvgParser {
   }
 
   private processingInstruction(node: Node): void {
-    if (node.nodeName !== "xml") throw new Error("unsupported processing instruction: " + node.nodeName);
+    if (node.nodeName !== "xml") {
+      throw new Error("unsupported processing instruction: " + node.nodeName);
+    }
     const encoding = /encoding\s*=\s*["']([^"']+)["']/iu.exec(node.nodeValue ?? "")?.[1];
-    if (encoding !== undefined && encoding.toUpperCase() !== "UTF-8") throw new Error("unsupported XML encoding: " + encoding);
+    if (encoding !== undefined && encoding.toUpperCase() !== "UTF-8") {
+      throw new Error("unsupported XML encoding: " + encoding);
+    }
   }
 }

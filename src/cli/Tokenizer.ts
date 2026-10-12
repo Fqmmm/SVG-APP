@@ -1,10 +1,14 @@
 export class Tokenizer {
   tokenize(line: string): readonly string[] {
-    if (line.trim() === "" || line.trimStart().startsWith("#")) return [];
+    if (line.trim() === "" || line.trimStart().startsWith("#")) {
+      return [];
+    }
     const tokens: string[] = [];
     let index = 0;
     while (index < line.length) {
-      if (/\s/u.test(line[index]!)) { index += 1; continue; }
+      if (/\s/u.test(line[index]!)) {
+        index += 1; continue;
+      }
       if (line[index] === '"') {
         const [token, next] = this.readQuoted(line, index + 1);
         tokens.push(token);
@@ -15,7 +19,9 @@ export class Tokenizer {
       } else {
         const start = index;
         while (index < line.length && !/\s/u.test(line[index]!)) {
-          if (line[index] === '"') throw new Error("quote must start an argument");
+          if (line[index] === '"') {
+            throw new Error("quote must start an argument");
+          }
           index += 1;
         }
         tokens.push(line.slice(start, index));
@@ -28,7 +34,9 @@ export class Tokenizer {
     let token = "";
     for (let index = start; index < line.length; index += 1) {
       const character = line[index]!;
-      if (character === '"') return [token, index + 1];
+      if (character === '"') {
+        return [token, index + 1];
+      }
       if (character === "\\") {
         const escaped = line[index + 1];
         if (escaped !== '"' && escaped !== "\\") {

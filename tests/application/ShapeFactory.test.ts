@@ -42,7 +42,9 @@ test("factory rejects incorrect counts for every type", () => {
     ["text", ["0", "0", "hello"]],
     ["g", []],
   ] as const) {
-    if (valid.length > 0) assert.throws(() => factory.create(type, "id", valid.slice(0, -1)), /argument count/);
+    if (valid.length > 0) {
+      assert.throws(() => factory.create(type, "id", valid.slice(0, -1)), /argument count/);
+    }
     assert.throws(() => factory.create(type, "id", [...valid, "extra", "extra"]), /argument count/);
   }
 });

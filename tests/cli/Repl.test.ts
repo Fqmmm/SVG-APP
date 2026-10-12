@@ -9,7 +9,9 @@ test("Repl displays a welcome message and prompt before input ends", async () =>
   const input = new PassThrough();
   const output = new PassThrough();
   let text = "";
-  output.on("data", (chunk: Buffer) => { text += chunk.toString("utf8"); });
+  output.on("data", (chunk: Buffer) => {
+    text += chunk.toString("utf8");
+  });
   const running = new Repl(input, output).run();
 
   try {
@@ -23,7 +25,9 @@ test("Repl displays a welcome message and prompt before input ends", async () =>
 test("Repl finishes at EOF without repeating the initial prompt", async () => {
   const output = new PassThrough();
   let text = "";
-  output.on("data", (chunk: Buffer) => { text += chunk.toString("utf8"); });
+  output.on("data", (chunk: Buffer) => {
+    text += chunk.toString("utf8");
+  });
 
   await new Repl(Readable.from([]), output).run();
 
@@ -34,7 +38,9 @@ test("Repl skips blank and comment lines and prompts for the next line", async (
   const input = Readable.from(["\n   \n  # a script comment\n"]);
   const output = new PassThrough();
   let text = "";
-  output.on("data", (chunk: Buffer) => { text += chunk.toString("utf8"); });
+  output.on("data", (chunk: Buffer) => {
+    text += chunk.toString("utf8");
+  });
 
   await new Repl(input, output).run();
 
@@ -45,7 +51,9 @@ test("Repl dispatches commands from CRLF input and continues reading", async () 
   const input = Readable.from(["init 400 200\r\ncreate rect r1 0 0 10 10\r\n"]);
   const output = new PassThrough();
   let text = "";
-  output.on("data", (chunk: Buffer) => { text += chunk.toString("utf8"); });
+  output.on("data", (chunk: Buffer) => {
+    text += chunk.toString("utf8");
+  });
 
   await new Repl(input, output).run();
 
@@ -59,7 +67,9 @@ test("Repl reports one error per line and continues through parser and domain fa
   ]);
   const output = new PassThrough();
   let text = "";
-  output.on("data", (chunk: Buffer) => { text += chunk.toString("utf8"); });
+  output.on("data", (chunk: Buffer) => {
+    text += chunk.toString("utf8");
+  });
   await new Repl(input, output).run();
   assert.equal(text, welcome + "svg> " + [
     "error: no document. use 'init' or 'read' first",
@@ -76,7 +86,9 @@ test("Repl builds nested Chinese text, moves a group and prints its restored sub
   ]);
   const output = new PassThrough();
   let text = "";
-  output.on("data", (chunk: Buffer) => { text += chunk.toString("utf8"); });
+  output.on("data", (chunk: Buffer) => {
+    text += chunk.toString("utf8");
+  });
   await new Repl(input, output).run();
   assert.equal(text, welcome + "svg> " + [
     "canvas 800x600 created", "g#node created",

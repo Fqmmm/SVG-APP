@@ -11,7 +11,9 @@ export class Circle extends Shape {
     AttributeValidator.geometry(this.state, ["r"]);
   }
 
-  override get type(): string { return "circle"; }
+  override get type(): string {
+    return "circle";
+  }
 
   override get geometry(): Readonly<{ cx: number; cy: number; r: number }> {
     return Object.freeze({ ...this.state });

@@ -7,7 +7,8 @@ export class Repl {
     private readonly input: Readable,
     private readonly output: Writable,
     private readonly dispatcher = new CommandDispatcher(),
-  ) {}
+  ) {
+  }
 
   async run(): Promise<void> {
     const lines = createInterface({
@@ -21,7 +22,9 @@ export class Repl {
       for await (const line of lines) {
         try {
           const response = this.dispatcher.dispatch(line);
-          if (response !== "") this.output.write(response + "\n");
+          if (response !== "") {
+            this.output.write(response + "\n");
+          }
         } catch (error) {
           const message = error instanceof Error ? error.message : String(error);
           this.output.write("error: " + message.replace(/[\r\n]/gu, " ") + "\n");

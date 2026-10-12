@@ -13,13 +13,17 @@ export class Text extends Shape {
     this.textContent = AttributeValidator.text(content, "text");
   }
 
-  override get type(): string { return "text"; }
+  override get type(): string {
+    return "text";
+  }
 
   override get geometry(): Readonly<{ x: number; y: number }> {
     return Object.freeze({ ...this.state });
   }
 
-  get content(): string { return this.textContent; }
+  get content(): string {
+    return this.textContent;
+  }
 
   override accept<R>(visitor: ShapeVisitor<R>): R {
     return visitor.visitText(this);

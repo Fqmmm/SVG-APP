@@ -11,7 +11,8 @@ export class FileDocumentRepository implements DocumentRepository {
   constructor(
     private readonly parser = new SvgParser(),
     private readonly serializer = new SvgSerializer(),
-  ) {}
+  ) {
+  }
 
   read(path: string): DocumentReadResult {
     let xml: string;
@@ -45,7 +46,9 @@ export class FileDocumentRepository implements DocumentRepository {
       throw new Error("cannot write file: " + path);
     } finally {
       if (created) {
-        try { unlinkSync(temporary); } catch {
+        try {
+          unlinkSync(temporary);
+        } catch {
           // Keep the prescribed write error if temporary-file cleanup also fails.
         }
       }

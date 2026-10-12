@@ -6,7 +6,9 @@ export abstract class EditCommand {
 
   execute(document: SvgDocument): void {
     this.checkDocument(document);
-    if (this.applied) throw new Error("command already executed");
+    if (this.applied) {
+      throw new Error("command already executed");
+    }
     this.executeEdit(document);
     this.owner = document;
     this.applied = true;
@@ -14,12 +16,15 @@ export abstract class EditCommand {
 
   undo(document: SvgDocument): void {
     this.checkDocument(document);
-    if (!this.applied) throw new Error("command not executed");
+    if (!this.applied) {
+      throw new Error("command not executed");
+    }
     this.undoEdit(document);
     this.applied = false;
   }
 
   protected abstract executeEdit(document: SvgDocument): void;
+
   protected abstract undoEdit(document: SvgDocument): void;
 
   private checkDocument(document: SvgDocument): void {

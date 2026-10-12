@@ -37,8 +37,13 @@ export class SessionReplay {
     return this.output.split("svg> ").slice(1).map(part => part.replace(/\n$/u, "")).filter(part => part !== "");
   }
 
-  xml(name: string): string { return readFileSync(join(this.directory, "examples", name), "utf8"); }
-  document(name: string): SvgDocument { return new SvgParser().parse(this.xml(name)).document; }
+  xml(name: string): string {
+    return readFileSync(join(this.directory, "examples", name), "utf8");
+  }
+
+  document(name: string): SvgDocument {
+    return new SvgParser().parse(this.xml(name)).document;
+  }
 
   close(): void {
     const directory = resolve(this.directory);

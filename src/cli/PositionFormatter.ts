@@ -8,7 +8,9 @@ import type { Text } from "../domain/Text.js";
 import type { Group } from "../domain/Group.js";
 
 export class PositionFormatter implements ShapeVisitor<string | undefined> {
-  format(shape: Shape): string | undefined { return shape.accept(this); }
+  format(shape: Shape): string | undefined {
+    return shape.accept(this);
+  }
 
   visitRect(shape: Rect): string {
     return "(" + shape.geometry.x + "," + shape.geometry.y + ")";
@@ -31,5 +33,7 @@ export class PositionFormatter implements ShapeVisitor<string | undefined> {
     return "(" + shape.geometry.x + "," + shape.geometry.y + ")";
   }
 
-  visitGroup(_shape: Group): undefined { return undefined; }
+  visitGroup(_shape: Group): undefined {
+    return undefined;
+  }
 }
