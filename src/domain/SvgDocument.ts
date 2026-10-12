@@ -120,6 +120,68 @@ export class SvgDocument {
     this.parents.set(shape, nextParent);
   }
 
+  // Validate the proposed forest and acquire new containers before changing any lists.
+  replaceStructure(roots: readonly Shape[], replacements: ReadonlyMap<Group, readonly Shape[]>): void {
+    const nextRoots = [...roots];
+    const changes = new Map<Group, readonly Shape[]>();
+    for (const [group, children] of replacements) changes.set(group, [...children]);
+    const childrenOf = (shape: Shape): readonly Shape[] => {
+      const group = shape.asContainer();
+      return group === undefined ? shape.children : changes.get(group) ?? group.children;
+    };
+    const nodes = TreeValidator.forest(nextRoots, childrenOf);
+    const nextNodes = new Set(nodes);
+    for (const node of nodes) {
+      const owner = SvgDocument.owners.get(node);
+      if (owner !== undefined && owner !== this) {
+        throw new Error("shape already belongs to a document: " + node.id);
+      }
+    }
+    for (const [group, children] of changes) {
+      if (!this.#groupAccess.has(group) && !nextNodes.has(group)) {
+        throw new Error("cannot modify unrelated group: " + group.id);
+      }
+      if (!nextNodes.has(group) && children.length !== 0) {
+        throw new Error("removed group must be empty when replaced: " + group.id);
+      }
+    }
+
+    const nextParents = new Map<Shape, Group | null>();
+    for (const root of nextRoots) nextParents.set(root, null);
+    for (const node of nodes) {
+      const container = node.asContainer();
+      if (container !== undefined) {
+        for (const child of childrenOf(node)) nextParents.set(child, container);
+      }
+    }
+    const acquired = this.acquireGroups(nodes.filter(node => {
+      const group = node.asContainer();
+      return group !== undefined && !this.#groupAccess.has(group);
+    }));
+    // Every changed group has either a live document-owned handle or a newly acquired one.
+    // add/remove/replaceStructure maintain this invariant; handles stay private and cannot
+    // be revoked externally. Group's handle only copies the already validated child list.
+    for (const [group, children] of changes) {
+      (this.#groupAccess.get(group) ?? acquired.get(group))!.replaceChildren(children);
+    }
+    this.rootNodes = nextRoots;
+    for (const node of this.shapes.values()) SvgDocument.owners.delete(node);
+    for (const [group, access] of this.#groupAccess) {
+      if (!nextNodes.has(group)) {
+        access.release();
+        this.#groupAccess.delete(group);
+      }
+    }
+    for (const [group, access] of acquired) this.#groupAccess.set(group, access);
+    this.shapes.clear();
+    this.parents.clear();
+    for (const node of nodes) {
+      this.shapes.set(node.id, node);
+      this.parents.set(node, nextParents.get(node)!);
+      SvgDocument.owners.set(node, this);
+    }
+  }
+
   private resolveParent(id: string | undefined): Group | null {
     if (id === undefined) return null;
     const shape = this.find(id);

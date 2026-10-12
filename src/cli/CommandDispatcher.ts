@@ -1,3 +1,8 @@
+import { GroupCommand } from "../application/GroupCommand.js";
+import { UngroupCommand } from "../application/UngroupCommand.js";
+import { AddToCommand } from "../application/AddToCommand.js";
+import { FrontCommand } from "../application/FrontCommand.js";
+import { BackCommand } from "../application/BackCommand.js";
 import { EditorSession } from "../application/EditorSession.js";
 import { ShapeFactory } from "../application/ShapeFactory.js";
 import { CreateCommand } from "../application/CreateCommand.js";
@@ -32,6 +37,11 @@ export class CommandDispatcher {
     ["scale", args => this.scale(args)],
     ["set", args => this.set(args)],
     ["delete", args => this.delete(args)],
+    ["group", args => this.group(args)],
+    ["ungroup", args => this.ungroup(args)],
+    ["addto", args => this.addto(args)],
+    ["front", args => this.front(args)],
+    ["back", args => this.back(args)],
     ["tree", args => this.tree(args)],
     ["show", args => this.show(args)],
     ["help", args => this.help(args)],
@@ -116,6 +126,49 @@ export class CommandDispatcher {
       () => this.label(shape) + " restored into " + destination);
   }
 
+  private group(args: readonly string[]): string {
+    this.requireCount(args, 2, Number.MAX_SAFE_INTEGER, "group <gid> <id1> [id2] ...");
+    const id = args[0]!;
+    const label = "g#" + id;
+    return this.execute(new GroupCommand(id, args.slice(1)),
+      () => label + " created with " + (args.length - 1) + " children",
+      () => label + " grouping undone");
+  }
+
+  private ungroup(args: readonly string[]): string {
+    this.requireCount(args, 1, 1, "ungroup <gid>");
+    const shape = this.session.document.get(args[0]!);
+    return this.execute(new UngroupCommand(shape.id),
+      () => this.label(shape) + " ungrouped",
+      () => this.label(shape) + " restored");
+  }
+
+  private addto(args: readonly string[]): string {
+    this.requireCount(args, 2, 2, "addto <gid> <id>");
+    const shape = this.session.document.get(args[1]!);
+    const previous = this.session.document.parentOf(shape.id);
+    const source = previous === null ? "svg" : this.label(previous);
+    return this.execute(new AddToCommand(args[0]!, shape.id),
+      () => this.label(shape) + " moved into " + this.label(this.session.document.get(args[0]!)),
+      () => this.label(shape) + " restored into " + source);
+  }
+
+  private front(args: readonly string[]): string {
+    this.requireCount(args, 1, 1, "front <id>");
+    const shape = this.session.document.get(args[0]!);
+    return this.execute(new FrontCommand(shape.id),
+      () => this.label(shape) + " brought to front",
+      () => this.label(shape) + " order restored");
+  }
+
+  private back(args: readonly string[]): string {
+    this.requireCount(args, 1, 1, "back <id>");
+    const shape = this.session.document.get(args[0]!);
+    return this.execute(new BackCommand(shape.id),
+      () => this.label(shape) + " sent to back",
+      () => this.label(shape) + " order restored");
+  }
+
   private tree(args: readonly string[]): string {
     this.requireCount(args, 0, 1, "tree [id]");
     const document = this.session.document;
@@ -176,6 +229,11 @@ export class CommandDispatcher {
       "scale <id> <factor>",
       "set <id> <attr> <value>",
       "delete <id>",
+      "group <gid> <id1> [id2] ...",
+      "ungroup <gid>",
+      "addto <gid> <id>",
+      "front <id>",
+      "back <id>",
       "tree [id]",
       "show <id>",
       "undo",
