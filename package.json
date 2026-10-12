@@ -16,5 +16,8 @@
   "devDependencies": {
     "@types/node": "22.19.15",
     "typescript": "5.9.3"
+  },
+  "dependencies": {
+    "@xmldom/xmldom": "0.9.12"
   }
 }

@@ -1,3 +1,4 @@
+import { TreeValidator } from "../domain/TreeValidator.js";
 import { GroupCommand } from "../application/GroupCommand.js";
 import { UngroupCommand } from "../application/UngroupCommand.js";
 import { AddToCommand } from "../application/AddToCommand.js";
@@ -32,6 +33,9 @@ export class CommandDispatcher {
   // The single command-name dispatch point; registration is deferred to the plugin phase.
   private readonly handlers = new Map<string, (args: readonly string[]) => string>([
     ["init", args => this.initialize(args)],
+    ["read", args => this.read(args)],
+    ["save", args => this.save(args)],
+    ["canvas", args => this.canvas(args)],
     ["create", args => this.create(args)],
     ["move", args => this.move(args)],
     ["scale", args => this.scale(args)],
@@ -57,7 +61,7 @@ export class CommandDispatcher {
     const handler = this.handlers.get(name);
     if (handler === undefined) throw new Error("unknown command: " + name);
     // Document errors take precedence over argument errors for document commands.
-    if (name !== "init" && name !== "help") void this.session.document;
+    if (name !== "init" && name !== "read" && name !== "help") void this.session.document;
     return handler(args);
   }
 
@@ -67,6 +71,30 @@ export class CommandDispatcher {
     const height = args[1] === undefined ? 600 : AttributeValidator.number(args[1], "height");
     this.session.initialize(width, height);
     return "canvas " + width + "x" + height + " created";
+  }
+
+  private read(args: readonly string[]): string {
+    this.requireCount(args, 1, 1, "read <file.svg>");
+    const result = this.session.read(args[0]!);
+    return [...result.warnings, "read " + args[0] + " (" + this.elementCount() + " elements)"].join("\n");
+  }
+
+  private save(args: readonly string[]): string {
+    this.requireCount(args, 0, 1, "save [file.svg]");
+    this.session.save(args[0]);
+    return "saved to " + this.session.path + " (" + this.elementCount() + " elements)";
+  }
+
+  private canvas(args: readonly string[]): string {
+    if (args.length !== 0 && args.length !== 2) throw new Error("usage: canvas [w] [h]");
+    if (args.length === 2) {
+      this.session.resize(AttributeValidator.number(args[0]!, "width"), AttributeValidator.number(args[1]!, "height"));
+    }
+    return "canvas " + this.session.document.width + "x" + this.session.document.height;
+  }
+
+  private elementCount(): number {
+    return TreeValidator.forest(this.session.document.children).length;
   }
 
   private create(args: readonly string[]): string {
@@ -218,6 +246,9 @@ export class CommandDispatcher {
     this.requireCount(args, 0, 0, "help");
     return [
       "init [w] [h]",
+      "read <file.svg>",
+      "save [file.svg]",
+      "canvas [w] [h]",
       "create <type> <id> [params] [in <containerId>]",
       "  rect <id> <x> <y> <w> <h> [fill]",
       "  circle <id> <cx> <cy> <r> [fill]",

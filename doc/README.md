@@ -1,8 +1,8 @@
 # SVG 编辑器 Phase 1 开发记录
 
-本项目按 [Phase 1 实验要求](Phase1/phase_cli_1.md)实现一个 TypeScript 命令行 SVG 编辑器。目前已完成阶段 6，CLI 支持 init、六种图形的 create、move、scale、set、delete、group、ungroup、addto、front、back、tree、show、help 和 undo/redo，create 可用 in 指定父容器。文件读写与画布命令留在阶段 7。下文列出目标架构，实际完成的部分见过程记录。功能范围是 rect、circle、ellipse、line、text 和 g；box 留到后续插件化阶段。
+本项目按 [Phase 1 实验要求](Phase1/phase_cli_1.md)实现一个 TypeScript 命令行 SVG 编辑器。目前已完成阶段 7，CLI 支持 init、read、save、canvas、六种图形的 create、move、scale、set、delete、group、ungroup、addto、front、back、tree、show、help 和 undo/redo。create 可用 in 指定父容器；SVG 读入支持范围见下文。下文列出目标架构，实际完成的部分见过程记录。功能范围是 rect、circle、ellipse、line、text 和 g；box 留到后续插件化阶段。
 
-开发分支为 `dev/phase1`。采用测试驱动开发，每个功能先写测试、确认失败，再实现和重构。阶段成果先交人工审核，审核后再提交。阶段 0 至 5 已审核并提交；阶段 6 经独立审查和测试补充后，按人工授权提交并推送。
+开发分支为 `dev/phase1`。采用测试驱动开发，每个功能先写测试、确认失败，再实现和重构。阶段成果先交人工审核，审核后再提交。阶段 0 至 6 已审核、提交并推送；阶段 7 经独立审查和解析校验修正后，按人工授权提交。
 
 ## 架构方案
 
@@ -13,9 +13,9 @@
 | 目录 | 职责 | 计划中的主要类或接口 |
 | --- | --- | --- |
 | `src/domain/` | 图形几何行为、样式、父子关系、唯一 id 和文档尺寸 | Shape、Rect、Circle、Ellipse、Line、Text、Group、SvgDocument |
-| `src/application/` | 编辑器会话、编辑命令、历史管理；定义文件访问接口 | EditorSession、EditCommand、ShapeEditCommand、StructureCommand、StructureEdit、CommandHistory、ShapeFactory、DocumentRepository |
+| `src/application/` | 编辑器会话、编辑命令、历史管理；定义文件访问接口 | EditorSession、EditCommand、ShapeEditCommand、StructureCommand、StructureEdit、CommandHistory、ShapeFactory、ShapeDefinition、DocumentRepository、DocumentReadResult |
 | `src/cli/` | 分词、命令分发、逐行输入和结果显示 | Tokenizer、CommandDispatcher、Repl、TreeFormatter、ShapeFormatter、PositionFormatter、AttributeFormatter |
-| `src/infrastructure/` | XML 与领域对象的转换、磁盘文件读写 | SvgParser、SvgSerializer、FileDocumentRepository |
+| `src/infrastructure/` | XML 与领域对象的转换、磁盘文件读写 | SvgParser、SvgSerializer、XmlText、XmlReferences、FileDocumentRepository |
 | `src/main.ts` | 创建对象、注入依赖并启动 REPL | 程序入口 |
 | `tests/` | 领域、应用、解析和完整会话测试 | 按被测模块组织 |
 | `examples/` | 命令回放脚本和示例 SVG | 后续验收时加入 |
@@ -70,7 +70,7 @@ Group 的 set 并非把所有属性递归覆盖到叶子。普通 g 只接受公
 
 #### 简单工厂：集中创建图形
 
-ShapeFactory 是唯一的“类型名到图形实现”入口。CLI 创建和 SVG 读入都复用它，避免解析器又出现一套按标签分派的逻辑。当前工厂用一张 Map 选择内置类型的创建函数，CreateArguments 处理数量与数值校验，图形构造函数检查几何约束。XML 属性读取留给 infrastructure。暂未为六个创建函数各建一个适配类；后续插件或 XML 读入需要独立适配对象时再拆分。
+ShapeFactory 是唯一的“类型名到图形实现”入口，CLI 创建和 SVG 读入都复用它。工厂用一张 Map 选择 ShapeDefinition，其中保留创建函数、XML 几何属性顺序和必要的缺省关系。CreateArguments 校验 CLI 参数数量与数值，图形构造函数校验几何约束。infrastructure 读取 XML 节点和属性，应用层工厂负责把属性转换成创建参数；解析器不再按标签维护另一套创建逻辑。六种类型共用一个定义类，插件注册仍留待后续阶段。
 
 CommandDispatcher 是唯一的“命令名到命令实现”入口。两个入口均标记为待重构点：阶段 1 内置类型和命令足够，后续再按实际需要改成注册机制，不提前实现插件加载。
 
@@ -119,7 +119,7 @@ tree、show 和 SVG 输出都要读取不同图形的属性。如果三个输出
 
 ### 历史屏障
 
-成功执行 init、read、save 或带尺寸的 canvas 后，计划清空编辑历史并开启屏障；undo、redo 均输出实验约定的禁止信息。下一次成功编辑关闭屏障，该编辑成为新的第一个撤销单元，不能撤销越过前一次文档操作。
+成功执行 init、read、save 或带尺寸的 canvas 后，清空编辑历史并开启屏障；undo、redo 均输出实验约定的禁止信息。下一次成功编辑关闭屏障，该编辑成为新的第一个撤销单元，不能撤销越过前一次文档操作。
 
 canvas 不带参数只查询，不清空历史。失败的编辑不清空 redo，也不关闭屏障；失败的文件操作不改当前文档、路径和历史。
 
@@ -139,23 +139,27 @@ canvas 不带参数只查询，不清空历史。失败的编辑不清空 redo�
 
 跨父级例子：root 下有 p(a, b) 和 q(c, d)，执行 group g d a，结果为 [g(a, d), p(b), q(c)]。这里会改变原先跨组的覆盖关系，文档没有要求这种操作保持所有视觉关系不变。阶段 6 的测试按这个位置和顺序核对。
 
-### SVG 读入范围尚未定案
+### SVG 读入范围
 
-必须完成的基线是六种内置元素、嵌套 g、实验列出的属性、文字内容、id 补全，以及本编辑器输出文件的读回。XML 特殊字符需要正确转义和还原。
+阶段 7 支持 rect、circle、ellipse、line、text 和嵌套 g，保留实验列出的几何属性及 fill、stroke、stroke-width。缺省的 fill/stroke 不写入属性。text 直接文本与 CDATA 合并为内容，注释不参与模型；不支持 tspan 等子元素。XML 属性中的 text 不能当作 CLI 的 text 伪属性使用。
 
-原文背景示例还包含 transform、font-size 和 text-anchor，而命令白名单并未包含它们。非默认 viewBox 也会改变坐标与显示的对应关系。阶段 7 前需要确定这些输入的处理方式：
+根元素和全部图形必须属于 http://www.w3.org/2000/svg 命名空间，允许使用命名空间前缀。只读 UTF-8；有 XML 编码声明时也必须是 UTF-8。XML 引用语法先行校验，解析遇到警告或错误即停止；通用 XML 模式不注入默认 SVG 命名空间，不接受库自动修复后的文档；拒绝 DOCTYPE、自定义实体和样式表处理指令。
 
-| 输入 | 待定问题 |
+| 输入 | 本阶段处理 |
 | --- | --- |
-| translate / scale 及嵌套 transform | 保存变换还是展开几何坐标；编辑后如何保持原外观 |
-| 与画布不一致的 viewBox | 保留内部坐标系还是统一转换；canvas 修改尺寸的含义 |
-| font-size、text-anchor 等额外属性 | 原样保留哪些属性，哪些允许编辑 |
-| 六种类型之外的元素 | 明确拒绝还是支持某些非图形元数据；不能静默删除 |
-| 带 data-kind="box" 的 g | 按原文降级为普通 Group；是否原样保留标记 |
+| transform、style、class、font-size、text-anchor 及其他未支持属性 | 明确报错；不保留或展开 |
+| width / height | 支持正数和 px；缺省时取 viewBox 对应尺寸，没有 viewBox 时取 800/600 |
+| viewBox | 支持 0 0 width height 且尺寸与画布一致；其他坐标系报错 |
+| 几何属性 | 支持有限十进制、科学计数法和 px；未提供时一般取 0；椭圆省略一侧半径时取另一侧数值 |
+| 六种类型以外的元素，包括 title、desc、metadata | 明确报错，避免读回时静默删掉内容 |
+| 带 data-kind="box" 的 g | 提示降级为普通组，保留子树，保存时不再写该标记 |
+| stroke-width | 按现有领域规则接受非负数，暂不接受单位、百分比或 CSS 表达式 |
 
-在范围确定之前，不宣称支持任意外部 SVG。最少要保证不支持的影响外观的内容得到明确反馈，read 失败时原文档不变。
+椭圆半径的缺省行为按 [SVG 2 的 ellipse 规则](https://www.w3.org/TR/SVG2/shapes.html#EllipseElement)实现；本阶段不支持显式 auto 或百分比值。这个读入范围能覆盖本编辑器的输出和实验内核示例，不代表支持任意外部 SVG。背景中带 transform 或额外字体属性的示例会被拒绝。
 
-另外，save 无参数在 read 后使用读入路径。init 后还没有路径时如何报错，以及显式 save 成功后是否更新默认路径，原文未说明；计划采用“最近一次成功 read/save 的路径”，错误文案在 CLI 阶段补入测试。
+save 不带参数使用最近一次成功 read/save 的路径。显式 save 成功后更新默认路径，失败时保留旧路径。init 清除路径；没有路径时提示 no file path. use 'save <file.svg>' first。相对路径按进程工作目录解析。路径含空格需加双引号，双引号内的 Windows 反斜杠按既有分词规则写成双反斜杠，也可用正斜杠。
+
+canvas 无参数查询；修改尺寸必须同时提供宽和高。修改不缩放图形，只调整画布尺寸，保存时输出对应的 viewBox。read/save/尺寸修改成功后清空历史并建立屏障；失败和 canvas 查询保持原历史。
 
 ## 分阶段实施
 
@@ -391,7 +395,6 @@ group 按前面约定的最低公共父容器、原树遍历顺序和最早分�
 
 本阶段只完成结构命令，read/save/canvas 和 SVG 转换仍留在阶段 7。没有创建根目录 README，也没有提交、推送或创建 tag。代码和记录先交独立审查。
 
-
 ### 2026-10-12：阶段 6 审查补充
 
 独立审查未发现阻断性问题。复核报告中的测试计数：原有 160 项，首次新增 21 项，自查再补 2 项，共 183 项，原记录无需改动。报告称 group 不会生成根级组，这一点不成立：目标的公共父容器可以是 svg。
@@ -404,6 +407,43 @@ group 按前面约定的最低公共父容器、原树遍历顺序和最早分�
 
 本阶段按人工授权提交并推送到 dev/phase1，不创建 tag。临时测试日志和根目录 README 均未恢复。
 
+### 2026-10-12：阶段 7 SVG 读写与画布
+
+阶段 6 已提交为 afac244，之后由人工完成推送。本阶段先写了 24 项测试，并给读写接口、会话方法和转换器提供抛错骨架。首次结果为 187 项通过、22 项失败，其中两项拒绝输入的测试连骨架也能通过，说明断言不够。加上合法输入对照后，原有 185 项通过、新增 24 项全部失败，编译正常。
+
+首轮实现后有五项失败：四项来自新测试把 Windows 路径直接放进双引号而没有转义反斜杠，按既有分词规则修正测试；另一项发现 XML 库的 onErrorStopParsing 不停止警告，非法的无引号属性被修复后接受。改用 onWarningStopParsing 后，209 项全部通过。没有改动原有 Tokenizer 的转义语义。
+
+自查又补了两个转换用例，发现 XML 的 text 属性会走到 CLI 的 text setter，覆盖元素内容。新增校验后 211 项通过；另一项确认 viewBox 缺省尺寸和编码/几何拒绝行为。随后按 SVG 2 核对椭圆省略一侧半径的规则，新增用例先得到 211 项通过、1 项失败，改由工厂声明半径缺省关系后，212 项全部通过。npm run typecheck 通过。
+
+application 新增 DocumentRepository、DocumentReadResult 和 ShapeDefinition。EditorSession 管理当前文档、默认路径和历史屏障，read 先得到完整结果再替换会话，save 只在仓库写入成功后更新路径并建立屏障。文件接口使用同步调用，适合当前逐行处理的小文件 CLI；没有为它引入异步调度。尺寸修改仍由 SvgDocument 校验，查询不进入历史。
+
+infrastructure 新增 SvgParser、SvgSerializer、FileDocumentRepository 和 XmlText。解析器使用 @xmldom/xmldom 0.9.12，精确版本写入 package.json 和 lockfile。安装时发现先选的 0.9.9 已被弃用并存在已知缺陷，因此改用当前修复版本；安装检查报告 0 项已知漏洞。[解析库说明](https://github.com/xmldom/xmldom)中的错误处理接口与实际安装源码都已核对。
+
+解析器先保留全部显式 id，再按原树顺序补缺失 id，返回警告给 CLI；解析失败不输出部分警告，也不激活部分文档。图形类型查找仍只有 ShapeFactory 一处：ShapeDefinition 把 XML 几何属性转换成创建参数，其余合法属性交给图形类校验，解析器根据 asContainer 决定能否接纳子节点。序列化走 Visitor，按当前子节点顺序写出几何和显式样式，不展开继承样式。XmlText 处理 XML 特殊字符以及文字/属性中的回车、换行和制表符，拒绝非法 XML 字符和孤立代理码。
+
+文件仓库先序列化，再在目标文件所在目录独占创建随机临时文件，写入并关闭后用 rename 替换目标。写入中途失败也尝试清理临时文件，旧目标在替换前保持原样。读写文件失败使用实验规定文案，解析失败以 invalid SVG 开头并给出具体原因。这个方案处理正常文件操作失败，不承诺断电后的持久性，也不保留被替换文件的权限等元数据；清理本身若失败，或进程在创建临时文件到替换目标之间退出，临时文件可能残留。
+
+测试覆盖六种图形往返、嵌套顺序和索引、缺省/空字符串样式、中文与实体、CDATA、id 冲突补全、命名空间、非法 XML、未知属性和不支持内容、UTF-8、文件不存在与不可写、失败后旧文件内容、默认路径、屏障和 redo 保留。应用层使用仓库替身，文件层使用临时目录；还有真实 main/REPL 进程回放。解组与撤销的样式用例检查了实际写出并读回的 SVG 结构和显式属性，未用渲染颜色代替结构断言。
+
+examples/phase7-demo.cli 已通过 npm run cli 回放，生成 examples/phase7-demo.svg，包含两个彩色矩形、一条连线和两段中文文字，共 6 个元素（含 flow 组，不含 svg 根）。保存和读回后的 tree 一致；read 后 undo 被屏障拒绝，下一次移动可以撤销。曾启动仅供本机访问的预览服务，但浏览器连接列表为空，无法执行渲染检查；服务已停止。浏览器显示和完整实验会话验收留在阶段 8，不能将本次 XML 往返算作视觉验收。
+
+本阶段未修改 domain，也未恢复根目录 README 或 test-logs。代码、支持范围和测试结果先交独立审查，尚未 commit、push 或创建 tag。
+
+### 2026-10-12：阶段 7 审查修正
+
+独立审查未发现阻断性问题，但指出 XML 库会接受某些裸 &，以及 image/svg+xml 模式会为未声明命名空间的文件补上默认 SVG 命名空间。这两点与本项目声明的严格读入规则不一致，按人工决定修复，没有放宽文档承诺。
+
+先增加 7 项测试，得到 216 项通过、3 项失败。失败项复现了正文/属性中的非法引用、缺失命名空间，以及这些输入没有被拒绝时会替换当前会话的问题。其余新增项固定合法 CDATA/注释、序列化幂等性、尺寸修改后的 viewBox 和文字中的 ]]> 往返；这些行为原本就正确，直接通过。
+
+新增 XmlReferences 在 DOM 解析前检查引用语法，接受五个 XML 预定义实体和合法的十进制/十六进制字符引用，拒绝裸 &、缺少分号、非法数值和未知实体。扫描时区分属性引号、普通文本、CDATA、注释和处理指令，避免对整份 XML 用一个正则而误拒绝合法字面内容。它只补引用边界，DOM 构建和其余 XML 校验仍由解析库负责。
+
+SvgParser 改用 application/xml，随后检查文件实际声明的命名空间。没有 xmlns、显式空命名空间和子节点清空命名空间的文件会被拒绝；正确的默认命名空间和前缀声明仍通过。失败读入保持原文档对象、默认路径、tree 和 redo。
+
+修正后 npm test 为 219 项全部通过，npm run typecheck 通过。序列化后的文件再次解析没有新警告，再次序列化与原字节一致；canvas 修改为 800x300 后，文件尺寸和 viewBox 一致，矩形坐标不变；a]]>b 正确转义并恢复原文。示例回放输出仍与保存的 SVG 一致。
+
+独立审查 agent 另行用 headless Chrome 检查了阶段 7 示例，报告两个彩色矩形、连线和白色中文文字正常显示。这是独立审查提供的渲染结果，不改写成本次自行完成的检查，也不替代阶段 8 的完整实验会话验收。
+
+本阶段按人工授权提交实现与审查修正，不推送、不创建 tag。根目录 README 和 test-logs 继续保持缺省。
 
 ### 后续记录方式
 
@@ -411,16 +451,16 @@ group 按前面约定的最低公共父容器、原树遍历顺序和最早分�
 
 ## 一致性自查
 
-阶段 6 已接入分组和同级顺序命令。文件访问仍待实现，下表记录当前检查范围。
+阶段 7 已接入 SVG 转换、文件访问与 canvas，下表记录当前检查范围。
 
 | 检查项 | 当前结果 | 实现后如何核对 |
 | --- | --- | --- |
-| 模块目录与职责 | src/main.ts、src/cli/、src/domain/、src/application/ 及对应 tests 目录符合方案；文件访问与示例待实现 | 列出实际目录；不一致处附修订记录 |
-| 依赖方向 | domain 仅依赖域内模块；application 只依赖自身和 domain；Repl 依赖 Node 流与逐行读取；未发现跨层反向依赖 | 检查 import，尤其是 domain 的外部依赖与 application 到 infrastructure 的反向引用 |
+| 模块目录与职责 | src/main.ts、src/cli/、src/domain/、src/application/、src/infrastructure/ 和对应 tests 符合方案；examples 提供可回放示例 | 列出实际目录；不一致处附修订记录 |
+| 依赖方向 | domain 仅依赖域内模块；application 只依赖自身和 domain；infrastructure 实现应用层接口并依赖 XML/文件库；main 注入文件仓库；未发现反向依赖 | 检查 import，尤其是 domain 的外部依赖与 application 到 infrastructure 的反向引用 |
 | 类封装与一类一文件 | 图形状态、文档索引、命令恢复信息、历史栈及会话字段封装；只读查询冻结副本；类文件名一致 | 检查公开可修改字段、子节点数组和文件命名 |
 | 类型分派位置 | 按名字查找集中在 CommandDispatcher 和 ShapeFactory；格式化走 Visitor；两处入口已标记为待重构 | 检查 switch、类型字符串条件链及注册查找，确认集中在两个指定入口 |
 | Command 与 Composite | 创建、移动、缩放、set、删除及五个结构命令经 CLI 接入同一历史；嵌套 Group 操作和结构恢复已验证 | 检查命令的恢复数据及调用关系，验证叶子和分组使用统一操作 |
-| 功能与错误约定 | 待验收 | 对照命令表、错误表和会话回放结果 |
+| 功能与错误约定 | 内核命令已接入，219 项测试通过；示例渲染由独立审查验证，完整实验回放待阶段 8 验收 | 对照命令表、错误表和会话回放结果 |
 
 ## 质量保证手段
 
@@ -447,4 +487,4 @@ group 按前面约定的最低公共父容器、原树遍历顺序和最早分�
 
 ### 最终交付检查
 
-完成实现后补充实际运行命令和结果、示例路径及已知限制。最终提交与 final tag 应在截止时间前完成并推送到远程；当前尚未确定截止时间。阶段 0 至 6 按人工授权提交并推送到 dev/phase1；尚未创建 final tag。
+完成实现后补充实际运行命令和结果、示例路径及已知限制。最终提交与 final tag 应在截止时间前完成并推送到远程；当前尚未确定截止时间。阶段 0 至 6 已提交并推送到 dev/phase1，阶段 7 按人工授权提交；尚未创建 final tag。
