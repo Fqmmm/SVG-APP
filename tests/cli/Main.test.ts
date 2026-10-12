@@ -14,7 +14,7 @@ test("CLI entry point starts and exits successfully when stdin closes", () => {
   assert.equal(result.error, undefined);
   assert.equal(result.status, 0);
   assert.equal(result.stderr, "");
-  assert.equal(result.stdout, "svg-editor 0.1\nsvg> ");
+  assert.equal(result.stdout, "svg-editor 0.1 — type 'help' for commands\nsvg> ");
 });
 
 test("CLI entry point runs a complete edit/query/undo session until EOF", () => {
@@ -30,7 +30,7 @@ test("CLI entry point runs a complete edit/query/undo session until EOF", () => 
   assert.equal(result.error, undefined);
   assert.equal(result.status, 0);
   assert.equal(result.stderr, "");
-  assert.equal(result.stdout, "svg-editor 0.1\nsvg> " + [
+  assert.equal(result.stdout, "svg-editor 0.1 — type 'help' for commands\nsvg> " + [
     "canvas 400x200 created", "g#flow created", "rect#r created in g#flow",
     "rect#r moved to (40,70)", "rect#r moved back to (30,70)", "rect#r moved to (40,70)",
     "rect#r deleted", "rect#r restored into g#flow",

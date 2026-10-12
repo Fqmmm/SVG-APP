@@ -3,7 +3,7 @@ import { PassThrough, Readable } from "node:stream";
 import { test } from "node:test";
 import { Repl } from "../../src/cli/Repl.js";
 
-const welcome = "svg-editor 0.1\n";
+const welcome = "svg-editor 0.1 — type 'help' for commands\n";
 
 test("Repl displays a welcome message and prompt before input ends", async () => {
   const input = new PassThrough();

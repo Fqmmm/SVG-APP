@@ -25,7 +25,7 @@ export class SessionReplay {
       assert.equal(result.error, undefined);
       assert.equal(result.status, 0);
       assert.equal(result.stderr, "");
-      assert.ok(result.stdout.startsWith("svg-editor 0.1\nsvg> "));
+      assert.ok(result.stdout.startsWith("svg-editor 0.1 — type 'help' for commands\nsvg> "));
       this.output = result.stdout;
     } catch (error) {
       this.close();

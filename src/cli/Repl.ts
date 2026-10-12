@@ -17,7 +17,7 @@ export class Repl {
     });
 
     try {
-      this.output.write("svg-editor 0.1\nsvg> ");
+      this.output.write("svg-editor 0.1 — type 'help' for commands\nsvg> ");
       for await (const line of lines) {
         try {
           const response = this.dispatcher.dispatch(line);

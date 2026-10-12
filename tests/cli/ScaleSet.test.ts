@@ -117,7 +117,7 @@ test("real CLI runs scale/set with empty text, validation errors and undo recove
   assert.equal(result.error, undefined);
   assert.equal(result.status, 0);
   assert.equal(result.stderr, "");
-  assert.equal(result.stdout, "svg-editor 0.1\nsvg> " + [
+  assert.equal(result.stdout, "svg-editor 0.1 — type 'help' for commands\nsvg> " + [
     "canvas 800x600 created", "text#t created", 'text#t updated: text=""',
     'text#t updated: text="开始"', 'text#t updated: text=""',
     "text#t scaled by 2", "error: scale factor must be positive",
