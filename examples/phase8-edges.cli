@@ -1,0 +1,38 @@
+# Expected error responses are part of this acceptance session.
+init 80 60
+create g scene
+create rect r 1 2 3 4 red in scene
+create circle c 10 20 5 blue in scene
+create ellipse e 4 6 2 3 green in scene
+create line l 1 2 3 4 black in scene
+create text t 5 6 "中文 & <内容>" in scene
+group g r c e l t
+scale g 2
+move g -2 1
+set t text "更新 & <内容>"
+set g stroke-width 2
+undo
+redo
+front g
+back g
+addto g scene
+ungroup scene
+set r width -1
+group bad g r
+create rect r 0 0 1 1
+delete g
+undo
+ungroup g
+undo
+save examples/phase8-edges.svg
+canvas 90 70
+save
+read examples/phase8-unsupported.svg
+read examples/phase8-no-namespace.svg
+read examples/phase8-bad-reference.svg
+create circle extra 0 0 1 in scene
+undo
+create rect final 9 9 1 1 in scene
+redo
+save
+tree

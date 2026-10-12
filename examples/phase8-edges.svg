@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="90" height="70" viewBox="0 0 90 70">
+<g id="scene">
+<g id="g" stroke-width="2">
+<rect id="r" x="0" y="5" width="6" height="8" fill="red"/>
+<circle id="c" cx="18" cy="41" r="10" fill="blue"/>
+<ellipse id="e" cx="6" cy="13" rx="4" ry="6" fill="green"/>
+<line id="l" x1="0" y1="5" x2="4" y2="9" stroke="black"/>
+<text id="t" x="8" y="13">更新 &amp; &lt;内容&gt;</text>
+</g>
+<rect id="final" x="9" y="9" width="1" height="1"/>
+</g>
+</svg>

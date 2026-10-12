@@ -1,0 +1,21 @@
+# Visual acceptance: overlap order and group style inheritance.
+init 240 120
+create rect blue 20 20 80 80 blue
+create rect red 60 20 80 80 red
+save examples/phase8-order-initial.svg
+front blue
+save examples/phase8-order-front.svg
+back blue
+save examples/phase8-order-back.svg
+init 240 120
+create g parent
+create g paint in parent
+set paint fill blue
+create rect r 20 20 80 80 in paint
+save examples/phase8-style-grouped.svg
+ungroup paint
+save examples/phase8-style-ungrouped.svg
+read examples/phase8-style-grouped.svg
+ungroup paint
+undo
+save examples/phase8-style-restored.svg
