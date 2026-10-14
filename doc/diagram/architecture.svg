@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1140 720" role="img" aria-labelledby="title desc">
+  <title id="title">Phase 1 模块依赖</title>
+  <desc id="desc">main 依赖 cli、application 和 infrastructure；cli 依赖 application 和 domain；application 依赖 domain；infrastructure 依赖 application 和 domain。</desc>
+  <style>
+    text { font-family: "Cascadia Code", "Noto Sans SC", "Microsoft YaHei", sans-serif; }
+    .title { font-size: 22px; font-weight: 700; fill: #111827; }
+    .name { font-size: 18px; font-weight: 600; fill: #111827; }
+    .detail { font-size: 12px; fill: #334155; }
+    .note { font-size: 11px; fill: #475569; }
+    .edge { fill: none; stroke: #64748b; stroke-width: 1.5; marker-end: url(#arrow); }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#64748b"/></marker>
+  </defs>
+  <rect width="1140" height="720" fill="#ffffff"/>
+  <g class="edge">
+    <path d="M415 135H265V245"/>
+    <path d="M725 135H890V245"/>
+    <path d="M570 170V385"/>
+    <path d="M380 285H405V415H415"/>
+    <path d="M770 285H745V415H725"/>
+    <path d="M265 345V585H415"/>
+    <path d="M890 345V585H725"/>
+    <path d="M570 475V540"/>
+  </g>
+  <g fill="#ffffff">
+    <rect x="415" y="100" width="310" height="70" rx="6"/>
+    <rect x="150" y="245" width="230" height="100" rx="6"/>
+    <rect x="770" y="245" width="240" height="100" rx="6"/>
+    <rect x="415" y="385" width="310" height="90" rx="6"/>
+    <rect x="415" y="540" width="310" height="90" rx="6"/>
+  </g>
+  <g stroke-width="1.5">
+    <rect x="415" y="100" width="310" height="70" rx="6" fill="#f1f5f9" stroke="#64748b"/>
+    <rect x="150" y="245" width="230" height="100" rx="6" fill="#ecfeff" stroke="#0891b2"/>
+    <rect x="770" y="245" width="240" height="100" rx="6" fill="#fffbeb" stroke="#d97706"/>
+    <rect x="415" y="385" width="310" height="90" rx="6" fill="#ecfdf5" stroke="#059669"/>
+    <rect x="415" y="540" width="310" height="90" rx="6" fill="#f5f3ff" stroke="#7c3aed"/>
+  </g>
+  <g text-anchor="middle">
+    <text class="name" x="570" y="126">main.ts</text>
+    <text class="detail" x="570" y="145">创建对象并注入 FileDocumentRepository</text>
+    <text class="name" x="265" y="270">cli</text>
+    <text class="detail" x="265" y="290">Tokenizer · CommandDispatcher</text>
+    <text class="detail" x="265" y="308">Repl</text>
+    <text class="detail" x="265" y="326">命令输入与只读格式化</text>
+    <text class="name" x="890" y="270">infrastructure</text>
+    <text class="detail" x="890" y="290">SvgParser · SvgSerializer</text>
+    <text class="detail" x="890" y="308">FileDocumentRepository</text>
+    <text class="detail" x="890" y="326">XML 校验</text>
+    <text class="name" x="570" y="411">application</text>
+    <text class="detail" x="570" y="430">EditCommand · CommandHistory</text>
+    <text class="detail" x="570" y="447">EditorSession · ShapeFactory</text>
+    <text class="detail" x="570" y="464">DocumentRepository 接口</text>
+    <text class="name" x="570" y="566">domain</text>
+    <text class="detail" x="570" y="587">Shape · 叶子图形 · Group · SvgDocument</text>
+    <text class="detail" x="570" y="605">行为、快照、结构与索引</text>
+  </g>
+  <g class="note">
+    <text x="190" y="222">REPL / Dispatcher</text>
+    <text x="805" y="222">File repository</text>
+    <text x="582" y="360">EditorSession</text>
+    <text x="293" y="367">命令与会话</text>
+    <text x="779" y="367">实现文件访问接口</text>
+    <text x="278" y="500">格式化 / 校验</text>
+    <text x="902" y="500">SVG ↔ 图形</text>
+    <text x="582" y="516">图形与文档操作</text>
+  </g>
+  <text class="note" x="150" y="665">domain 不依赖 Node / XML；application 通过接口访问文件，不导入 infrastructure。</text>
+  <text class="title" x="30" y="36">Phase 1 模块依赖</text>
+  <text class="note" x="30" y="57">箭头表示源码 import，包含类型依赖；测试依赖未画入图中。</text>
+</svg>

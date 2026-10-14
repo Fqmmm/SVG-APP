@@ -1,0 +1,23 @@
+{
+  "name": "svg-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Phase 1 SVG command-line editor",
+  "engines": {
+    "node": ">=22.20.0 <23"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "npm run build && node --test \"dist/tests/**/*.test.js\"",
+    "cli": "npm run build && node dist/src/main.js"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.15",
+    "typescript": "5.9.3"
+  },
+  "dependencies": {
+    "@xmldom/xmldom": "0.9.12"
+  }
+}

@@ -1,0 +1,17 @@
+# Run from the repository root with: Get-Content -Encoding utf8 examples/phase7-demo.cli | npm run cli
+init 400 200
+create g flow
+create rect start 30 70 120 60 #4a90d9 in flow
+create line edge 150 100 250 100 black in flow
+create rect end 250 70 120 60 #f5a623 in flow
+create text startLabel 70 105 "开始" in flow
+create text endLabel 290 105 "结束" in flow
+set startLabel fill white
+set endLabel fill white
+save examples/phase7-demo.svg
+read examples/phase7-demo.svg
+tree
+canvas
+undo
+move flow 10 0
+undo

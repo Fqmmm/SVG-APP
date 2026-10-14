@@ -1,0 +1,21 @@
+@startuml
+skinparam backgroundColor white
+skinparam defaultFontName Microsoft YaHei
+skinparam defaultFontSize 18
+skinparam shadowing false
+skinparam dpi 160
+skinparam packageStyle rectangle
+package "domain" as Domain
+package "application" as Application
+package "cli" as Cli
+package "infrastructure" as Infrastructure
+rectangle "main.ts" as Main
+Cli --> Application
+Cli --> Domain : 查询与校验
+Application --> Domain
+Infrastructure --> Application : 工厂与文件访问接口
+Infrastructure --> Domain : SVG 与图形转换
+Main --> Cli
+Main --> Application
+Main --> Infrastructure
+@enduml

@@ -1,0 +1,15 @@
+# Experiment section 6.1, version A.
+init 800 600
+create g flowchart
+create g node1 in flowchart
+create rect start 120 100 160 60 #4a90d9 in node1
+create text start-label 155 135 "开始" in node1
+create g node2 in flowchart
+create rect process 520 100 160 60 #f5a623 in node2
+create text process-label 545 135 "处理数据" in node2
+create line arrow1 280 130 520 130 black in flowchart
+tree
+move node2 0 100
+undo
+set process-label text "处理数据 v2"
+save examples/phase8-flowchart.svg
