@@ -1,0 +1,12 @@
+.vscode/**
+tests/**
+scripts/**
+src/**
+node_modules/.bin/**
+node_modules/@types/**
+node_modules/typescript/**
+dist/tests/**
+**/*.map
+**/*.tsbuildinfo
+tsconfig.json
+package-lock.json

@@ -188,3 +188,100 @@ TypeScript 开启严格检查，通过 npm run typecheck 检查类型，通过 n
 将生成的 SVG 交给本机 Chrome 无界面模式渲染，查看截图，核对图形布局、中文文字、重叠顺序和样式继承。检查对象包括[典型会话输出](../examples/phase8-demo.svg)、[中文流程图](../examples/phase8-flowchart.svg)，以及视觉对照会话生成的各组 SVG。
 
 重叠图形在执行 front 后显示在上层，执行 back 后恢复原覆盖关系；组合样式示例中，未显式设置 fill 的矩形在组内显示为蓝色，解组后显示为黑色，撤销解组后恢复蓝色。浏览器呈现与保存的节点顺序、父级关系和样式一致。
+
+# Phase 2
+
+## VSCode 扩展实践
+
+按[第二阶段要求](Phase2/phase_cli_2.md)，第一部分完成了独立的 VSCode 扩展 SVG App Tools：Explorer 中的 SVG 文件显示 [] 标记，原生 Outline 展示元素层级，点击节点定位源码，编辑文本后更新。CLI 插件式重构属于第二部分，后续继续实现。
+
+扩展位于 [vscode-extension](../vscode-extension/README.md)，与 CLI 分开构建和测试。示例文件是 [flowchart.svg](../vscode-extension/examples/flowchart.svg)，完整结果见[验证记录](../vscode-extension/docs/VERIFICATION.md)。
+
+### 安装依赖与启动
+
+在仓库根目录执行：
+
+```powershell
+npm --prefix vscode-extension ci
+npm --prefix vscode-extension run build
+```
+
+在 VSCode 的“运行和调试”中选择 Run SVG App Tools，按 F5 打开扩展开发窗口。也可以单独打开 vscode-extension 文件夹后使用同名配置。调试器加载子项目的扩展清单，示例工作区指向 examples。
+
+环境要求为 VSCode 1.95 及以上、Node.js 22 和 npm。本次采用本地开发模式加载扩展。examples 的工作区配置将 SVG 默认关联到文本编辑器，保证打开文件和点击大纲都进入源码视图；图片预览仍可通过“重新打开编辑器的方式”切换。
+
+### 职责划分与调用过程
+
+| 实现 | 职责 |
+| --- | --- |
+| extension.ts | 创建对象，注册两个 Provider，登记文件监听与资源释放 |
+| SvgFileBadge / FileProbe | 判断 SVG 后缀和普通文件条件，文件类型查询可替换为测试实现 |
+| VsCodeFileProbe | 将 workspace.fs.stat 的类型结果转换为 FileProbe 接口 |
+| SvgFileDecorationProvider | 返回 [] 文件装饰，并通知 VSCode 文件变化 |
+| SvgOutlineParser / OutlineParser | 从 XML 文本生成带名称、子节点和源码范围的只读元素树 |
+| SvgDocumentSymbolProvider | 将元素树转换为 DocumentSymbol 和编辑器 Range |
+
+VSCode 管理 Explorer、大纲和编辑器文档，插件负责提供标记和符号数据。扩展在 onStartupFinished 时激活，通过 registerFileDecorationProvider 和 registerDocumentSymbolProvider 注册功能。之后由 VSCode 在绘制文件条目或请求大纲时调用 Provider。
+
+大纲 Provider 每次读取当前编辑器文本，使用解析结果的 UTF-16 偏移调用 document.positionAt，得到源码行列。DocumentSymbol.children 保存层级，range 覆盖整个元素，selectionRange 指向开始标签名。XML 不完整或起止标签不匹配时返回空大纲，文本修复后重新生成。
+
+### 文件装饰与设计模式
+
+文件标记给已有文件条目附加 badge 和 tooltip，文件名与内容保持原样。这与 Decorator 为对象附加职责的目的相近，但对象关系不同：经典装饰器持有被包装对象，实现同一接口并转发操作；本扩展注册独立的 FileDecorationProvider，由 VSCode 查询并合并显示结果，没有直接包装 Explorer 的文件对象。
+
+FileProbe 与 VsCodeFileProbe 则对应 Adapter 模式。FileProbe 是目标接口，VsCodeFileProbe 是适配器，workspace.fs.stat 是被适配 API，SvgFileBadge 是调用方。适配器处理 URI 和 FileType，调用方只需要知道文件是否为普通文件。
+
+SvgDocumentSymbolProvider 依赖 OutlineParser 接口，将元素树转换成 VSCode 文档符号。XML 解析器可以在普通 Node 进程中测试，编辑器位置转换留在 Provider 中。
+
+### Phase 1 代码复用评估
+
+| Phase 1 模块 | 评估结果 |
+| --- | --- |
+| SvgParser / SvgShapeReader | 用于导入领域文档，包含类型白名单、几何缺省值及属性校验，且没有完整元素起止范围；大纲另用能提供 token 偏移的 XML 解析库 |
+| Shape / Group / SvgDocument | 用于图形编辑和唯一 ID 管理；大纲展示源码，允许缺失或重复 id，也需要显示 CLI 未支持的元素，因此采用独立的只读元素树 |
+| TreeFormatter | 生成终端字符树；原生 Outline 接收 DocumentSymbol 和 Range，输出结构不同 |
+| 递归遍历方式 | 沿用按子节点顺序递归的组织方式，节点结构根据源码范围需求重新定义 |
+
+本次选用 @xml-tools/parser@1.0.12，保留命名空间前缀，并处理 id 中的标准及数值 XML 字符引用。解析测试覆盖注释、CDATA、引号中的大于号，以及中文、emoji、CRLF 和同一行的多个元素。
+
+### 运行演示
+
+文件标记和源码定位见下图：flowchart.svg 右侧有 []，notes.txt 和 folder.svg 目录没有标记。Outline 显示根、嵌套分组和叶子，无 id 的 text、circle 使用标签名。点击 rect#start 后，编辑器定位到第 3 行、第 6 列。
+
+![SVG 文件标记、大纲层级和第 3 行源码定位](../vscode-extension/docs/images/outline-navigation.png)
+
+把矩形 id 从 start 改为 newid 后，大纲及面包屑同步显示 rect#newid。
+
+![修改 ID 后大纲同步更新](../vscode-extension/docs/images/outline-id-update.png)
+
+删除末尾的 SVG 闭合标签后，大纲清空，编辑器仍可继续使用。
+
+![XML 不完整时大纲清空](../vscode-extension/docs/images/outline-incomplete-xml.png)
+
+恢复闭合标签后，大纲重新显示完整层级，并保留 rect#newid。
+
+![恢复闭合标签后大纲重新显示](../vscode-extension/docs/images/outline-restored.png)
+
+### 测试与验收
+
+在 vscode-extension 目录运行：
+
+```powershell
+npm test
+npm run typecheck
+npm run test:host
+```
+
+10 项单元测试检查文件过滤、启动配置、元素层级、源码范围和异常输入。8 项真实扩展宿主测试加载注册后的 Provider，检查文件类型、符号查询、取消请求、编辑更新和导航选区。宿主测试使用本机已安装的 VSCode，以及隔离的临时用户配置；逐项结果保存在 [host-tests.json](../vscode-extension/docs/host-tests.json)。
+
+本次宿主环境为 VSCode 1.145.2、Node.js v24.22.1，18 项扩展测试全部通过。CLI 的 228 项单元与集成测试、根项目和扩展的类型检查也通过。手动验收确认了文件标记、鼠标定位、ID 更新和不完整 XML 的恢复，四张截图已保存在仓库中。
+
+### 协作过程与问题修正
+
+这一部分仍由我和 Codex 协作：Codex 编写实现、测试和文档，我在扩展开发窗口中操作并核对结果。实现前先观察 VSCode 已有 Markdown 大纲的层级、展开与选择方式，再接入原生 Outline。
+
+第一次启动遇到的错误是缺少 engines.vscode。检查后发现调试器加载了仓库根目录的 CLI 清单，于是在根目录补上调试配置，将路径指向 vscode-extension，并增加两种启动方式的回归测试。
+
+随后，大纲能显示，但点击节点会进入 SVG 图片预览。我们在 examples 工作区配置默认文本编辑器，并补测打开后的活动编辑器、选区和第 3 行位置。我重新运行后确认定位正确；单击大纲时焦点仍在左侧，切回编辑区后即可继续输入。
+
+最后，我将矩形 id 改为 newid，确认大纲更新；删除并恢复闭合标签，确认大纲先清空再恢复。自动测试与这些实际操作的结果一起记录在扩展验证文档中。

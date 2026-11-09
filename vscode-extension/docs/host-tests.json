@@ -1,0 +1,38 @@
+{
+  "vscode": "1.145.2",
+  "node": "v24.22.1",
+  "results": [
+    {
+      "name": "extension activates and registers its native document-symbol provider",
+      "passed": true
+    },
+    {
+      "name": "real file decorations distinguish SVG files, text files and SVG-named directories without changing bytes",
+      "passed": true
+    },
+    {
+      "name": "symbol ranges select the original tag with exact UTF-16 line and character positions",
+      "passed": true
+    },
+    {
+      "name": "symbol navigation opens the text editor at the third source line",
+      "passed": true
+    },
+    {
+      "name": "unsaved edits update the registered outline and do not change the saved source",
+      "passed": true
+    },
+    {
+      "name": "incomplete XML clears the registered outline and a valid edit recovers",
+      "passed": true
+    },
+    {
+      "name": "cancellation and unsupported URI schemes return no symbols or decorations",
+      "passed": true
+    },
+    {
+      "name": "file-change notifications identify only the requested resource",
+      "passed": true
+    }
+  ]
+}
