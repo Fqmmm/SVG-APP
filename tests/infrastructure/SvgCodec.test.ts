@@ -1,3 +1,4 @@
+import { SvgShapeReader } from "../../src/infrastructure/SvgShapeReader.js";
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { SvgParser } from "../../src/infrastructure/SvgParser.js";
@@ -121,13 +122,13 @@ test("plain group data-kind box is downgraded with feedback while preserving its
   assert.ok(result.warnings.some(warning => warning.includes("box") && warning.includes("ordinary")));
 });
 
-test("shape factory imports XML attributes through its existing type lookup", () => {
+test("SVG reader imports attributes through the shared shape definition lookup", () => {
   const factory = new ShapeFactory();
-  const shape = factory.createFromAttributes("rect", "r", new Map([["width", "5"], ["fill", "in"]]), "");
+  const shape = new SvgShapeReader(factory).read("rect", "r", new Map([["width", "5"], ["fill", "in"]]), "");
   assert.deepEqual(shape.geometry, { x: 0, y: 0, width: 5, height: 0 });
   assert.deepEqual(shape.styles, { fill: "in" });
-  assert.throws(() => factory.createFromAttributes("path", "p", new Map(), ""), /unknown shape type/);
-  assert.throws(() => factory.createFromAttributes("rect", "r", new Map([["rx", "1"]]), ""), /unknown attribute/);
+  assert.throws(() => new SvgShapeReader(factory).read("path", "p", new Map(), ""), /unknown shape type/);
+  assert.throws(() => new SvgShapeReader(factory).read("rect", "r", new Map([["rx", "1"]]), ""), /unknown attribute/);
 });
 
 test("serialization follows current sibling order and preserves container styles without flattening", () => {

@@ -8,13 +8,17 @@ import type { Text } from "../domain/Text.js";
 import type { Group } from "../domain/Group.js";
 
 export class ShapeFormatter implements ShapeVisitor<string> {
+  static label(shape: Shape): string {
+    return shape.type + "#" + shape.id;
+  }
+
   summary(shape: Shape): string {
     const details = [shape.accept(this), this.styles(shape)].filter(value => value !== "").join(" ");
-    return shape.type + "#" + shape.id + (details === "" ? "" : "  " + details);
+    return ShapeFormatter.label(shape) + (details === "" ? "" : "  " + details);
   }
 
   show(shape: Shape, parent: Group | null): string {
-    const lines = [shape.type + "#" + shape.id + "  parent=" + (parent === null ? "svg" : parent.type + "#" + parent.id)];
+    const lines = [ShapeFormatter.label(shape) + "  parent=" + (parent === null ? "svg" : parent.type + "#" + parent.id)];
     const geometry = shape.accept(this);
     const styles = this.styles(shape);
     if (geometry !== "") {

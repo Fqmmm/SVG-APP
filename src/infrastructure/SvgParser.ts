@@ -1,5 +1,6 @@
 import { DOMParser, onWarningStopParsing } from "@xmldom/xmldom";
 import type { Element, Node } from "@xmldom/xmldom";
+import { SvgShapeReader } from "./SvgShapeReader.js";
 import { ShapeFactory } from "../application/ShapeFactory.js";
 import type { DocumentReadResult } from "../application/DocumentReadResult.js";
 import { AttributeValidator } from "../domain/AttributeValidator.js";
@@ -8,79 +9,95 @@ import { XmlText } from "./XmlText.js";
 import { XmlReferences } from "./XmlReferences.js";
 
 export class SvgParser {
-  private readonly factory = new ShapeFactory();
+  private readonly shapes = new SvgShapeReader(new ShapeFactory());
   private readonly namespace = "http://www.w3.org/2000/svg";
 
   parse(xml: string): DocumentReadResult {
     try {
-      XmlText.validate(xml);
-      XmlReferences.validate(xml);
-      const dom = new DOMParser({ onError: onWarningStopParsing }).parseFromString(xml, "application/xml");
-      for (let node = dom.firstChild; node !== null; node = node.nextSibling) {
-        if (node.nodeType === 10) {
-          throw new Error("unsupported DOCTYPE");
-        }
-        if (node.nodeType === 7) {
-          this.processingInstruction(node);
-        }
-      }
-      const root = dom.documentElement;
-      if (root === null || root.localName !== "svg") {
-        throw new Error("expected svg root");
-      }
-      this.validateNamespace(root);
-      const attributes = this.attributes(root);
-      for (const name of attributes.keys()) {
-        if (!["width", "height", "viewBox"].includes(name)) {
-          throw new Error("unsupported svg attribute: " + name);
-        }
-      }
-      const box = attributes.get("viewBox")?.trim().split(/[\s,]+/u).map(value => AttributeValidator.number(value, "viewBox"));
-      if (box !== undefined && (box.length !== 4 || box[0] !== 0 || box[1] !== 0)) {
-        throw new Error("unsupported viewBox: expected 0 0 width height");
-      }
-      const width = this.length(attributes.get("width"), box?.[2] ?? 800, "width");
-      const height = this.length(attributes.get("height"), box?.[3] ?? 600, "height");
-      if (box !== undefined && (box[2] !== width || box[3] !== height)) {
-        throw new Error("unsupported viewBox: dimensions must match canvas");
-      }
-      const document = new SvgDocument(width, height);
-      const elements: Element[] = [];
-      this.collect(root, elements);
-      const used = new Set<string>();
-      for (const element of elements) {
-        this.validateNamespace(element);
-        if (element.hasAttribute("id")) {
-          const id = element.getAttribute("id")!;
-          AttributeValidator.id(id);
-          if (used.has(id)) {
-            throw new Error("id already exists: " + id);
-          }
-          used.add(id);
-        }
-      }
+      const root = this.parseRoot(xml);
+      const document = this.createDocument(root);
       const warnings: string[] = [];
-      const ids = new Map<Element, string>();
-      const counters = new Map<string, number>();
-      for (const element of elements) {
-        let id = element.getAttribute("id");
-        const type = element.localName!;
-        if (id === null) {
-          let index = counters.get(type) ?? 1;
-          while (used.has(type + index)) index += 1;
-          id = type + index;
-          counters.set(type, index + 1);
-          used.add(id);
-          warnings.push("warning: assigned id " + id + " to unnamed <" + type + ">");
-        }
-        ids.set(element, id);
-      }
+      const ids = this.assignIds(root, warnings);
       this.appendChildren(root, document, ids, warnings);
       return { document, warnings: Object.freeze(warnings) };
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       throw new Error("invalid SVG: " + message);
     }
+  }
+
+  private parseRoot(xml: string): Element {
+    XmlText.validate(xml);
+    XmlReferences.validate(xml);
+    const dom = new DOMParser({ onError: onWarningStopParsing }).parseFromString(xml, "application/xml");
+    for (let node = dom.firstChild; node !== null; node = node.nextSibling) {
+      if (node.nodeType === 10) {
+        throw new Error("unsupported DOCTYPE");
+      }
+      if (node.nodeType === 7) {
+        this.processingInstruction(node);
+      }
+    }
+    const root = dom.documentElement;
+    if (root === null || root.localName !== "svg") {
+      throw new Error("expected svg root");
+    }
+    this.validateNamespace(root);
+    return root;
+  }
+
+  private createDocument(root: Element): SvgDocument {
+    const attributes = this.attributes(root);
+    for (const name of attributes.keys()) {
+      if (!["width", "height", "viewBox"].includes(name)) {
+        throw new Error("unsupported svg attribute: " + name);
+      }
+    }
+    const box = attributes.get("viewBox")?.trim().split(/[\s,]+/u).map(value => AttributeValidator.number(value, "viewBox"));
+    if (box !== undefined && (box.length !== 4 || box[0] !== 0 || box[1] !== 0)) {
+      throw new Error("unsupported viewBox: expected 0 0 width height");
+    }
+    const width = this.length(attributes.get("width"), box?.[2] ?? 800, "width");
+    const height = this.length(attributes.get("height"), box?.[3] ?? 600, "height");
+    if (box !== undefined && (box[2] !== width || box[3] !== height)) {
+      throw new Error("unsupported viewBox: dimensions must match canvas");
+    }
+    return new SvgDocument(width, height);
+  }
+
+  private assignIds(root: Element, warnings: string[]): ReadonlyMap<Element, string> {
+    const elements: Element[] = [];
+    this.collect(root, elements);
+    const used = new Set<string>();
+    for (const element of elements) {
+      this.validateNamespace(element);
+      if (element.hasAttribute("id")) {
+        const id = element.getAttribute("id")!;
+        AttributeValidator.id(id);
+        if (used.has(id)) {
+          throw new Error("id already exists: " + id);
+        }
+        used.add(id);
+      }
+    }
+    const ids = new Map<Element, string>();
+    const counters = new Map<string, number>();
+    for (const element of elements) {
+      let id = element.getAttribute("id");
+      const type = element.localName!;
+      if (id === null) {
+        let index = counters.get(type) ?? 1;
+        while (used.has(type + index)) {
+          index += 1;
+        }
+        id = type + index;
+        counters.set(type, index + 1);
+        used.add(id);
+        warnings.push("warning: assigned id " + id + " to unnamed <" + type + ">");
+      }
+      ids.set(element, id);
+    }
+    return ids;
   }
 
   private appendChildren(
@@ -94,7 +111,7 @@ export class SvgParser {
       const kind = attributes.get("data-kind");
       attributes.delete("data-kind");
       const content = this.directText(child);
-      const shape = this.factory.createFromAttributes(child.localName!, id, attributes, content);
+      const shape = this.shapes.read(child.localName!, id, attributes, content);
       if (kind !== undefined) {
         if (shape.asContainer() === undefined || kind !== "box") {
           throw new Error("unsupported data-kind: " + kind);

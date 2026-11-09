@@ -9,46 +9,52 @@ import { CreateArguments } from "./CreateArguments.js";
 import { ShapeDefinition } from "./ShapeDefinition.js";
 
 export class ShapeFactory {
-  // The single shape-name dispatch point for CLI and SVG; registration comes with plugins.
+  // Phase 1 retains the single, fixed shape-name lookup for CLI and SVG.
   private readonly definitions = new Map<string, ShapeDefinition>([
-    ["rect", new ShapeDefinition(["x", "y", "width", "height"], (id, values) => {
-      const args = new CreateArguments("rect", values, 4, 5);
-      return new Rect(id, args.number(0, "x"), args.number(1, "y"),
-        args.number(2, "width"), args.number(3, "height"), args.optional(4));
+    ["rect", new ShapeDefinition({ geometry: ["x", "y", "width", "height"], style: "fill" }, (id, input) => {
+      const { x, y, width, height } = input.geometry;
+      return new Rect(id, x!, y!, width!, height!);
     })],
-    ["circle", new ShapeDefinition(["cx", "cy", "r"], (id, values) => {
-      const args = new CreateArguments("circle", values, 3, 4);
-      return new Circle(id, args.number(0, "cx"), args.number(1, "cy"), args.number(2, "r"), args.optional(3));
+    ["circle", new ShapeDefinition({ geometry: ["cx", "cy", "r"], style: "fill" }, (id, input) => {
+      const { cx, cy, r } = input.geometry;
+      return new Circle(id, cx!, cy!, r!);
     })],
-    ["ellipse", new ShapeDefinition(["cx", "cy", "rx", "ry"], (id, values) => {
-      const args = new CreateArguments("ellipse", values, 4, 5);
-      return new Ellipse(id, args.number(0, "cx"), args.number(1, "cy"),
-        args.number(2, "rx"), args.number(3, "ry"), args.optional(4));
-    }, false, new Map([["rx", "ry"], ["ry", "rx"]]))],
-    ["line", new ShapeDefinition(["x1", "y1", "x2", "y2"], (id, values) => {
-      const args = new CreateArguments("line", values, 4, 5);
-      return new Line(id, args.number(0, "x1"), args.number(1, "y1"),
-        args.number(2, "x2"), args.number(3, "y2"), args.optional(4));
+    ["ellipse", new ShapeDefinition({
+      geometry: ["cx", "cy", "rx", "ry"], style: "fill", missingGeometry: new Map([["rx", "ry"], ["ry", "rx"]]),
+    }, (id, input) => {
+      const { cx, cy, rx, ry } = input.geometry;
+      return new Ellipse(id, cx!, cy!, rx!, ry!);
     })],
-    ["text", new ShapeDefinition(["x", "y"], (id, values) => {
-      const args = new CreateArguments("text", values, 3);
-      return new Text(id, args.number(0, "x"), args.number(1, "y"), args.text(2));
-    }, true)],
-    ["g", new ShapeDefinition([], (id, values) => {
-      new CreateArguments("g", values, 0);
+    ["line", new ShapeDefinition({ geometry: ["x1", "y1", "x2", "y2"], style: "stroke" }, (id, input) => {
+      const { x1, y1, x2, y2 } = input.geometry;
+      return new Line(id, x1!, y1!, x2!, y2!);
+    })],
+    ["text", new ShapeDefinition({ geometry: ["x", "y"], hasText: true }, (id, input) => {
+      return new Text(id, input.geometry["x"]!, input.geometry["y"]!, input.content!);
+    })],
+    ["g", new ShapeDefinition({ geometry: [] }, id => {
       return new Group(id);
     })],
   ]);
 
   create(type: string, id: string, parameters: readonly string[]): Shape {
-    return this.definition(type).create(id, parameters);
+    const definition = this.definition(type);
+    const schema = definition.schema;
+    const minimum = schema.geometry.length + (schema.hasText === true ? 1 : 0);
+    const args = new CreateArguments(type, parameters, minimum, minimum + (schema.style === undefined ? 0 : 1));
+    const geometry = Object.fromEntries(schema.geometry.map((name, index) => {
+      return [name, args.number(index, name)];
+    }));
+    const content = schema.hasText === true ? args.text(schema.geometry.length) : undefined;
+    const style = schema.style === undefined ? undefined : args.optional(schema.geometry.length);
+    return definition.create(id, {
+      geometry,
+      ...(content === undefined ? {} : { content }),
+      ...(style === undefined ? {} : { style }),
+    });
   }
 
-  createFromAttributes(type: string, id: string, attributes: ReadonlyMap<string, string>, content: string): Shape {
-    return this.definition(type).fromAttributes(id, attributes, content);
-  }
-
-  private definition(type: string): ShapeDefinition {
+  definition(type: string): ShapeDefinition {
     const definition = this.definitions.get(type);
     if (definition === undefined) {
       throw new Error("unknown shape type: " + type + " (is the plugin loaded?)");
