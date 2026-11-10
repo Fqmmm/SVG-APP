@@ -25,10 +25,10 @@ test("config assembly alone reproduces the Phase 1 version B session and saved S
     const svg = readFileSync(join(repository, "doc/transcript/box.expected.svg"), "utf8").replace(/\r\n/gu, "\n");
     const outputPath = join(directory, "flowchart-box.svg");
     assert.equal(existsSync(outputPath), false);
-    const configured = run(directory, input, ["--config", join(repository, "tests/fixtures/plugins.box-only.config.json")]);
+    const configured = run(directory, input, ["--config", join(repository, "plugins.config.json")]);
     assert.equal(configured, expected.stdout);
     assert.equal(readFileSync(outputPath, "utf8"), svg);
-    const readBack = run(directory, "read flowchart-box.svg\nstats\nset n1 label changed\nundo\n", ["--config", join(repository, "tests/fixtures/plugins.box-only.config.json")]);
+    const readBack = run(directory, "read flowchart-box.svg\nstats\nset n1 label changed\nundo\n", ["--config", join(repository, "plugins.config.json")]);
     assert.match(readBack, /read flowchart-box.svg \(8 elements\)/);
     assert.match(readBack, /rect: 2  text: 2  line: 1  \(total 5, containers 3\)/);
     assert.match(readBack, /box#n1 label restored:/);

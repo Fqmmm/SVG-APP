@@ -29,10 +29,10 @@ test("box reproduces the Phase 1 version B session identically under code and co
     assert.equal(readFileSync(outputPath, "utf8"), svg);
     unlinkSync(outputPath);
     assert.equal(existsSync(outputPath), false);
-    const config = run(directory, input, ["--config", join(repository, "tests/fixtures/plugins.box-only.config.json")]);
+    const config = run(directory, input, ["--config", join(repository, "plugins.config.json")]);
     assert.equal(config, code);
     assert.equal(readFileSync(outputPath, "utf8"), svg);
-    const readBack = run(directory, "read flowchart-box.svg\nstats\nset n1 label changed\nundo\n", ["--config", join(repository, "tests/fixtures/plugins.box-only.config.json")]);
+    const readBack = run(directory, "read flowchart-box.svg\nstats\nset n1 label changed\nundo\n", ["--config", join(repository, "plugins.config.json")]);
     assert.match(readBack, /read flowchart-box.svg \(8 elements\)/);
     assert.match(readBack, /rect: 2  text: 2  line: 1  \(total 5, containers 3\)/);
     assert.match(readBack, /box#n1 label restored:/);

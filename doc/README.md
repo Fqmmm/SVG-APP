@@ -292,7 +292,7 @@ npm run test:host
 
 [框架说明](Phase2/FRAMEWORK.md)列出接口职责、调用位置、缺省行为、冲突和失败处理。[首次 CLI metrics](../docs/metrics/README.md)提供与 `final` 的文件、复杂度及依赖对比，包含分类清单、采集脚本和 PlantUML 依赖图。三个 ADR 分别记录[扩展与装配边界](Phase2/adr/001-extension-boundaries.md)、[属性事务](Phase2/adr/002-attribute-transactions.md)和[开放图形协议](Phase2/adr/003-open-shapes.md)。
 
-框架节点当时先验证扩展能力，使用测试插件且不加入默认 CLI。命令与加载器、box 已在后续节点完成，见下文；modified-star 留待标签节点。
+框架节点当时先验证扩展能力，使用测试插件且不加入默认 CLI。命令与加载器、box 已在后续节点完成，见下文；modified-star 在后续标签节点完成，见下文。
 
 框架节点的[审查处理记录](Phase2/REVIEW_RESOLUTION.md)说明各条意见的取舍。文本持久化改用独立访问器；插件边界增加反例检查；四个扩展点均有类实现，其中标签与属性示例默认关闭。metrics 已补充分类行数、具名模块图及过期校验。
 
@@ -310,7 +310,8 @@ box 已通过图形、属性和树标签扩展点接入，支持整体编辑、�
 
 [box 节点说明](Phase2/BOX_PLUGIN.md)记录运行方法、17 项专项测试及框架准备与插件接入的提交边界；[ADR 005](Phase2/adr/005-composite-containers.md)说明结构约束、派生 ID、导入策略和共享模型。box 节点当时通过 318 项 CLI 测试。通用准备、配置接入与代码装配分别提交，每一步都有对应指标和测试；验证命令见节点说明。
 
+### 标签完成
 
-### 标签配置接入
+modified-star 与 `(box)` 标签已能同时显示。星号按当前内容与最近成功读写的内容比较，子节点修改向祖先传播；新建未保存节点立即标星，undo 回到保存内容后星号消失。两个插件互不依赖，默认按注册顺序显示 `(box) *`，禁用标签时 Phase 1 的树输出保持原样。
 
-modified-star 已通过根配置加载，与 (box) 标签并存；代码装配在下一提交接入。星号比较当前内容与最近成功读写的内容，修改向祖先传播，undo 回到保存点后消失。当前 CLI 344 项测试、标签专项 16 项通过。通用准备与配置接入分别提交，严格首次零改动判据的限制见 [标签节点说明](Phase2/TREE_LABELS.md) 和 [ADR 006](Phase2/adr/006-content-checkpoints.md)。
+[标签节点说明](Phase2/TREE_LABELS.md)提供运行方法、A/B 会话证据、17 项专项测试和通用准备的提交边界；[ADR 006](Phase2/adr/006-content-checkpoints.md)记录保存点、祖先传播和标签顺序。CLI 当前 345 项测试通过。本轮按通用准备、根配置接入和代码装配分别提交，三个源码/测试组合已在临时工作树分别验证；分步提交只能证明准备后接入的零改动，不能把本次推动的渲染器改动视为符合严格的首次零改动判据。

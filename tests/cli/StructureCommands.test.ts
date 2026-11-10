@@ -77,7 +77,7 @@ test("failed structure commands preserve redo, state and initial barrier", () =>
 
 test("real CLI supports mixed structural editing and error recovery", () => {
   const entry = fileURLToPath(new URL("../../src/main.js", import.meta.url));
-  const result = spawnSync(process.execPath, [entry], {
+  const result = spawnSync(process.execPath, [entry, "--config", fileURLToPath(new URL("../../../tests/fixtures/plugins.none.config.json", import.meta.url))], {
     input: [
       "init", "create g p", "create rect a 1 2 3 4 in p",
       "create text b 5 6 \"开始\" in p", "group g b a", "front g", "back g",

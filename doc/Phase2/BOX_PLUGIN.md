@@ -1,6 +1,6 @@
 # box 图形插件
 
-`box` 把矩形与标题作为一个可嵌套的容器接入 CLI。它提供图形创建与 SVG 读回、`fill`/`label` 属性处理以及 `(box)` 类型标签。`modified-star` 留在下一个节点。
+`box` 把矩形与标题作为一个可嵌套的容器接入 CLI。它提供图形创建与 SVG 读回、`fill`/`label` 属性处理以及 `(box)` 类型标签。box 节点交付时尚未加入 modified-star；当前已在[标签节点](TREE_LABELS.md)完成。
 
 ## 运行
 
@@ -105,7 +105,7 @@ npm run check:boundaries
 npm run metrics:check
 ```
 
-box 相关 17 项测试：独立插件 7 项、命令与读写集成 7 项、配置装配与禁用 2 项、代码/配置一致性 1 项。CLI 全部 318 项通过，VSCode 扩展 10 项单元测试与类型检查通过；本轮未重新启动扩展宿主测试。
+box 相关 17 项测试：独立插件 7 项、命令与读写集成 7 项、配置装配与禁用 2 项、代码/配置一致性 1 项。box 节点当时的 CLI 全部 318 项通过；当前最新验证见标签节点。VSCode 扩展 10 项单元测试与类型检查通过；本轮未重新启动扩展宿主测试。
 
 [BoxAssembly.test.ts](../../tests/composition/BoxAssembly.test.ts) 在同一个临时工作目录运行 A/B，使用相同插件顺序、输入和初始状态，比较 stdout 与 SVG；第二次运行前删除第一次的输出文件并确认不存在，验证配置方式重新保存。配置方式的独立会话与读回检查见 [BoxConfigAssembly.test.ts](../../tests/composition/BoxConfigAssembly.test.ts)。独立测试还覆盖派生 ID 冲突、一次多部件修改失败的回滚以及处理器冲突。
 

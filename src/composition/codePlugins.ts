@@ -18,4 +18,9 @@ export async function registerCodePlugins(loader: PluginLoader): Promise<void> {
       return (await import("../plugins/box/index.js")).default;
     },
   });
+  await loader.loadCode({ module: "./src/plugins/modified-star", directory,
+    async load() {
+      return (await import("../plugins/modified-star/index.js")).default;
+    },
+  });
 }

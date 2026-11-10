@@ -35,6 +35,7 @@ test("code and config assembly produce identical help, stats, dir and saved SVG 
     writeFileSync(config, JSON.stringify({ plugins: [
       { module: relative(directory, join(repository, "src/plugins/stats")) }, { module: relative(directory, join(repository, "src/plugins/dir")) },
       { module: relative(directory, join(repository, "src/plugins/box")) },
+      { module: relative(directory, join(repository, "src/plugins/modified-star")) },
     ] }));
     const input = readFileSync(join(repository, "doc/transcript/command-plugins.txt"), "utf8");
     const fromCode = run(cwd, input);
