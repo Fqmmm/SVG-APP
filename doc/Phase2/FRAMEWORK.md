@@ -1,6 +1,6 @@
 # CLI 框架扩展机制
 
-本节点完成四个扩展点、默认装配、Phase 1 回归和 CLI metrics 采集。审查后的处理记录见 [REVIEW_RESOLUTION.md](REVIEW_RESOLUTION.md)。`stats`、`dir`、`box`、正式标签插件和配置加载器按后续节点实现。
+本节点完成四个扩展点、默认装配、Phase 1 回归和 CLI metrics 采集。审查后的处理记录见 [REVIEW_RESOLUTION.md](REVIEW_RESOLUTION.md)。命令插件与加载器已完成，见 [COMMAND_PLUGINS.md](COMMAND_PLUGINS.md)；box 和正式标签插件按后续节点实现。
 
 ## 模块边界
 
@@ -15,7 +15,7 @@
 | 扩展点 | 契约与职责 | 内核调用位置 | 已有类实现及缺省行为 | 违规与失败处理 |
 |---|---|---|---|---|
 | `ShapeProvider` | schema、创建、展示、文本存储策略、SVG 映射与复合图形读回 | `RegisteredShapeFactory.create/fromInput/forSvg`；`ShapeViews.present`；`RegisteredSvgParser.readShape`；`RegisteredSvgSerializer.element` | `plugins/builtin/providers.ts` 的六个 Provider 类；空注册表不支持任何类型 | schema 与文本访问器不一致报 `invalid shape text contract`；错误类型/id 报 `invalid shape provider result`；遗漏或重排子图形报 `invalid shape provider children`；SVG 映射歧义时报 `ambiguous SVG shape provider` |
-| `Command` | 命令名称、帮助、文档前置条件和执行回调 | `RegisteredCommandDispatcher.dispatch` | `plugins/builtin/commands.ts` 的 `BoundCommand`、`HelpCommand`；未知命令拒绝执行；帮助来自注册结果 | 重名报 `duplicate registration`，空名称报 `invalid registration name`；缺少文档时先报原有文档错误；执行异常由 REPL 转成 `error:` 输出 |
+| `Command` | 命令名称、帮助、文档前置条件和执行回调 | `RegisteredCommandDispatcher.dispatch` | `plugins/builtin/commands.ts` 的 `BoundCommand`、`HelpCommand`，以及独立 stats/dir 包；未知命令拒绝执行；帮助来自注册结果 | 重名报 `duplicate registration`，空名称报 `invalid registration name`；缺少文档时先报原有文档错误；执行异常由 REPL 转成 `error:` 输出 |
 | `TreeDecorator` | 为画布或图形返回单行标签，只读访问上下文 | `RegisteredTreeFormatter.labels` | `plugins/examples/ShapeTypeDecorator.ts`；默认不注册标签，保持原树输出 | 重名、空名称由注册表拒绝；换行报 `tree decorator must return a single line`；回调异常由 REPL 报错 |
 | `AttributeHandler` | 判断目标属性是否适用，通过图形公开方法修改目标子树 | `SetCommand.changeShape` → `AttributeRouter.apply` | `plugins/examples/StyleAttributeHandler.ts`；默认不注册处理器，回退原有属性白名单 | 多个命中报 `ambiguous attribute handler`，不执行处理器；执行失败恢复目标子树快照，保留 undo/redo 历史；未知属性仍由原白名单报错 |
 
@@ -53,6 +53,6 @@ npm run check:boundaries
 npm run metrics:check
 ```
 
-测试包含原有回归、仅导入 SDK 的 tile、文本往返、复合图形、类插件示例、事务回滚、错误优先级、注册冲突、帮助文本比较、违规依赖反例和 metrics 过期反例。当前 CLI 共 265 项测试通过。
+测试包含原有回归、仅导入 SDK 的 tile、文本往返、复合图形、类插件示例、事务回滚、错误优先级、注册冲突、帮助文本比较、违规依赖反例和 metrics 过期反例。当前 CLI 共 295 项测试通过。
 
 依赖检查允许插件导入其他插件或公开 SDK，拒绝它们导入装配层和私有内核模块；内核只依赖内核。该检查针对 CLI TypeScript 源文件中的静态 import 与转导出。指标及模块依赖图见 [CLI metrics](../../docs/metrics/README.md)。

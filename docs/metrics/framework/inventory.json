@@ -1,12 +1,12 @@
 {
   "baselineRevision": "6d5239a6a29f6044be80f49ea05a6c4b417d5d9e",
-  "headRevision": "97f02cbf021d60fdf49a578dc78c59d8ea66a8b7",
+  "headRevision": "77f00355b96c73df7e24175a58919927fc87806d",
   "generatorSha256": "54d96e38b3dfda2b6241efa18ec447f6b5be6a145e8debebdf2cdca96e6121b3",
   "artifactHashes": {
-    "files.csv": "8be708755340aadf29576f3a2649a69045a98edd2f455f49e7368ad745148f69",
+    "files.csv": "6b9c34f8e84d2e459f8149fff3d2615a887a19eae3347a4e825f6b2dd955b392",
     "before.puml": "a83da6887353486d644f52c42710413481ac323447647fb1e257be02568cb64d",
-    "after.puml": "3d213ac981643c8c461eadb341955b69e84acfbc50796e3bf984d7aaa1c59b59",
-    "summary.json": "c1c08748f48395e6be2842ca6fa62161caef1718d9197f8e9c61a52ed86b7de4"
+    "after.puml": "cf34100c4005d2d34aa011164bb7f9b7f99515cddc572aa1f27f483099d5c279",
+    "summary.json": "e7cf69b56badf776eed0b8003a866e9f2790e01aa1d142e63b76b133c25673d1"
   },
   "scope": "CLI src/**/*.ts only; excludes VSCode extension, tests, generated files",
   "before": {
@@ -4361,6 +4361,73 @@
         "fanOut": 1
       },
       {
+        "path": "src/composition/ProjectDirectory.ts",
+        "role": "assembly",
+        "responsibility": "Construct and connect dependencies: projectDirectory",
+        "sha256": "4ef61a592b98c1fbe6622047ce33abb82b27951c711d4ed4caccfcf01a627f40",
+        "lines": 22,
+        "imports": [
+          "node:fs",
+          "node:path",
+          "node:url",
+          "./plugins/PluginManifest.js"
+        ],
+        "exports": [
+          "projectDirectory"
+        ],
+        "functions": [
+          {
+            "name": "projectDirectory",
+            "line": 6,
+            "complexity": 6
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/composition/plugins/PluginManifest.ts"
+        ],
+        "fanIn": 1,
+        "fanOut": 1
+      },
+      {
+        "path": "src/composition/codePlugins.ts",
+        "role": "assembly",
+        "responsibility": "Construct and connect dependencies: registerCodePlugins",
+        "sha256": "466e1beb3c1eace74cc67794bed91ea405ccc218d0afdbf654ce74d438debf96",
+        "lines": 16,
+        "imports": [
+          "./ProjectDirectory.js",
+          "./plugins/PluginLoader.js"
+        ],
+        "exports": [
+          "registerCodePlugins"
+        ],
+        "functions": [
+          {
+            "name": "registerCodePlugins",
+            "line": 4,
+            "complexity": 1
+          },
+          {
+            "name": "load",
+            "line": 7,
+            "complexity": 1
+          },
+          {
+            "name": "load",
+            "line": 12,
+            "complexity": 1
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/composition/ProjectDirectory.ts",
+          "src/composition/plugins/PluginLoader.ts"
+        ],
+        "fanIn": 0,
+        "fanOut": 2
+      },
+      {
         "path": "src/composition/compat/CommandDispatcher.ts",
         "role": "assembly",
         "responsibility": "Construct and connect dependencies: CommandDispatcher",
@@ -4618,7 +4685,7 @@
           "src/plugins/builtin/shapes.ts",
           "src/plugins/builtin/commands.ts"
         ],
-        "fanIn": 3,
+        "fanIn": 4,
         "fanOut": 3
       },
       {
@@ -4658,6 +4725,397 @@
         ],
         "fanIn": 1,
         "fanOut": 7
+      },
+      {
+        "path": "src/composition/plugins/PluginActivation.ts",
+        "role": "assembly",
+        "responsibility": "Construct and connect dependencies: publishPlugin",
+        "sha256": "919c00bc29bb6247cbc1855986d24cd60601e741a8c9f950d1e6beca096136de",
+        "lines": 55,
+        "imports": [
+          "../../extensions/Framework.js",
+          "../../extensions/ExtensionRegistry.js",
+          "./PluginErrors.js",
+          "./RegistrationContext.js",
+          "./PluginManifest.js"
+        ],
+        "exports": [
+          "publishPlugin"
+        ],
+        "functions": [
+          {
+            "name": "plan",
+            "line": 7,
+            "complexity": 1
+          },
+          {
+            "name": "check",
+            "line": 10,
+            "complexity": 3
+          },
+          {
+            "name": "commit",
+            "line": 17,
+            "complexity": 2
+          },
+          {
+            "name": "plans",
+            "line": 25,
+            "complexity": 1
+          },
+          {
+            "name": "registered",
+            "line": 30,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 32,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 33,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 34,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 35,
+            "complexity": 1
+          },
+          {
+            "name": "publishPlugin",
+            "line": 39,
+            "complexity": 5
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/extensions/Framework.ts",
+          "src/extensions/ExtensionRegistry.ts",
+          "src/composition/plugins/PluginErrors.ts",
+          "src/composition/plugins/RegistrationContext.ts",
+          "src/composition/plugins/PluginManifest.ts"
+        ],
+        "fanIn": 1,
+        "fanOut": 5
+      },
+      {
+        "path": "src/composition/plugins/PluginConfiguration.ts",
+        "role": "assembly",
+        "responsibility": "Construct and connect dependencies: PluginConfigurationEntry, readPluginConfiguration",
+        "sha256": "a2d32c24795b5e3c10de3955c6322e74ccb31aa2502ff12e1bb482284c94412c",
+        "lines": 27,
+        "imports": [
+          "node:fs",
+          "./PluginManifest.js"
+        ],
+        "exports": [
+          "PluginConfigurationEntry",
+          "readPluginConfiguration"
+        ],
+        "functions": [
+          {
+            "name": "readPluginConfiguration",
+            "line": 10,
+            "complexity": 4
+          },
+          {
+            "name": "<anonymous>",
+            "line": 16,
+            "complexity": 8
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/composition/plugins/PluginManifest.ts"
+        ],
+        "fanIn": 1,
+        "fanOut": 1
+      },
+      {
+        "path": "src/composition/plugins/PluginErrors.ts",
+        "role": "assembly",
+        "responsibility": "Construct and connect dependencies: RegistrationConflict, ManifestMismatch",
+        "sha256": "cfbd128acdd4fdcbd2f2a0c753206dc21e9bde0254edb4978f306b11501b6fe5",
+        "lines": 11,
+        "imports": [],
+        "exports": [
+          "RegistrationConflict",
+          "ManifestMismatch"
+        ],
+        "functions": [
+          {
+            "name": "<anonymous>",
+            "line": 2,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 8,
+            "complexity": 1
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [],
+        "fanIn": 3,
+        "fanOut": 0
+      },
+      {
+        "path": "src/composition/plugins/PluginLoader.ts",
+        "role": "assembly",
+        "responsibility": "Construct and connect dependencies: Plugin, CodePlugin, PluginLoader",
+        "sha256": "b4299f72b8aedeaca399d50edccdb084b38116dbdd79e32af252224b9fe51370",
+        "lines": 101,
+        "imports": [
+          "node:path",
+          "node:url",
+          "../../extensions/Framework.js",
+          "./PluginManifest.js",
+          "./PluginConfiguration.js",
+          "./PluginPackage.js",
+          "./PluginErrors.js",
+          "./RegistrationContext.js",
+          "./PluginActivation.js"
+        ],
+        "exports": [
+          "Plugin",
+          "CodePlugin",
+          "PluginLoader"
+        ],
+        "functions": [
+          {
+            "name": "<anonymous>",
+            "line": 23,
+            "complexity": 1
+          },
+          {
+            "name": "activate",
+            "line": 26,
+            "complexity": 4
+          },
+          {
+            "name": "loadCode",
+            "line": 42,
+            "complexity": 2
+          },
+          {
+            "name": "loadConfiguration",
+            "line": 55,
+            "complexity": 4
+          },
+          {
+            "name": "loadModule",
+            "line": 70,
+            "complexity": 5
+          },
+          {
+            "name": "failure",
+            "line": 91,
+            "complexity": 5
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/extensions/Framework.ts",
+          "src/composition/plugins/PluginManifest.ts",
+          "src/composition/plugins/PluginConfiguration.ts",
+          "src/composition/plugins/PluginPackage.ts",
+          "src/composition/plugins/PluginErrors.ts",
+          "src/composition/plugins/RegistrationContext.ts",
+          "src/composition/plugins/PluginActivation.ts"
+        ],
+        "fanIn": 2,
+        "fanOut": 7
+      },
+      {
+        "path": "src/composition/plugins/PluginManifest.ts",
+        "role": "assembly",
+        "responsibility": "Construct and connect dependencies: categories, Category, Contributions, PluginManifest, isRecord, pluginManifest",
+        "sha256": "61231c40dc00598ef78d62081436c5a0c9bda99c78eee2f5cdff304adc399593",
+        "lines": 30,
+        "imports": [],
+        "exports": [
+          "categories",
+          "Category",
+          "Contributions",
+          "PluginManifest",
+          "isRecord",
+          "pluginManifest"
+        ],
+        "functions": [
+          {
+            "name": "isRecord",
+            "line": 10,
+            "complexity": 3
+          },
+          {
+            "name": "pluginManifest",
+            "line": 14,
+            "complexity": 7
+          },
+          {
+            "name": "<anonymous>",
+            "line": 19,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 19,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 22,
+            "complexity": 5
+          },
+          {
+            "name": "<anonymous>",
+            "line": 24,
+            "complexity": 2
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [],
+        "fanIn": 5,
+        "fanOut": 0
+      },
+      {
+        "path": "src/composition/plugins/PluginPackage.ts",
+        "role": "assembly",
+        "responsibility": "Construct and connect dependencies: PluginPackage, PluginNotFound, resolvePlugin",
+        "sha256": "9583e074f27444f0fce33fa285264bfc1ca5e6b60b25df7ffd29f6da1982fde4",
+        "lines": 74,
+        "imports": [
+          "node:fs",
+          "node:module",
+          "node:url",
+          "import-meta-resolve",
+          "node:path",
+          "./PluginManifest.js"
+        ],
+        "exports": [
+          "PluginPackage",
+          "PluginNotFound",
+          "resolvePlugin"
+        ],
+        "functions": [
+          {
+            "name": "<anonymous>",
+            "line": 14,
+            "complexity": 1
+          },
+          {
+            "name": "readManifest",
+            "line": 19,
+            "complexity": 1
+          },
+          {
+            "name": "nearestManifest",
+            "line": 23,
+            "complexity": 7
+          },
+          {
+            "name": "resolvePlugin",
+            "line": 41,
+            "complexity": 15
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/composition/plugins/PluginManifest.ts"
+        ],
+        "fanIn": 1,
+        "fanOut": 1
+      },
+      {
+        "path": "src/composition/plugins/RegistrationContext.ts",
+        "role": "assembly",
+        "responsibility": "Construct and connect dependencies: createRegistrationContext",
+        "sha256": "e46bb2d4f7ded6c42bde42b4bb90d34e250d2ccd254d97da6c381b5d902b0027",
+        "lines": 22,
+        "imports": [
+          "../../extensions/Framework.js",
+          "../../extensions/ExtensionRegistry.js",
+          "./PluginErrors.js"
+        ],
+        "exports": [
+          "createRegistrationContext"
+        ],
+        "functions": [
+          {
+            "name": "guardRegistration",
+            "line": 5,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 7,
+            "complexity": 2
+          },
+          {
+            "name": "createRegistrationContext",
+            "line": 15,
+            "complexity": 1
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/extensions/Framework.ts",
+          "src/extensions/ExtensionRegistry.ts",
+          "src/composition/plugins/PluginErrors.ts"
+        ],
+        "fanIn": 2,
+        "fanOut": 3
+      },
+      {
+        "path": "src/composition/startCli.ts",
+        "role": "assembly",
+        "responsibility": "Construct and connect dependencies: createCommandEditor, runCli",
+        "sha256": "594498ecd9c429204c4f7ffea789cf54bd8ba93db5d81e111e4b53ff7a840411",
+        "lines": 30,
+        "imports": [
+          "node:stream",
+          "../cli/RegisteredRepl.js",
+          "./createDefaultFramework.js",
+          "./createEditor.js",
+          "./plugins/PluginLoader.js"
+        ],
+        "exports": [
+          "createCommandEditor",
+          "runCli"
+        ],
+        "functions": [
+          {
+            "name": "createCommandEditor",
+            "line": 7,
+            "complexity": 2
+          },
+          {
+            "name": "runCli",
+            "line": 19,
+            "complexity": 6
+          },
+          {
+            "name": "<anonymous>",
+            "line": 20,
+            "complexity": 1
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/cli/RegisteredRepl.ts",
+          "src/composition/createDefaultFramework.ts",
+          "src/composition/createEditor.ts",
+          "src/composition/plugins/PluginLoader.ts"
+        ],
+        "fanIn": 1,
+        "fanOut": 4
       },
       {
         "path": "src/domain/AttributeValidator.ts",
@@ -5415,7 +5873,7 @@
         ],
         "forwardingOnly": false,
         "dependencies": [],
-        "fanIn": 6,
+        "fanIn": 8,
         "fanOut": 0
       },
       {
@@ -5443,7 +5901,7 @@
           "src/extensions/TreeDecorator.ts",
           "src/extensions/AttributeHandler.ts"
         ],
-        "fanIn": 3,
+        "fanIn": 6,
         "fanOut": 5
       },
       {
@@ -5739,7 +6197,7 @@
           "src/extensions/ShapeViews.ts",
           "src/extensions/ShapeRegistry.ts"
         ],
-        "fanIn": 14,
+        "fanIn": 18,
         "fanOut": 35
       },
       {
@@ -6175,21 +6633,19 @@
         "path": "src/main.ts",
         "role": "assembly",
         "responsibility": "Construct and connect dependencies: main",
-        "sha256": "b42ecb142e7ae4bbbe12da8a360e0344b486d2fa2f291ded076f6e646bb30313",
-        "lines": 6,
+        "sha256": "4096d046e38f610a7a9a8cbb9b3e72000d9a0f4c971b385739880ce4df44ff7e",
+        "lines": 3,
         "imports": [
-          "./composition/createEditor.js",
-          "./cli/RegisteredRepl.js"
+          "./composition/startCli.js"
         ],
         "exports": [],
         "functions": [],
         "forwardingOnly": false,
         "dependencies": [
-          "src/composition/createEditor.ts",
-          "src/cli/RegisteredRepl.ts"
+          "src/composition/startCli.ts"
         ],
         "fanIn": 0,
-        "fanOut": 2
+        "fanOut": 1
       },
       {
         "path": "src/plugins/builtin/DocumentCommands.ts",
@@ -7119,6 +7575,151 @@
         "fanOut": 1
       },
       {
+        "path": "src/plugins/dir/DirCommand.ts",
+        "role": "plugin",
+        "responsibility": "Built-in contribution: DirCommand",
+        "sha256": "ae8f4dc390f8ea0d35081da427b5b26042061782f26ccb469a2c9dabb346c325",
+        "lines": 44,
+        "imports": [
+          "../../extensions/index.js",
+          "./DirectoryAccess.js"
+        ],
+        "exports": [
+          "DirCommand"
+        ],
+        "functions": [
+          {
+            "name": "<anonymous>",
+            "line": 10,
+            "complexity": 1
+          },
+          {
+            "name": "execute",
+            "line": 13,
+            "complexity": 1
+          },
+          {
+            "name": "read",
+            "line": 18,
+            "complexity": 2
+          },
+          {
+            "name": "format",
+            "line": 28,
+            "complexity": 4
+          },
+          {
+            "name": "<anonymous>",
+            "line": 36,
+            "complexity": 2
+          },
+          {
+            "name": "<anonymous>",
+            "line": 36,
+            "complexity": 4
+          },
+          {
+            "name": "<anonymous>",
+            "line": 40,
+            "complexity": 1
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/extensions/index.ts",
+          "src/plugins/dir/DirectoryAccess.ts"
+        ],
+        "fanIn": 1,
+        "fanOut": 2
+      },
+      {
+        "path": "src/plugins/dir/DirectoryAccess.ts",
+        "role": "plugin",
+        "responsibility": "Built-in contribution: DirectoryEntry, DirectoryAccess",
+        "sha256": "1a26a171f3d71a4d9a0eaba34bc032b893e73b990696dbf228a98ddc505c6005",
+        "lines": 9,
+        "imports": [],
+        "exports": [
+          "DirectoryEntry",
+          "DirectoryAccess"
+        ],
+        "functions": [],
+        "forwardingOnly": false,
+        "dependencies": [],
+        "fanIn": 2,
+        "fanOut": 0
+      },
+      {
+        "path": "src/plugins/dir/NodeDirectoryAccess.ts",
+        "role": "plugin",
+        "responsibility": "Built-in contribution: NodeDirectoryAccess",
+        "sha256": "748f8297d81ac467ee840b1a09f2511ff2703a7c545ffa7549f474a9923a710d",
+        "lines": 25,
+        "imports": [
+          "node:fs",
+          "./DirectoryAccess.js"
+        ],
+        "exports": [
+          "NodeDirectoryAccess"
+        ],
+        "functions": [
+          {
+            "name": "currentDirectory",
+            "line": 6,
+            "complexity": 1
+          },
+          {
+            "name": "entries",
+            "line": 10,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 11,
+            "complexity": 1
+          },
+          {
+            "name": "kind",
+            "line": 16,
+            "complexity": 4
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/plugins/dir/DirectoryAccess.ts"
+        ],
+        "fanIn": 1,
+        "fanOut": 1
+      },
+      {
+        "path": "src/plugins/dir/index.ts",
+        "role": "plugin",
+        "responsibility": "Public extension SDK exports",
+        "sha256": "a5005b4733287b0ab3961280ed300ebc09afe55cb1198b9c297299e0711c6d74",
+        "lines": 11,
+        "imports": [
+          "../../extensions/index.js",
+          "./DirCommand.js",
+          "./NodeDirectoryAccess.js"
+        ],
+        "exports": [],
+        "functions": [
+          {
+            "name": "activate",
+            "line": 6,
+            "complexity": 1
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/extensions/index.ts",
+          "src/plugins/dir/DirCommand.ts",
+          "src/plugins/dir/NodeDirectoryAccess.ts"
+        ],
+        "fanIn": 0,
+        "fanOut": 3
+      },
+      {
         "path": "src/plugins/examples/ShapeTypeDecorator.ts",
         "role": "plugin",
         "responsibility": "Built-in contribution: ShapeTypeDecorator",
@@ -7174,24 +7775,101 @@
         ],
         "fanIn": 0,
         "fanOut": 1
+      },
+      {
+        "path": "src/plugins/stats/StatsCommand.ts",
+        "role": "plugin",
+        "responsibility": "Built-in contribution: StatsCommand",
+        "sha256": "f47caceeda8b7b9fd1151a0fffe696656606ef062eca54e860f55637acd03627",
+        "lines": 38,
+        "imports": [
+          "../../extensions/index.js"
+        ],
+        "exports": [
+          "StatsCommand"
+        ],
+        "functions": [
+          {
+            "name": "execute",
+            "line": 9,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 19,
+            "complexity": 2
+          },
+          {
+            "name": "format",
+            "line": 25,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 26,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 27,
+            "complexity": 1
+          },
+          {
+            "name": "count",
+            "line": 31,
+            "complexity": 3
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/extensions/index.ts"
+        ],
+        "fanIn": 1,
+        "fanOut": 1
+      },
+      {
+        "path": "src/plugins/stats/index.ts",
+        "role": "plugin",
+        "responsibility": "Public extension SDK exports",
+        "sha256": "656298042a699ba82e29024e44bd690c2026d5e5168d910707af2d8369dba92f",
+        "lines": 10,
+        "imports": [
+          "../../extensions/index.js",
+          "./StatsCommand.js"
+        ],
+        "exports": [],
+        "functions": [
+          {
+            "name": "activate",
+            "line": 5,
+            "complexity": 1
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/extensions/index.ts",
+          "src/plugins/stats/StatsCommand.ts"
+        ],
+        "fanIn": 0,
+        "fanOut": 2
       }
     ],
     "summary": {
-      "files": 98,
-      "lines": 3242,
-      "functions": 384,
-      "totalComplexity": 763,
+      "files": 114,
+      "lines": 3764,
+      "functions": 443,
+      "totalComplexity": 913,
       "maxComplexity": 21,
-      "dependencyEdges": 249,
+      "dependencyEdges": 281,
       "linesByRole": {
         "core": 2309,
-        "assembly": 118,
-        "plugin": 815
+        "assembly": 503,
+        "plugin": 952
       },
       "roles": {
         "core": 56,
-        "assembly": 28,
-        "plugin": 14
+        "assembly": 38,
+        "plugin": 20
       }
     }
   }

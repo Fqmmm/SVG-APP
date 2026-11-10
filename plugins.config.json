@@ -1,0 +1,6 @@
+{
+  "plugins": [
+    { "module": "./src/plugins/stats" },
+    { "module": "./src/plugins/dir" }
+  ]
+}

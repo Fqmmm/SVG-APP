@@ -1,0 +1,8 @@
+{
+  "name": "@svgframe/plugin-stats",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "../../../dist/src/plugins/stats/index.js",
+  "contributes": { "commands": ["stats"] }
+}

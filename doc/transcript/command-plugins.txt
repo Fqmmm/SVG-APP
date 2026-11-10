@@ -1,0 +1,17 @@
+help
+dir
+init
+create g scene
+create rect r 1 2 3 4 in scene
+create text t 0 0 hello
+stats
+move r 10 20
+stats
+undo
+redo
+stats
+read assets/source.svg
+dir
+save assets/saved.svg
+dir
+stats

@@ -1,6 +1,3 @@
-import { createEditor } from "./composition/createEditor.js";
-import { RegisteredRepl } from "./cli/RegisteredRepl.js";
+import { runCli } from "./composition/startCli.js";
 
-const editor = createEditor();
-const repl = new RegisteredRepl(process.stdin, process.stdout, editor.dispatcher);
-await repl.run();
+await runCli({ args: process.argv.slice(2), input: process.stdin, output: process.stdout });
