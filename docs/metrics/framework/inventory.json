@@ -1,12 +1,12 @@
 {
   "baselineRevision": "6d5239a6a29f6044be80f49ea05a6c4b417d5d9e",
-  "headRevision": "9559e0cd5dabbcddfcb5255109a72c02c6ae63f2",
+  "headRevision": "8f3aeb0915a69291a053904dc931834b1e95a88c",
   "generatorSha256": "54d96e38b3dfda2b6241efa18ec447f6b5be6a145e8debebdf2cdca96e6121b3",
   "artifactHashes": {
-    "files.csv": "03962bad5f32dc293a46802adb81887f2197e4d6250adf647ef50a3398809b76",
+    "files.csv": "bf8e1d0f48a2b3d4f1c43bfc43e5881eb8e580869032a07c001975fbefd6e437",
     "before.puml": "a83da6887353486d644f52c42710413481ac323447647fb1e257be02568cb64d",
-    "after.puml": "326688cbada947216a1f5eebf2615349644e3e8694194f5a31a991ff9e78a654",
-    "summary.json": "bc8b7fa0fd211c922f4a0a80d4093e57e4d4b5f36cadd259b9e5913ce33581d1"
+    "after.puml": "8775fce41a5cab4ad843eecf57e8d5519c9380d1f5375a3c907ce927abd4b77b",
+    "summary.json": "c68827b96fd980aac89860a19d7ff7f7afdce95257bc620f19c8b4118593718d"
   },
   "scope": "CLI src/**/*.ts only; excludes VSCode extension, tests, generated files",
   "before": {
@@ -3239,7 +3239,7 @@
         "dependencies": [
           "src/domain/SvgDocument.ts"
         ],
-        "fanIn": 4,
+        "fanIn": 5,
         "fanOut": 1
       },
       {
@@ -3261,7 +3261,7 @@
           "src/domain/SvgDocument.ts",
           "src/application/DocumentReadResult.ts"
         ],
-        "fanIn": 2,
+        "fanIn": 3,
         "fanOut": 2
       },
       {
@@ -4183,9 +4183,10 @@
         "path": "src/cli/RegisteredTreeFormatter.ts",
         "role": "core",
         "responsibility": "Kernel policy/service/contract: RegisteredTreeFormatter",
-        "sha256": "fdb43bcff4ef3bfccb177919af628bb8877d144785b5a98c5efa7a2551290528",
-        "lines": 47,
+        "sha256": "f5d9b58730281941468b2a986da96e5b59928f080011758017b7c7ad2aa2dda5",
+        "lines": 67,
         "imports": [
+          "../extensions/DocumentSnapshot.js",
           "../domain/Shape.js",
           "../domain/SvgDocument.js",
           "../extensions/ShapeViews.js",
@@ -4198,42 +4199,58 @@
         "functions": [
           {
             "name": "<anonymous>",
-            "line": 8,
+            "line": 11,
             "complexity": 1
           },
           {
             "name": "document",
-            "line": 14,
+            "line": 17,
             "complexity": 1
           },
           {
             "name": "subtree",
-            "line": 20,
+            "line": 24,
+            "complexity": 2
+          },
+          {
+            "name": "context",
+            "line": 31,
+            "complexity": 1
+          },
+          {
+            "name": "snapshot",
+            "line": 35,
             "complexity": 1
           },
           {
             "name": "appendChildren",
-            "line": 26,
+            "line": 42,
             "complexity": 4
           },
           {
             "name": "labels",
-            "line": 34,
+            "line": 50,
             "complexity": 3
           },
           {
             "name": "<anonymous>",
-            "line": 38,
+            "line": 54,
             "complexity": 3
           },
           {
+            "name": "snapshot",
+            "line": 56,
+            "complexity": 1
+          },
+          {
             "name": "<anonymous>",
-            "line": 44,
+            "line": 64,
             "complexity": 2
           }
         ],
         "forwardingOnly": false,
         "dependencies": [
+          "src/extensions/DocumentSnapshot.ts",
           "src/domain/Shape.ts",
           "src/domain/SvgDocument.ts",
           "src/extensions/ShapeViews.ts",
@@ -4241,7 +4258,7 @@
           "src/extensions/TreeDecorator.ts"
         ],
         "fanIn": 2,
-        "fanOut": 5
+        "fanOut": 6
       },
       {
         "path": "src/cli/Repl.ts",
@@ -4359,6 +4376,74 @@
         ],
         "fanIn": 0,
         "fanOut": 1
+      },
+      {
+        "path": "src/composition/CheckpointRepository.ts",
+        "role": "assembly",
+        "responsibility": "Construct and connect dependencies: CheckpointRepository",
+        "sha256": "b9895b241c4d062ba6e448c39dc3c403f3df93fb15c074ea0230a7321ef5dab4",
+        "lines": 59,
+        "imports": [
+          "../application/DocumentRepository.js",
+          "../application/DocumentReadResult.js",
+          "../domain/SvgDocument.js",
+          "../extensions/ShapeViews.js",
+          "../extensions/TreeDecorator.js",
+          "../extensions/ExtensionRegistry.js",
+          "../extensions/DocumentSnapshot.js"
+        ],
+        "exports": [
+          "CheckpointRepository"
+        ],
+        "functions": [
+          {
+            "name": "<anonymous>",
+            "line": 10,
+            "complexity": 1
+          },
+          {
+            "name": "read",
+            "line": 18,
+            "complexity": 2
+          },
+          {
+            "name": "write",
+            "line": 26,
+            "complexity": 2
+          },
+          {
+            "name": "listeners",
+            "line": 33,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 34,
+            "complexity": 1
+          },
+          {
+            "name": "publish",
+            "line": 39,
+            "complexity": 4
+          },
+          {
+            "name": "reportFailure",
+            "line": 52,
+            "complexity": 2
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/application/DocumentRepository.ts",
+          "src/application/DocumentReadResult.ts",
+          "src/domain/SvgDocument.ts",
+          "src/extensions/ShapeViews.ts",
+          "src/extensions/TreeDecorator.ts",
+          "src/extensions/ExtensionRegistry.ts",
+          "src/extensions/DocumentSnapshot.ts"
+        ],
+        "fanIn": 1,
+        "fanOut": 7
       },
       {
         "path": "src/composition/ProjectDirectory.ts",
@@ -4697,9 +4782,11 @@
         "path": "src/composition/createEditor.ts",
         "role": "assembly",
         "responsibility": "Construct and connect dependencies: createEditor",
-        "sha256": "0e79dfac7d88169693a6c9cb6ede4a7f8c5388f8bd3bd7278b394bc6705a462a",
-        "lines": 14,
+        "sha256": "61a4881c6aa951b79bb496790a606fe239396a4bdb236e4a4c146517878f638c",
+        "lines": 16,
         "imports": [
+          "./CheckpointRepository.js",
+          "../extensions/ShapeViews.js",
           "../application/RegisteredShapeFactory.js",
           "../application/EditorSession.js",
           "../cli/RegisteredCommandDispatcher.js",
@@ -4714,12 +4801,14 @@
         "functions": [
           {
             "name": "createEditor",
-            "line": 9,
+            "line": 11,
             "complexity": 1
           }
         ],
         "forwardingOnly": false,
         "dependencies": [
+          "src/composition/CheckpointRepository.ts",
+          "src/extensions/ShapeViews.ts",
           "src/application/RegisteredShapeFactory.ts",
           "src/application/EditorSession.ts",
           "src/cli/RegisteredCommandDispatcher.ts",
@@ -4729,7 +4818,7 @@
           "src/composition/createDefaultFramework.ts"
         ],
         "fanIn": 1,
-        "fanOut": 7
+        "fanOut": 9
       },
       {
         "path": "src/composition/plugins/PluginActivation.ts",
@@ -5082,7 +5171,7 @@
         "path": "src/composition/startCli.ts",
         "role": "assembly",
         "responsibility": "Construct and connect dependencies: createCommandEditor, runCli",
-        "sha256": "594498ecd9c429204c4f7ffea789cf54bd8ba93db5d81e111e4b53ff7a840411",
+        "sha256": "83728eb2a2eabec25690539cff2c7df2cc38d3cd645deffa5db0fc8a7e360d6b",
         "lines": 30,
         "imports": [
           "node:stream",
@@ -5493,7 +5582,7 @@
           "src/domain/AttributeValidator.ts",
           "src/domain/ShapeState.ts"
         ],
-        "fanIn": 29,
+        "fanIn": 30,
         "fanOut": 4
       },
       {
@@ -5691,7 +5780,7 @@
           "src/domain/TreeAccess.ts",
           "src/domain/GroupTreeAccess.ts"
         ],
-        "fanIn": 21,
+        "fanIn": 24,
         "fanOut": 6
       },
       {
@@ -5981,6 +6070,64 @@
         "fanOut": 1
       },
       {
+        "path": "src/extensions/DocumentSnapshot.ts",
+        "role": "core",
+        "responsibility": "Kernel policy/service/contract: DocumentSnapshot",
+        "sha256": "46b629f47f98e7b49be0800501282c60cc55d7595b8648ec431c2dfd2ca84be4",
+        "lines": 39,
+        "imports": [
+          "../domain/Shape.js",
+          "../domain/SvgDocument.js"
+        ],
+        "exports": [
+          "DocumentSnapshot"
+        ],
+        "functions": [
+          {
+            "name": "<anonymous>",
+            "line": 9,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 10,
+            "complexity": 1
+          },
+          {
+            "name": "same",
+            "line": 16,
+            "complexity": 3
+          },
+          {
+            "name": "record",
+            "line": 24,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 25,
+            "complexity": 1
+          },
+          {
+            "name": "entries",
+            "line": 34,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 35,
+            "complexity": 1
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/domain/Shape.ts",
+          "src/domain/SvgDocument.ts"
+        ],
+        "fanIn": 5,
+        "fanOut": 2
+      },
+      {
         "path": "src/extensions/ExtensionRegistry.ts",
         "role": "core",
         "responsibility": "Kernel policy/service/contract: ExtensionRegistry",
@@ -6019,7 +6166,7 @@
         ],
         "forwardingOnly": false,
         "dependencies": [],
-        "fanIn": 8,
+        "fanIn": 9,
         "fanOut": 0
       },
       {
@@ -6148,16 +6295,19 @@
           "src/domain/Shape.ts",
           "src/extensions/ShapeProvider.ts"
         ],
-        "fanIn": 4,
+        "fanIn": 5,
         "fanOut": 2
       },
       {
         "path": "src/extensions/ShapeViews.ts",
         "role": "core",
         "responsibility": "Kernel policy/service/contract: ShapeViews",
-        "sha256": "b6b6ba4eb01ddb97643b323d0dc376c759f00cadc4777539aa09204f25e8bf7d",
-        "lines": 67,
+        "sha256": "76d56888fda628dd448c40dd34dbc19c1a6618f207621cff5e151af39143499e",
+        "lines": 76,
         "imports": [
+          "./DocumentSnapshot.js",
+          "./ShapeText.js",
+          "../domain/SvgDocument.js",
           "../domain/Shape.js",
           "../domain/Group.js",
           "../application/RegisteredShapeFactory.js",
@@ -6169,87 +6319,101 @@
         "functions": [
           {
             "name": "<anonymous>",
-            "line": 7,
-            "complexity": 1
-          },
-          {
-            "name": "label",
             "line": 10,
             "complexity": 1
           },
           {
+            "name": "label",
+            "line": 13,
+            "complexity": 1
+          },
+          {
             "name": "present",
-            "line": 14,
+            "line": 17,
             "complexity": 3
           },
           {
             "name": "summary",
-            "line": 23,
+            "line": 26,
             "complexity": 3
           },
           {
             "name": "<anonymous>",
-            "line": 24,
+            "line": 27,
             "complexity": 1
           },
           {
             "name": "show",
-            "line": 28,
+            "line": 31,
             "complexity": 4
           },
           {
-            "name": "describeEdit",
-            "line": 38,
-            "complexity": 2
+            "name": "snapshot",
+            "line": 41,
+            "complexity": 1
           },
           {
-            "name": "position",
+            "name": "<anonymous>",
             "line": 42,
             "complexity": 1
           },
           {
+            "name": "describeEdit",
+            "line": 47,
+            "complexity": 2
+          },
+          {
+            "name": "position",
+            "line": 51,
+            "complexity": 1
+          },
+          {
             "name": "attribute",
-            "line": 46,
+            "line": 55,
             "complexity": 4
           },
           {
             "name": "details",
-            "line": 55,
+            "line": 64,
             "complexity": 2
           },
           {
             "name": "<anonymous>",
-            "line": 56,
+            "line": 65,
             "complexity": 1
           },
           {
             "name": "styles",
-            "line": 61,
+            "line": 70,
             "complexity": 1
           },
           {
             "name": "<anonymous>",
-            "line": 62,
+            "line": 71,
             "complexity": 4
           }
         ],
         "forwardingOnly": false,
         "dependencies": [
+          "src/extensions/DocumentSnapshot.ts",
+          "src/extensions/ShapeText.ts",
+          "src/domain/SvgDocument.ts",
           "src/domain/Shape.ts",
           "src/domain/Group.ts",
           "src/application/RegisteredShapeFactory.ts",
           "src/extensions/ShapeProvider.ts"
         ],
-        "fanIn": 3,
-        "fanOut": 4
+        "fanIn": 5,
+        "fanOut": 7
       },
       {
         "path": "src/extensions/TreeDecorator.ts",
         "role": "core",
         "responsibility": "Kernel policy/service/contract: TreeNodeContext, TreeDecorator",
-        "sha256": "ecde5a55563c5a9ea668f66e3e1def7ec7eaf2e71f00e100a8d76106470c74d0",
-        "lines": 12,
+        "sha256": "844a00264524a683c4a25c0cdb113697c764d7c4c6a7448a173b8113917623cc",
+        "lines": 17,
         "imports": [
+          "./DocumentSnapshot.js",
           "../domain/Shape.js",
           "../domain/SvgDocument.js"
         ],
@@ -6260,18 +6424,19 @@
         "functions": [],
         "forwardingOnly": false,
         "dependencies": [
+          "src/extensions/DocumentSnapshot.ts",
           "src/domain/Shape.ts",
           "src/domain/SvgDocument.ts"
         ],
-        "fanIn": 3,
-        "fanOut": 2
+        "fanIn": 4,
+        "fanOut": 3
       },
       {
         "path": "src/extensions/index.ts",
         "role": "core",
         "responsibility": "Public extension SDK exports",
-        "sha256": "fef9c1a7b20b2885ab59c80dfad6e66fadfc7fe6f90b86ca0a7c1edb197eceda",
-        "lines": 42,
+        "sha256": "b5d536aca90248a975328f452fed4c90ea7640826f52d740589b0e1785d98de9",
+        "lines": 43,
         "imports": [
           "../domain/Shape.js",
           "../domain/ShapeVisitor.js",
@@ -6309,7 +6474,8 @@
           "./ShapeViews.js",
           "./ShapeRegistry.js",
           "../domain/primitives/Rect.js",
-          "../domain/primitives/Text.js"
+          "../domain/primitives/Text.js",
+          "./DocumentSnapshot.js"
         ],
         "exports": [],
         "functions": [],
@@ -6351,10 +6517,11 @@
           "src/extensions/ShapeViews.ts",
           "src/extensions/ShapeRegistry.ts",
           "src/domain/primitives/Rect.ts",
-          "src/domain/primitives/Text.ts"
+          "src/domain/primitives/Text.ts",
+          "src/extensions/DocumentSnapshot.ts"
         ],
         "fanIn": 23,
-        "fanOut": 37
+        "fanOut": 38
       },
       {
         "path": "src/infrastructure/FileDocumentRepository.ts",
@@ -8191,20 +8358,20 @@
       }
     ],
     "summary": {
-      "files": 122,
-      "lines": 3979,
-      "functions": 474,
-      "totalComplexity": 968,
+      "files": 124,
+      "lines": 4114,
+      "functions": 493,
+      "totalComplexity": 996,
       "maxComplexity": 21,
-      "dependencyEdges": 300,
+      "dependencyEdges": 317,
       "linesByRole": {
-        "core": 2440,
-        "assembly": 508,
+        "core": 2514,
+        "assembly": 569,
         "plugin": 1031
       },
       "roles": {
-        "core": 58,
-        "assembly": 38,
+        "core": 59,
+        "assembly": 39,
         "plugin": 26
       }
     }

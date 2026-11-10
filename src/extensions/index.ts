@@ -40,3 +40,4 @@ export type { SvgElementInput } from "./ShapeProvider.js";
 export { ShapeRegistry } from "./ShapeRegistry.js";
 export { Rect } from "../domain/primitives/Rect.js";
 export { Text } from "../domain/primitives/Text.js";
+export { DocumentSnapshot } from "./DocumentSnapshot.js";

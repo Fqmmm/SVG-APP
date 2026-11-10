@@ -55,6 +55,15 @@ npm run check:boundaries
 npm run metrics:check
 ```
 
-测试包含原有回归、仅导入 SDK 的 tile、文本往返、复合图形、类插件示例、事务回滚、错误优先级、注册冲突、帮助文本比较、违规依赖反例和 metrics 过期反例。当前 CLI 共 318 项测试通过。
+测试包含原有回归、仅导入 SDK 的 tile、文本往返、复合图形、类插件示例、事务回滚、错误优先级、注册冲突、帮助文本比较、违规依赖反例和 metrics 过期反例。检查点接口准备后，CLI 共 328 项测试通过。
 
 依赖检查允许插件导入其他插件或公开 SDK，拒绝它们导入装配层和私有内核模块；内核只依赖内核。该检查针对 CLI TypeScript 源文件中的静态 import 与转导出。指标及模块依赖图见 [CLI metrics](../../docs/metrics/README.md)。
+
+
+## 内容检查点准备
+
+DocumentSnapshot 比较几何、样式、注册 Provider 的文本、父级与子顺序。ShapeViews 负责从 Provider 投影内容；TreeNodeContext 提供同次查询共享的懒快照。
+
+TreeDecorator 可选的 checkpoint 由装配层 CheckpointRepository 在成功读取或保存后通知。回调异常逐个报告并隔离，健康回调继续执行；成功 I/O 的路径与屏障记账不受影响。无监听者时不构建额外快照。createEditor 接收报告出口，CLI 传入自身输出通道。
+
+此准备提交不含 modified-star 包、标签配置或标签测试入口。它确实补改了渲染器与接口，不能称为首次需求下的零改动；后续插件接入以此为基线。见 [ADR 006](adr/006-content-checkpoints.md)。

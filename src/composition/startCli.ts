@@ -9,11 +9,11 @@ export async function createCommandEditor(options: { configPath?: string; report
   const loader = new PluginLoader(framework, options.report);
   if (options.configPath !== undefined) {
     await loader.loadConfiguration(options.configPath);
-    return createEditor(framework);
+    return createEditor(framework, options.report);
   }
   const { registerCodePlugins } = await import("./codePlugins.js");
   await registerCodePlugins(loader);
-  return createEditor(framework);
+  return createEditor(framework, options.report);
 }
 
 export async function runCli(options: { args: readonly string[]; input: Readable; output: Writable }): Promise<void> {

@@ -1,3 +1,6 @@
+import { DocumentSnapshot } from "./DocumentSnapshot.js";
+import { elementText } from "./ShapeText.js";
+import type { SvgDocument } from "../domain/SvgDocument.js";
 import type { Shape } from "../domain/Shape.js";
 import type { Group } from "../domain/Group.js";
 import type { RegisteredShapeFactory } from "../application/RegisteredShapeFactory.js";
@@ -33,6 +36,12 @@ export class ShapeViews {
       }
     }
     return lines.join("\n");
+  }
+
+  snapshot(document: SvgDocument): DocumentSnapshot {
+    return new DocumentSnapshot(document, shape => {
+      return elementText(this.factory.provider(shape.type), shape);
+    });
   }
 
   describeEdit(change: ShapeEditFeedback, fallback: string): string {
