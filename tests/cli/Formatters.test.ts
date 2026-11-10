@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { ShapeFormatter } from "../../src/cli/ShapeFormatter.js";
-import { TreeFormatter } from "../../src/cli/TreeFormatter.js";
+import { ShapeFormatter } from "../../src/composition/defaults/ShapeFormatter.js";
+import { TreeFormatter } from "../../src/composition/defaults/TreeFormatter.js";
 import { SvgDocument } from "../../src/domain/SvgDocument.js";
-import { Rect } from "../../src/domain/Rect.js";
-import { Circle } from "../../src/domain/Circle.js";
-import { Ellipse } from "../../src/domain/Ellipse.js";
-import { Line } from "../../src/domain/Line.js";
-import { Text } from "../../src/domain/Text.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
+import { Circle } from "../../src/domain/primitives/Circle.js";
+import { Ellipse } from "../../src/domain/primitives/Ellipse.js";
+import { Line } from "../../src/domain/primitives/Line.js";
+import { Text } from "../../src/domain/primitives/Text.js";
 import { Group } from "../../src/domain/Group.js";
 
 test("shape summaries use built-in presentations for all six types and only show explicit styles", () => {

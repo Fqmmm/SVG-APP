@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { pathToFileURL } from "node:url";
 import { ShapeDefinition } from "../../src/extensions/index.js";
 import type { ShapeProvider } from "../../src/extensions/index.js";
-import { Text } from "../../src/domain/Text.js";
+import { Text } from "../../src/domain/primitives/Text.js";
 import { Framework } from "../../src/extensions/index.js";
 import { createDefaultFramework } from "../../src/composition/createDefaultFramework.js";
 import { createEditor } from "../../src/composition/createEditor.js";

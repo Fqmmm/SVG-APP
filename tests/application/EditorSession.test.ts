@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { EditorSession } from "../../src/application/EditorSession.js";
-import { CreateCommand } from "../../src/application/CreateCommand.js";
-import { MoveCommand } from "../../src/application/MoveCommand.js";
-import { Rect } from "../../src/domain/Rect.js";
+import { EditorSession } from "../../src/application/session/EditorSession.js";
+import { CreateCommand } from "../../src/application/commands/shapes/CreateCommand.js";
+import { MoveCommand } from "../../src/application/commands/shapes/MoveCommand.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
 
 test("session rejects document access and editing before initialization", () => {
   const session = new EditorSession();

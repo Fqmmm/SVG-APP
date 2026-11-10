@@ -6,7 +6,7 @@
 
 采用四个具名扩展接口，注册表属于框架实例。默认图形和命令移到 `plugins/builtin`，由 `composition` 显式注册类实例。插件通过 `extensions/index.ts` 访问公开契约、模型和编辑服务。核心调度器根据注册结果调用插件。
 
-旧模块路径保留纯转导出，默认构造集中在 `composition/compat`。机械检查限制转导出文件的 AST 结构，拒绝在旧路径加入执行代码。保留现有调用方仍使用的构造入口，删除无运行时用途的 Attribute/PositionFormatter。
+目录整理后，旧模块路径的纯转发文件已移除。默认构造入口集中在 `composition/defaults`，内置命令和图形分别放在 `plugins/builtin/commands` 与 `plugins/builtin/shapes`。依赖检查不再需要为旧路径设置装配身份例外；内核目录里的文件统一按内核规则检查。
 
 metrics 计入所有源文件和转导出，区分内核、插件与装配，同时提供分类行数和具名模块图。依赖检查拒绝内核访问插件或装配，也拒绝插件访问私有内核与装配模块。
 

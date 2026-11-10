@@ -3,9 +3,9 @@ import { test } from "node:test";
 import { mkdtempSync, readFileSync, writeFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { FileDocumentRepository } from "../../src/infrastructure/FileDocumentRepository.js";
+import { FileDocumentRepository } from "../../src/composition/defaults/FileDocumentRepository.js";
 import { SvgDocument } from "../../src/domain/SvgDocument.js";
-import { Text } from "../../src/domain/Text.js";
+import { Text } from "../../src/domain/primitives/Text.js";
 
 test("file repository writes UTF-8 SVG and reads it back from a path with spaces", () => {
   const directory = mkdtempSync(join(tmpdir(), "svg-app-"));

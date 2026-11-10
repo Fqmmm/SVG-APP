@@ -1,5 +1,5 @@
-import type { EditCommand } from "../application/EditCommand.js";
-import type { EditorSession } from "../application/EditorSession.js";
+import type { EditCommand } from "../application/commands/EditCommand.js";
+import type { EditorSession } from "../application/session/EditorSession.js";
 import { CommandArguments } from "./CommandArguments.js";
 
 export class EditFeedback {

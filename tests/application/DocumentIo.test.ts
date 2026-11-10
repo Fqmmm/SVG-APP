@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { EditorSession } from "../../src/application/EditorSession.js";
-import type { DocumentRepository } from "../../src/application/DocumentRepository.js";
-import type { DocumentReadResult } from "../../src/application/DocumentReadResult.js";
+import { EditorSession } from "../../src/application/session/EditorSession.js";
+import type { DocumentRepository } from "../../src/application/documents/DocumentRepository.js";
+import type { DocumentReadResult } from "../../src/application/documents/DocumentReadResult.js";
 import { SvgDocument } from "../../src/domain/SvgDocument.js";
-import { Rect } from "../../src/domain/Rect.js";
-import { CreateCommand } from "../../src/application/CreateCommand.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
+import { CreateCommand } from "../../src/application/commands/shapes/CreateCommand.js";
 
 class MemoryRepository implements DocumentRepository {
   failure = false;

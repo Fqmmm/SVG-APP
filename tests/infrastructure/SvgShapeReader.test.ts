@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { Text } from "../../src/domain/Text.js";
-import { ShapeFactory } from "../../src/application/ShapeFactory.js";
-import { SvgShapeReader } from "../../src/infrastructure/SvgShapeReader.js";
+import { Text } from "../../src/domain/primitives/Text.js";
+import { ShapeFactory } from "../../src/composition/defaults/ShapeFactory.js";
+import { SvgShapeReader } from "../../src/infrastructure/svg/SvgShapeReader.js";
 
 const factory = new ShapeFactory();
 

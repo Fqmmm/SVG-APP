@@ -5,10 +5,10 @@ import { fileURLToPath } from "node:url";
 import { mkdtempSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { EditorSession } from "../../src/application/EditorSession.js";
-import { CommandDispatcher } from "../../src/cli/CommandDispatcher.js";
-import { FileDocumentRepository } from "../../src/infrastructure/FileDocumentRepository.js";
-import { SvgParser } from "../../src/infrastructure/SvgParser.js";
+import { EditorSession } from "../../src/application/session/EditorSession.js";
+import { CommandDispatcher } from "../../src/composition/defaults/CommandDispatcher.js";
+import { FileDocumentRepository } from "../../src/composition/defaults/FileDocumentRepository.js";
+import { SvgParser } from "../../src/composition/defaults/SvgParser.js";
 
 test("canvas query preserves history while resize is a document barrier", () => {
   const dispatcher = new CommandDispatcher();

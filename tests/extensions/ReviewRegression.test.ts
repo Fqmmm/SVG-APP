@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { Framework, ShapeDefinition, ShapeViews, SvgDocument } from "../../src/extensions/index.js";
-import { Text } from "../../src/domain/Text.js";
+import { Text } from "../../src/domain/primitives/Text.js";
 import { createDefaultFramework } from "../../src/composition/createDefaultFramework.js";
-import { RegisteredShapeFactory } from "../../src/application/RegisteredShapeFactory.js";
-import { RegisteredSvgParser } from "../../src/infrastructure/RegisteredSvgParser.js";
-import { RegisteredSvgSerializer } from "../../src/infrastructure/RegisteredSvgSerializer.js";
+import { RegisteredShapeFactory } from "../../src/application/shapes/RegisteredShapeFactory.js";
+import { RegisteredSvgParser } from "../../src/infrastructure/svg/RegisteredSvgParser.js";
+import { RegisteredSvgSerializer } from "../../src/infrastructure/svg/RegisteredSvgSerializer.js";
 
 class Caption extends Text {
   override get type(): string {

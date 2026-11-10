@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { GroupCommand } from "../../src/application/GroupCommand.js";
-import { UngroupCommand } from "../../src/application/UngroupCommand.js";
-import { CommandHistory } from "../../src/application/CommandHistory.js";
+import { GroupCommand } from "../../src/application/commands/structure/GroupCommand.js";
+import { UngroupCommand } from "../../src/application/commands/structure/UngroupCommand.js";
+import { CommandHistory } from "../../src/application/session/CommandHistory.js";
 import { SvgDocument } from "../../src/domain/SvgDocument.js";
 import { Group } from "../../src/domain/Group.js";
-import { Rect } from "../../src/domain/Rect.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
 
 test("same-parent group follows tree order and restores original indexes in one undo", () => {
   const [a, b, c, d] = ["a", "b", "c", "d"].map(id => new Rect(id, 1, 2, 3, 4));

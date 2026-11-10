@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { CommandDispatcher } from "../../src/cli/CommandDispatcher.js";
-import { EditorSession } from "../../src/application/EditorSession.js";
+import { CommandDispatcher } from "../../src/composition/defaults/CommandDispatcher.js";
+import { EditorSession } from "../../src/application/session/EditorSession.js";
 
 test("structure command syntax and help are available with document-first errors", () => {
   const dispatcher = new CommandDispatcher();

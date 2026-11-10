@@ -4,18 +4,18 @@
 
 ## 模块边界
 
-`src/extensions/index.ts` 是插件访问内核的公开入口。`domain` 保存文档、图形基类、容器、共享 Rect/Text 模型和状态快照，`application` 保存编辑事务与会话。`cli/Registered*` 和 `infrastructure/Registered*` 通过注入的依赖工作。
+`src/extensions/index.ts` 是插件访问内核的公开入口。`domain` 保存文档、图形基类、容器、共享基础图形模型（Rect、Circle、Ellipse、Line、Text）和状态快照，`application` 按 session、commands、shapes 和 documents 分组，分别保存会话历史、编辑操作、图形创建服务和文档读写接口。`cli/Registered*` 和 `infrastructure/svg/Registered*` 和文件仓库 通过注入的依赖工作。
 
 `plugins/builtin` 提供默认图形和命令。每种图形的创建、帮助、展示与文本访问集中在 `providers.ts` 对应的类中；命令由实现 `Command` 的 `BoundCommand` 和 `HelpCommand` 提供。`composition/createDefaultFramework.ts` 注册这些实例，`createEditor.ts` 把同一个注册表接入命令、创建及 SVG 读写。
 
-旧模块路径只做转导出，默认构造逻辑集中在 `composition/compat`。依赖检查以 AST 限制旧入口只能转导出，防止它们重新长出业务逻辑。默认文件仓库的解析器和序列化器共享同一图形工厂。已删除没有运行时用途的 `AttributeFormatter`、`PositionFormatter` 门面，调用方直接使用 `ShapeViews`。
+源码目录与阅读顺序见 [源码目录说明](../../src/README.md)。旧模块路径的纯转发文件已移除；默认构造入口集中在 `composition/defaults`，调用方直接引用实际实现。默认文件仓库的解析器与序列化器使用同一图形工厂。
 
 ## 扩展点清单
 
 | 扩展点 | 契约与职责 | 内核调用位置 | 已有类实现及缺省行为 | 违规与失败处理 |
 |---|---|---|---|---|
-| `ShapeProvider` | schema、创建、展示、文本存储策略、SVG 映射与复合图形读回 | `RegisteredShapeFactory.create/fromInput/forSvg`；`ShapeViews.present/describeEdit`（Provider 回调入口）；内置插件 `ShapeCommands.create/set` 调用 ShapeViews.describeEdit；`RegisteredSvgParser.readShape`；`RegisteredSvgSerializer.element` | `plugins/builtin/providers.ts` 的六个 Provider 类及 `plugins/box/BoxProvider.ts`；空注册表不支持任何类型 | schema 与文本访问器不一致报 `invalid shape text contract`；错误类型/id 报 `invalid shape provider result`；遗漏或重排子图形报 `invalid shape provider children`；SVG 映射歧义时报 `ambiguous SVG shape provider` |
-| `Command` | 命令名称、帮助、文档前置条件和执行回调 | `RegisteredCommandDispatcher.dispatch` | `plugins/builtin/commands.ts` 的 `BoundCommand`、`HelpCommand`，以及独立 stats/dir 包；未知命令拒绝执行；帮助来自注册结果 | 重名报 `duplicate registration`，空名称报 `invalid registration name`；缺少文档时先报原有文档错误；执行异常由 REPL 转成 `error:` 输出 |
+| `ShapeProvider` | schema、创建、展示、文本存储策略、SVG 映射与复合图形读回 | `RegisteredShapeFactory.create/fromInput/forSvg`；`ShapeViews.present/describeEdit`（Provider 回调入口）；内置插件 `ShapeCommands.create/set` 调用 ShapeViews.describeEdit；`RegisteredSvgParser.readShape`；`RegisteredSvgSerializer.element` | `plugins/builtin/shapes/providers.ts` 的六个 Provider 类及 `plugins/box/BoxProvider.ts`；空注册表不支持任何类型 | schema 与文本访问器不一致报 `invalid shape text contract`；错误类型/id 报 `invalid shape provider result`；遗漏或重排子图形报 `invalid shape provider children`；SVG 映射歧义时报 `ambiguous SVG shape provider` |
+| `Command` | 命令名称、帮助、文档前置条件和执行回调 | `RegisteredCommandDispatcher.dispatch` | `plugins/builtin/commands/index.ts` 的 `BoundCommand`、`HelpCommand`，以及独立 stats/dir 包；未知命令拒绝执行；帮助来自注册结果 | 重名报 `duplicate registration`，空名称报 `invalid registration name`；缺少文档时先报原有文档错误；执行异常由 REPL 转成 `error:` 输出 |
 | `TreeDecorator` | 为画布或图形返回单行标签；上下文可含不可变 snapshot，checkpoint 接收成功读写基线 | `RegisteredTreeFormatter.labels`（渲染）；`CheckpointRepository.publish`（成功读写通知） | `plugins/examples/ShapeTypeDecorator.ts`、`plugins/box/BoxTypeDecorator.ts`、`plugins/modified-star/ModifiedStarDecorator.ts`；只调用 `createDefaultFramework()` 时不注册标签，保持原树输出 | 重名、空名称由注册表拒绝；换行报 `tree decorator must return a single line`；渲染回调异常由 REPL 报错；checkpoint 异常逐个报告 `error: checkpoint failed: <name>`，继续通知其他标签，不反转已完成 I/O |
 | `AttributeHandler` | 判断目标属性是否适用，通过图形公开方法修改目标子树 | `SetCommand.changeShape` → `AttributeRouter.apply` | `plugins/examples/StyleAttributeHandler.ts`、`plugins/box/BoxAttributes.ts`；只调用 `createDefaultFramework()` 时不注册处理器，回退原有属性白名单 | 多个命中报 `ambiguous attribute handler`，不执行处理器；执行失败恢复目标子树快照，保留 undo/redo 历史；未知属性仍由原白名单报错 |
 

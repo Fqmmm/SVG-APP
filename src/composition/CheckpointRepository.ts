@@ -1,5 +1,5 @@
-import type { DocumentRepository } from "../application/DocumentRepository.js";
-import type { DocumentReadResult } from "../application/DocumentReadResult.js";
+import type { DocumentRepository } from "../application/documents/DocumentRepository.js";
+import type { DocumentReadResult } from "../application/documents/DocumentReadResult.js";
 import type { SvgDocument } from "../domain/SvgDocument.js";
 import type { ShapeViews } from "../extensions/ShapeViews.js";
 import type { TreeDecorator } from "../extensions/TreeDecorator.js";

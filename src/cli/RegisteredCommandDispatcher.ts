@@ -1,4 +1,4 @@
-import type { EditorSession } from "../application/EditorSession.js";
+import type { EditorSession } from "../application/session/EditorSession.js";
 import type { Framework } from "../extensions/Framework.js";
 import { Tokenizer } from "./Tokenizer.js";
 

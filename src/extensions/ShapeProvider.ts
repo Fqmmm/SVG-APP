@@ -1,4 +1,4 @@
-import type { ShapeDefinition } from "../application/ShapeDefinition.js";
+import type { ShapeDefinition } from "../application/shapes/ShapeDefinition.js";
 import type { Shape } from "../domain/Shape.js";
 
 export interface ShapePresentation {

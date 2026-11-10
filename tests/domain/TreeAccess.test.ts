@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { Group } from "../../src/domain/Group.js";
-import { Rect } from "../../src/domain/Rect.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
 import type { Shape } from "../../src/domain/Shape.js";
 import { SvgDocument } from "../../src/domain/SvgDocument.js";
 import * as treeAccess from "../../src/domain/TreeAccess.js";

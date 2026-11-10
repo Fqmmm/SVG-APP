@@ -3,7 +3,7 @@ import { elementText } from "./ShapeText.js";
 import type { SvgDocument } from "../domain/SvgDocument.js";
 import type { Shape } from "../domain/Shape.js";
 import type { Group } from "../domain/Group.js";
-import type { RegisteredShapeFactory } from "../application/RegisteredShapeFactory.js";
+import type { RegisteredShapeFactory } from "../application/shapes/RegisteredShapeFactory.js";
 import type { ShapeEditFeedback, ShapePresentation } from "./ShapeProvider.js";
 
 export class ShapeViews {

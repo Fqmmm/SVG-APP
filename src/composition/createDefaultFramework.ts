@@ -1,6 +1,6 @@
 import { Framework } from "../extensions/Framework.js";
-import { registerBuiltinShapes } from "../plugins/builtin/shapes.js";
-import { registerBuiltinCommands } from "../plugins/builtin/commands.js";
+import { registerBuiltinShapes } from "../plugins/builtin/shapes/index.js";
+import { registerBuiltinCommands } from "../plugins/builtin/commands/index.js";
 
 export function createDefaultFramework(): Framework {
   const framework = new Framework();

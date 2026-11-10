@@ -1,70 +1,92 @@
 @startuml
 title framework-worktree - CLI module dependencies
 left to right direction
-component "src/application\ncore" as module0
-component "src/application\nassembly" as module1
-component "src/cli\ncore" as module2
-component "src/cli\nassembly" as module3
-component "src/composition\nassembly" as module4
-component "src/composition/compat\nassembly" as module5
-component "src/composition/plugins\nassembly" as module6
-component "src/domain\ncore" as module7
-component "src/domain\nassembly" as module8
-component "src/domain/primitives\ncore" as module9
-component "src/extensions\ncore" as module10
-component "src/extensions/index.ts\npublic SDK" as module11
-component "src/infrastructure\nassembly" as module12
-component "src/infrastructure\ncore" as module13
-component "src/main.ts\nassembly" as module14
-component "src/plugins/box\nplugin" as module15
-component "src/plugins/builtin\nplugin" as module16
-component "src/plugins/builtin/shapes\nplugin" as module17
-component "src/plugins/dir\nplugin" as module18
-component "src/plugins/examples\nplugin" as module19
-component "src/plugins/modified-star\nplugin" as module20
-component "src/plugins/stats\nplugin" as module21
-module0 --> module7 : 33
-module0 --> module10 : 4
-module1 --> module5 : 1
-module3 --> module5 : 4
-module3 --> module16 : 4
-module2 --> module0 : 3
-module2 --> module10 : 5
-module2 --> module7 : 2
-module4 --> module0 : 4
-module4 --> module7 : 1
-module4 --> module10 : 6
-module4 --> module6 : 3
-module5 --> module0 : 2
-module5 --> module4 : 2
-module5 --> module2 : 3
-module5 --> module13 : 5
-module5 --> module10 : 1
-module4 --> module16 : 2
-module4 --> module2 : 2
-module4 --> module13 : 3
-module6 --> module10 : 5
-module8 --> module17 : 3
-module8 --> module9 : 2
-module9 --> module7 : 4
-module10 --> module7 : 11
-module10 --> module0 : 3
-module11 --> module7 : 7
-module11 --> module0 : 16
-module11 --> module2 : 3
+component "src/application/commands\ncore" as module0
+component "src/application/commands/shapes\ncore" as module1
+component "src/application/commands/structure\ncore" as module2
+component "src/application/documents\ncore" as module3
+component "src/application/session\ncore" as module4
+component "src/application/shapes\ncore" as module5
+component "src/cli\ncore" as module6
+component "src/composition\nassembly" as module7
+component "src/composition/defaults\nassembly" as module8
+component "src/composition/plugins\nassembly" as module9
+component "src/domain\ncore" as module10
+component "src/domain/primitives\ncore" as module11
+component "src/extensions\ncore" as module12
+component "src/extensions/index.ts\npublic SDK" as module13
+component "src/infrastructure\ncore" as module14
+component "src/infrastructure/svg\ncore" as module15
+component "src/infrastructure/xml\ncore" as module16
+component "src/main.ts\nassembly" as module17
+component "src/plugins/box\nplugin" as module18
+component "src/plugins/builtin/commands\nplugin" as module19
+component "src/plugins/builtin/shapes\nplugin" as module20
+component "src/plugins/dir\nplugin" as module21
+component "src/plugins/examples\nplugin" as module22
+component "src/plugins/modified-star\nplugin" as module23
+component "src/plugins/stats\nplugin" as module24
+module0 --> module10 : 1
+module1 --> module0 : 3
+module1 --> module10 : 12
+module1 --> module12 : 1
+module2 --> module10 : 13
+module2 --> module0 : 1
+module3 --> module10 : 2
+module4 --> module10 : 2
+module4 --> module0 : 2
+module4 --> module3 : 2
+module5 --> module10 : 3
+module5 --> module12 : 3
+module6 --> module0 : 1
+module6 --> module4 : 2
+module6 --> module12 : 5
+module6 --> module10 : 2
+module7 --> module3 : 2
+module7 --> module10 : 1
+module7 --> module12 : 6
+module7 --> module9 : 3
+module7 --> module20 : 1
+module7 --> module19 : 1
+module7 --> module5 : 1
+module7 --> module4 : 1
+module7 --> module6 : 2
+module7 --> module14 : 1
+module7 --> module15 : 2
+module8 --> module4 : 1
+module8 --> module7 : 2
+module8 --> module6 : 3
+module8 --> module15 : 4
+module8 --> module14 : 1
+module8 --> module5 : 1
+module8 --> module12 : 1
+module9 --> module12 : 5
 module11 --> module10 : 10
-module11 --> module9 : 2
-module12 --> module5 : 3
-module13 --> module0 : 6
-module13 --> module7 : 10
-module13 --> module10 : 3
-module14 --> module4 : 1
-module15 --> module11 : 5
-module16 --> module11 : 7
-module16 --> module17 : 5
-module17 --> module11 : 5
-module18 --> module11 : 2
-module19 --> module11 : 2
-module20 --> module11 : 2
-module21 --> module11 : 2
+module12 --> module10 : 11
+module12 --> module4 : 1
+module12 --> module5 : 2
+module13 --> module10 : 7
+module13 --> module4 : 1
+module13 --> module5 : 4
+module13 --> module0 : 1
+module13 --> module1 : 5
+module13 --> module2 : 5
+module13 --> module6 : 3
+module13 --> module12 : 10
+module13 --> module11 : 5
+module14 --> module3 : 2
+module14 --> module10 : 1
+module15 --> module10 : 9
+module15 --> module5 : 3
+module15 --> module3 : 1
+module15 --> module16 : 3
+module15 --> module12 : 3
+module17 --> module7 : 1
+module18 --> module13 : 5
+module19 --> module13 : 5
+module20 --> module13 : 2
+module21 --> module13 : 2
+module22 --> module13 : 2
+module23 --> module13 : 2
+module24 --> module13 : 2
 @enduml

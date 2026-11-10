@@ -4,12 +4,12 @@ import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { Framework, Group, ShapeDefinition, SvgDocument } from "../../src/extensions/index.js";
-import { Text } from "../../src/domain/Text.js";
+import { Text } from "../../src/domain/primitives/Text.js";
 import { createEditor } from "../../src/composition/createEditor.js";
 import { createDefaultFramework } from "../../src/composition/createDefaultFramework.js";
-import { RegisteredShapeFactory } from "../../src/application/RegisteredShapeFactory.js";
-import { RegisteredSvgParser } from "../../src/infrastructure/RegisteredSvgParser.js";
-import { RegisteredSvgSerializer } from "../../src/infrastructure/RegisteredSvgSerializer.js";
+import { RegisteredShapeFactory } from "../../src/application/shapes/RegisteredShapeFactory.js";
+import { RegisteredSvgParser } from "../../src/infrastructure/svg/RegisteredSvgParser.js";
+import { RegisteredSvgSerializer } from "../../src/infrastructure/svg/RegisteredSvgSerializer.js";
 
 const wrap = (body: string): string => '<svg xmlns="http://www.w3.org/2000/svg">' + body + '</svg>';
 

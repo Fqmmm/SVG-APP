@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { Rect } from "../../src/domain/Rect.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
 
 test("Rect moves positions while preserving dimensions and styles", () => {
   const shape = new Rect("r1", 10, 20, 100, 50);

@@ -1,8 +1,8 @@
 import { execFileSync } from "node:child_process";
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
@@ -15,6 +15,9 @@ const baseline = git("rev-parse", process.argv[2] ?? "8f3aeb0");
 const temporary = mkdtempSync(join(tmpdir(), "svg-label-stages-"));
 const worktree = join(temporary, "worktree");
 const preparation = [
+  "src/application", "src/infrastructure",
+  "src/domain/primitives/Circle.ts", "src/domain/primitives/Ellipse.ts", "src/domain/primitives/Line.ts",
+  "src/composition/defaults",
   "src/cli/RegisteredTreeFormatter.ts", "src/composition/CheckpointRepository.ts",
   "src/composition/createEditor.ts", "src/composition/startCli.ts",
   "src/extensions/DocumentSnapshot.ts", "src/extensions/ShapeViews.ts",
@@ -42,6 +45,28 @@ function copy(paths) {
   for (const path of paths) {
     cpSync(join(root, path), join(worktree, path), { recursive: true });
   }
+}
+
+// Historical worktrees still have the old flat import paths. Bridge them only
+// inside that temporary checkout so staged verification can use the current layout.
+function bridgeHistoricalImports(directory) {
+  const sourceRoot = join(root, directory);
+  function visit(folder) {
+    for (const entry of readdirSync(folder, { withFileTypes: true })) {
+      const source = join(folder, entry.name);
+      if (entry.isDirectory()) {
+        visit(source);
+      } else if (entry.name.endsWith(".ts") && folder !== sourceRoot) {
+        const previous = join(worktree, directory, entry.name);
+        if (existsSync(previous)) {
+          const current = join(worktree, relative(root, source));
+          const module = relative(dirname(previous), current).replaceAll("\\", "/").replace(/\.ts$/u, ".js");
+          writeFileSync(previous, 'export * from "./' + module + '";\n');
+        }
+      }
+    }
+  }
+  visit(sourceRoot);
 }
 
 function command(args) {
@@ -76,6 +101,8 @@ try {
   // A real dependency copy avoids junctions that could escape cleanup boundaries on Windows.
   cpSync(join(root, "node_modules"), join(worktree, "node_modules"), { recursive: true });
   copy(preparation);
+  bridgeHistoricalImports("src/application");
+  bridgeHistoricalImports("src/infrastructure");
   verify("preparation", preparation, false);
 
   copy(configuration);

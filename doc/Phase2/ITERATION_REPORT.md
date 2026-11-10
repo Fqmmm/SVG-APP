@@ -32,7 +32,7 @@ Phase 2 的 [startCli](../../src/composition/startCli.ts)先建立默认框架�
 | 树标签 | TreeFormatter 生成固定文本 | TreeDecorator 顺序组合行尾标签 | `(box)` 与 `*` 可分别禁用、调整顺序 |
 | 装配 | main.ts 直接连接具体实现 | composition 选择插件并校验清单 | CLI 执行服务通过注入工作 |
 
-原有 [EditorSession](../../src/application/EditorSession.ts)、CommandHistory 和编辑命令保留了撤销重做职责。结构变更由 SvgDocument 维护 ID、父子关系和对象归属；状态快照保证失败回滚。这些基础承担新增插件的编辑行为，插件无需另建一套历史栈。
+原有 [EditorSession](../../src/application/session/EditorSession.ts)、CommandHistory 和编辑命令保留了撤销重做职责。结构变更由 SvgDocument 维护 ID、父子关系和对象归属；状态快照保证失败回滚。这些基础承担新增插件的编辑行为，插件无需另建一套历史栈。
 
 ### 2.2 四个扩展点与依赖方向
 

@@ -4,13 +4,6 @@ import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync, readdirSync } from "node:fs";
 import { posix, resolve } from "node:path";
 
-const compatibility = new Set([
-  "src/application/ShapeFactory.ts",
-  ...["CommandDispatcher", "DocumentCommands", "QueryCommands", "Repl", "ShapeCommands", "ShapeFormatter", "StructureCommands", "TreeFormatter"].map(name => "src/cli/" + name + ".ts"),
-  ...["Circle", "Ellipse", "Line", "Rect", "Text"].map(name => "src/domain/" + name + ".ts"),
-  ...["FileDocumentRepository", "SvgParser", "SvgSerializer"].map(name => "src/infrastructure/" + name + ".ts"),
-]);
-
 function analyze(source, path = "source.ts") {
   const ast = ts.createSourceFile(path, source, ts.ScriptTarget.Latest, true);
   const imports = [], exports = [], functions = [];
@@ -68,13 +61,10 @@ function role(path, current) {
   if (path.startsWith("src/plugins/")) {
     return "plugin";
   }
-  return path === "src/main.ts" || path.startsWith("src/composition/") || compatibility.has(path) ? "assembly" : "core";
+  return path === "src/main.ts" || path.startsWith("src/composition/") ? "assembly" : "core";
 }
 
 function responsibility(path, entryRole, report) {
-  if (compatibility.has(path) && entryRole === "assembly") {
-    return "Default assembly or compatibility export; delegates to registered services or built-in implementation";
-  }
   if (path.endsWith("/index.ts")) {
     return "Public extension SDK exports";
   }
@@ -151,11 +141,6 @@ function checkBoundaries(report) {
     }
     return file.role === "plugin" && destination.role !== "plugin" && dependency !== "src/extensions/index.ts";
   }).map(dependency => file.path + " -> " + dependency));
-  for (const file of report.files) {
-    if (compatibility.has(file.path) && !file.forwardingOnly) {
-      violations.push("compatibility module must contain only re-exports: " + file.path);
-    }
-  }
   if (violations.length > 0) {
     throw new Error("dependency boundary violations:\n" + violations.join("\n"));
   }

@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { SvgDocument } from "../../src/domain/SvgDocument.js";
 import { Group } from "../../src/domain/Group.js";
-import { Rect } from "../../src/domain/Rect.js";
-import { Circle } from "../../src/domain/Circle.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
+import { Circle } from "../../src/domain/primitives/Circle.js";
 
 test("SvgDocument defaults to 800x600 and rejects invalid resize atomically", () => {
   const doc = new SvgDocument();

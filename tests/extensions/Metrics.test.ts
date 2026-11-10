@@ -51,12 +51,13 @@ test("dependency audit rejects plugin-to-assembly and private-core imports using
   }
 });
 
-test("legacy compatibility exports cannot hide executable code", () => {
+test("domain modules cannot import built-in plugins through former compatibility paths", () => {
   const result = auditFixture({
-    "src/domain/Rect.ts": 'export const hiddenLogic = 1 + 2;',
+    "src/domain/Circle.ts": 'export { Circle } from "../plugins/builtin/shapes/Circle.js";',
+    "src/plugins/builtin/shapes/Circle.ts": 'export class Circle {}',
   });
   assert.notEqual(result.status, 0);
-  assert.match(result.stderr, /compatibility module must contain only re-exports/);
+  assert.match(result.stderr, /dependency boundary violations/);
 });
 
 test("metrics include role line totals and named SDK/module dependencies", () => {

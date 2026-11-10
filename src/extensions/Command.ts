@@ -1,4 +1,4 @@
-import type { EditorSession } from "../application/EditorSession.js";
+import type { EditorSession } from "../application/session/EditorSession.js";
 
 export interface Command {
   readonly name: string;

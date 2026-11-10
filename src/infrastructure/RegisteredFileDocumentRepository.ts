@@ -1,8 +1,8 @@
 import { readFileSync, openSync, writeFileSync, closeSync, renameSync, unlinkSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { randomUUID } from "node:crypto";
-import type { DocumentRepository } from "../application/DocumentRepository.js";
-import type { DocumentReadResult } from "../application/DocumentReadResult.js";
+import type { DocumentRepository } from "../application/documents/DocumentRepository.js";
+import type { DocumentReadResult } from "../application/documents/DocumentReadResult.js";
 import type { SvgDocument } from "../domain/SvgDocument.js";
 
 

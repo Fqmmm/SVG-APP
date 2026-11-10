@@ -1,13 +1,13 @@
-import { SvgShapeReader } from "../../src/infrastructure/SvgShapeReader.js";
+import { SvgShapeReader } from "../../src/infrastructure/svg/SvgShapeReader.js";
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { SvgParser } from "../../src/infrastructure/SvgParser.js";
-import { SvgSerializer } from "../../src/infrastructure/SvgSerializer.js";
+import { SvgParser } from "../../src/composition/defaults/SvgParser.js";
+import { SvgSerializer } from "../../src/composition/defaults/SvgSerializer.js";
 import { SvgDocument } from "../../src/domain/SvgDocument.js";
 import { Group } from "../../src/domain/Group.js";
-import { Rect } from "../../src/domain/Rect.js";
-import { Text } from "../../src/domain/Text.js";
-import { ShapeFactory } from "../../src/application/ShapeFactory.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
+import { Text } from "../../src/domain/primitives/Text.js";
+import { ShapeFactory } from "../../src/composition/defaults/ShapeFactory.js";
 
 const wrap = (body: string, attributes = 'width="400" height="200"'): string =>
   '<svg xmlns="http://www.w3.org/2000/svg" ' + attributes + '>' + body + '</svg>';

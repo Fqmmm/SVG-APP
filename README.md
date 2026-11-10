@@ -1,5 +1,7 @@
 # SVG CLI 编辑器
 
+源码结构与阅读顺序见 [源码目录说明](src/README.md)。当前 CLI 采用内核、插件与宿主装配的结构，Phase 2 的扩展点与加载契约见 [框架说明](doc/Phase2/FRAMEWORK.md)。
+
 一个使用 TypeScript 编写的命令行 SVG 编辑器，作为软件设计实验 Phase 1 的实现。通过命令创建和编辑图形，组织组合结构，执行撤销与重做，并读写 SVG 文件。
 
 ## 功能

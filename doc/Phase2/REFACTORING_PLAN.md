@@ -1,5 +1,7 @@
 # Phase 1 内部重构方案
 
+本文记录 Phase 1 的重构过程。目录已在后续整理，下面的源码链接指向当前实现；当前结构见 [源码目录说明](../../src/README.md)。
+
 日期：2026-11-09
 
 状态：代码重构已完成，待审查。
@@ -26,11 +28,11 @@
 
 | 类 | 职责 | 代码 |
 | --- | --- | --- |
-| CommandDispatcher | 分词、固定命令名查找、文档前置检查及委派 | [CommandDispatcher.ts](../../src/cli/CommandDispatcher.ts) |
-| DocumentCommands | init、read、save、canvas 的参数处理和反馈 | [DocumentCommands.ts](../../src/cli/DocumentCommands.ts) |
-| ShapeCommands | create、move、scale、set、delete 的参数处理与编辑命令构造 | [ShapeCommands.ts](../../src/cli/ShapeCommands.ts) |
-| StructureCommands | group、ungroup、addto、front、back 的参数处理与反馈 | [StructureCommands.ts](../../src/cli/StructureCommands.ts) |
-| QueryCommands | tree、show、help 的参数处理与输出 | [QueryCommands.ts](../../src/cli/QueryCommands.ts) |
+| CommandDispatcher | 分词、固定命令名查找、文档前置检查及委派 | [CommandDispatcher.ts](../../src/composition/defaults/CommandDispatcher.ts) |
+| DocumentCommands | init、read、save、canvas 的参数处理和反馈 | [DocumentCommands.ts](../../src/plugins/builtin/commands/DocumentCommands.ts) |
+| ShapeCommands | create、move、scale、set、delete 的参数处理与编辑命令构造 | [ShapeCommands.ts](../../src/plugins/builtin/commands/ShapeCommands.ts) |
+| StructureCommands | group、ungroup、addto、front、back 的参数处理与反馈 | [StructureCommands.ts](../../src/plugins/builtin/commands/StructureCommands.ts) |
+| QueryCommands | tree、show、help 的参数处理与输出 | [QueryCommands.ts](../../src/plugins/builtin/commands/QueryCommands.ts) |
 | EditFeedback | 执行编辑命令、关联反馈、处理 undo/redo 的反馈 | [EditFeedback.ts](../../src/cli/EditFeedback.ts) |
 | CommandArguments | 统一参数数量检查与 usage 错误 | [CommandArguments.ts](../../src/cli/CommandArguments.ts) |
 
@@ -44,7 +46,7 @@ ShapeFormatter.label 统一生成 type#id 标签，供图形摘要和编辑反�
 
 ### 4.1 共用的类型定义
 
-[ShapeSchema](../../src/application/ShapeSchema.ts)描述几何字段顺序、可选样式、文本及缺省几何来源。[ShapeInput](../../src/application/ShapeInput.ts)承载已经转换的数值、文本和可选样式。[ShapeDefinition](../../src/application/ShapeDefinition.ts)接收 ShapeInput，调用具体图形构造函数并设置可选样式。
+[ShapeSchema](../../src/application/shapes/ShapeSchema.ts)描述几何字段顺序、可选样式、文本及缺省几何来源。[ShapeInput](../../src/application/shapes/ShapeInput.ts)承载已经转换的数值、文本和可选样式。[ShapeDefinition](../../src/application/shapes/ShapeDefinition.ts)接收 ShapeInput，调用具体图形构造函数并设置可选样式。
 
 这些输入描述用于连接转换层与领域构造。移动、缩放、属性更新、几何约束和状态恢复仍由图形类完成。
 
@@ -52,13 +54,13 @@ ShapeFormatter.label 统一生成 type#id 标签，供图形摘要和编辑反�
 
 ShapeCommands.create → ShapeFactory.create → CreateArguments → ShapeInput → ShapeDefinition.create → 具体图形 → CreateCommand。
 
-[ShapeFactory](../../src/application/ShapeFactory.ts)保留六种类型的集中查找，根据 schema 检查参数数量并解析数值。CreateArguments 继续处理原有的参数数量与缺少容器 ID 等错误。父容器挂接仍由 CreateCommand 和 SvgDocument 完成。
+[ShapeFactory](../../src/composition/defaults/ShapeFactory.ts)保留六种类型的集中查找，根据 schema 检查参数数量并解析数值。CreateArguments 继续处理原有的参数数量与缺少容器 ID 等错误。父容器挂接仍由 CreateCommand 和 SvgDocument 完成。
 
 ### 4.3 SVG 导入路径
 
 SvgParser → SvgShapeReader.read → ShapeFactory.definition → ShapeInput → ShapeDefinition.create → 具体图形。
 
-[SvgShapeReader](../../src/infrastructure/SvgShapeReader.ts)负责 SVG 属性转换：处理 px 单位、缺省几何值、椭圆半径回退、文本内容及非几何属性。它直接生成数值输入，避免借用 CLI 字符串参数重新解析。
+[SvgShapeReader](../../src/infrastructure/svg/SvgShapeReader.ts)负责 SVG 属性转换：处理 px 单位、缺省几何值、椭圆半径回退、文本内容及非几何属性。它直接生成数值输入，避免借用 CLI 字符串参数重新解析。
 
 原有工厂的 createFromAttributes 和类型定义的 fromAttributes 调用迁移到 SvgShapeReader.read；对应测试调整调用位置，保留行为断言。CLI 使用方式保持不变。
 
@@ -66,7 +68,7 @@ SvgParser → SvgShapeReader.read → ShapeFactory.definition → ShapeInput →
 
 ### 5.1 SVG 解析
 
-[SvgParser.parse](../../src/infrastructure/SvgParser.ts)按以下顺序组织导入：
+[SvgParser.parse](../../src/composition/defaults/SvgParser.ts)按以下顺序组织导入：
 
 1. parseRoot 校验 XML 文本、引用、处理指令、根元素和命名空间。
 2. createDocument 校验画布属性及 viewBox，创建新文档。
@@ -78,7 +80,7 @@ EditorSession 仍在完整读入成功后才替换当前文档。读入失败保
 
 ### 5.2 分组
 
-[GroupCommand](../../src/application/GroupCommand.ts)保留原有算法，提取三个计算步骤：
+[GroupCommand](../../src/application/commands/structure/GroupCommand.ts)保留原有算法，提取三个计算步骤：
 
 - selectTargets 校验目标并按文档树顺序排列。
 - commonParent 确定共同父级。

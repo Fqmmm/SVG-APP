@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { Rect } from "../../src/domain/Rect.js";
-import { Circle } from "../../src/domain/Circle.js";
-import { Ellipse } from "../../src/domain/Ellipse.js";
-import { Line } from "../../src/domain/Line.js";
-import { Text } from "../../src/domain/Text.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
+import { Circle } from "../../src/domain/primitives/Circle.js";
+import { Ellipse } from "../../src/domain/primitives/Ellipse.js";
+import { Line } from "../../src/domain/primitives/Line.js";
+import { Text } from "../../src/domain/primitives/Text.js";
 import { Group } from "../../src/domain/Group.js";
 import type { Shape } from "../../src/domain/Shape.js";
 import type { ShapeVisitor } from "../../src/domain/ShapeVisitor.js";

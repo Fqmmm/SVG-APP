@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { CreateCommand } from "../../src/application/CreateCommand.js";
+import { CreateCommand } from "../../src/application/commands/shapes/CreateCommand.js";
 import { SvgDocument } from "../../src/domain/SvgDocument.js";
-import { Rect } from "../../src/domain/Rect.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
 import { Group } from "../../src/domain/Group.js";
 
 test("create executes, undoes and redoes the same root object", () => {

@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { SessionReplay } from "./SessionReplay.js";
-import { SvgParser } from "../../src/infrastructure/SvgParser.js";
-import { SvgSerializer } from "../../src/infrastructure/SvgSerializer.js";
-import { Text } from "../../src/domain/Text.js";
+import { SvgParser } from "../../src/composition/defaults/SvgParser.js";
+import { SvgSerializer } from "../../src/composition/defaults/SvgSerializer.js";
+import { Text } from "../../src/domain/primitives/Text.js";
 
 test("experiment section 6 replays all feedback and both trees through the real CLI", () => {
   const replay = new SessionReplay("phase8-session.cli");

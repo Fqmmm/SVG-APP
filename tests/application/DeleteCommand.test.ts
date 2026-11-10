@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { DeleteCommand } from "../../src/application/DeleteCommand.js";
+import { DeleteCommand } from "../../src/application/commands/shapes/DeleteCommand.js";
 import { SvgDocument } from "../../src/domain/SvgDocument.js";
-import { Rect } from "../../src/domain/Rect.js";
-import { Text } from "../../src/domain/Text.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
+import { Text } from "../../src/domain/primitives/Text.js";
 import { Group } from "../../src/domain/Group.js";
 
 test("delete undo restores a root node between its original siblings", () => {

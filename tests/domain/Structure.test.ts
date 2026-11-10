@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { SvgDocument } from "../../src/domain/SvgDocument.js";
 import { Group } from "../../src/domain/Group.js";
-import { Rect } from "../../src/domain/Rect.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
 import { acquireTreeAccess } from "../../src/domain/TreeAccess.js";
 
 test("batch structure changes move existing nodes and update every index atomically", () => {

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { Text } from "../../src/domain/Text.js";
+import { Text } from "../../src/domain/primitives/Text.js";
 
 test("Text moves positions while preserving dimensions and styles", () => {
   const shape = new Text("t1", 10, 20, "开始 & end");

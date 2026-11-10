@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { CommandDispatcher } from "../../src/cli/CommandDispatcher.js";
-import { EditorSession } from "../../src/application/EditorSession.js";
+import { CommandDispatcher } from "../../src/composition/defaults/CommandDispatcher.js";
+import { EditorSession } from "../../src/application/session/EditorSession.js";
 
 test("shape and structure handlers share one undo history and preserve each command feedback", () => {
   const session = new EditorSession();

@@ -4,7 +4,7 @@ import { copyFileSync, mkdtempSync, mkdirSync, readFileSync, rmSync } from "node
 import { tmpdir } from "node:os";
 import { join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { SvgParser } from "../../src/infrastructure/SvgParser.js";
+import { SvgParser } from "../../src/composition/defaults/SvgParser.js";
 import type { SvgDocument } from "../../src/domain/SvgDocument.js";
 
 export class SessionReplay {
