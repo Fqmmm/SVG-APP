@@ -126,6 +126,10 @@ export class SvgDocument {
     nextChildren.splice(position, 0, shape);
 
     if (previousParent !== nextParent) {
+      previousParent?.validateChildren(previousChildren);
+    }
+    nextParent?.validateChildren(nextChildren);
+    if (previousParent !== nextParent) {
       this.setChildren(previousParent, previousChildren);
     }
     this.setChildren(nextParent, nextChildren);
@@ -150,6 +154,7 @@ export class SvgDocument {
       }
     }
     for (const [group, children] of changes) {
+      group.validateChildren(children);
       if (!this.#groupAccess.has(group) && !nextNodes.has(group)) {
         throw new Error("cannot modify unrelated group: " + group.id);
       }
@@ -214,6 +219,7 @@ export class SvgDocument {
   }
 
   private setChildren(parent: Group | null, children: readonly Shape[]): void {
+    parent?.validateChildren(children);
     if (parent === null) {
       this.rootNodes = [...children];
     } else {

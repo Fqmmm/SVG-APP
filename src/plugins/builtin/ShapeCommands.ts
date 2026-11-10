@@ -41,10 +41,12 @@ export class ShapeCommands {
     const suffix = parent === null || parent === undefined ? "" : " in " + parent.type + "#" + parent.id;
     return this.feedback.execute(command,
       () => {
-        return ShapeFormatter.label(shape) + " created" + suffix;
+        return this.extensions.views.describeEdit({ shape, operation: "create", phase: "applied" },
+          ShapeFormatter.label(shape) + " created") + suffix;
       },
       () => {
-        return ShapeFormatter.label(shape) + " removed";
+        return this.extensions.views.describeEdit({ shape, operation: "create", phase: "undone" },
+          ShapeFormatter.label(shape) + " removed");
       });
   }
 
@@ -79,10 +81,17 @@ export class ShapeCommands {
     CommandArguments.requireCount(args, 3, 3, "set <id> <attr> <value>");
     const shape = this.session.document.get(args[0]!);
     const attribute = args[1]!;
-    const updated = (): string => {
-      return ShapeFormatter.label(shape) + " updated: " + attribute + "=" + this.extensions.views.attribute(shape, attribute);
+    const updated = (phase: "applied" | "undone"): string => {
+      return this.extensions.views.describeEdit({ shape, operation: "set", phase, attribute },
+        ShapeFormatter.label(shape) + " updated: " + attribute + "=" + this.extensions.views.attribute(shape, attribute));
     };
-    return this.feedback.execute(new SetCommand(shape.id, attribute, args[2]!, this.extensions.attributes), updated, updated);
+    return this.feedback.execute(new SetCommand(shape.id, attribute, args[2]!, this.extensions.attributes),
+      () => {
+        return updated("applied");
+      },
+      () => {
+        return updated("undone");
+      });
   }
 
   delete(args: readonly string[]): string {

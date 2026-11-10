@@ -4,7 +4,7 @@
 
 ## 模块边界
 
-`src/extensions/index.ts` 是插件访问内核的公开入口。`domain` 保存文档、图形基类、容器和状态快照，`application` 保存编辑事务与会话。`cli/Registered*` 和 `infrastructure/Registered*` 通过注入的依赖工作。
+`src/extensions/index.ts` 是插件访问内核的公开入口。`domain` 保存文档、图形基类、容器、共享 Rect/Text 模型和状态快照，`application` 保存编辑事务与会话。`cli/Registered*` 和 `infrastructure/Registered*` 通过注入的依赖工作。
 
 `plugins/builtin` 提供默认图形和命令。每种图形的创建、帮助、展示与文本访问集中在 `providers.ts` 对应的类中；命令由实现 `Command` 的 `BoundCommand` 和 `HelpCommand` 提供。`composition/createDefaultFramework.ts` 注册这些实例，`createEditor.ts` 把同一个注册表接入命令、创建及 SVG 读写。
 
@@ -53,6 +53,15 @@ npm run check:boundaries
 npm run metrics:check
 ```
 
-测试包含原有回归、仅导入 SDK 的 tile、文本往返、复合图形、类插件示例、事务回滚、错误优先级、注册冲突、帮助文本比较、违规依赖反例和 metrics 过期反例。当前 CLI 共 295 项测试通过。
+测试包含原有回归、仅导入 SDK 的 tile、文本往返、复合图形、类插件示例、事务回滚、错误优先级、注册冲突、帮助文本比较、违规依赖反例和 metrics 过期反例。通用复合容器契约准备完成后，CLI 共 301 项测试通过。
 
 依赖检查允许插件导入其他插件或公开 SDK，拒绝它们导入装配层和私有内核模块；内核只依赖内核。该检查针对 CLI TypeScript 源文件中的静态 import 与转导出。指标及模块依赖图见 [CLI metrics](../../docs/metrics/README.md)。
+
+
+## 复合容器接入准备
+
+Group.validateChildren 对候选子节点列表验证不变量；TreeValidator 和 SvgDocument 在结构写入前调用。Group.assertUngroupable 默认沿用 canUngroup，允许派生容器提供明确错误。校验必须只依赖 ID 与传入列表，构造阶段也会执行。
+
+ShapePresentation.treeLabel 可覆盖树标题。ShapeProvider.describeEdit 接收 create/set 和 applied/undone；内置插件 ShapeCommands.create/set 调用 ShapeViews.describeEdit，再转给 Provider 回调；返回 undefined 时保持原反馈。
+
+Rect/Text 实现位于 domain/primitives，经公开 SDK 导出。旧路径与内置模型路径仅转导出同一模型，不改变对象身份。此准备提交不包含 box 插件或 test:box 脚本，使用对应的 116 文件指标快照。独立约束与契约测试见 ContainerConstraints、PresentationHooks 和 PublicPrimitives。设计见 [ADR 005](adr/005-composite-containers.md)。

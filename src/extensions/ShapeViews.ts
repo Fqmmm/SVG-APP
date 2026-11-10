@@ -1,7 +1,7 @@
 import type { Shape } from "../domain/Shape.js";
 import type { Group } from "../domain/Group.js";
 import type { RegisteredShapeFactory } from "../application/RegisteredShapeFactory.js";
-import type { ShapePresentation } from "./ShapeProvider.js";
+import type { ShapeEditFeedback, ShapePresentation } from "./ShapeProvider.js";
 
 export class ShapeViews {
   constructor(private readonly factory: RegisteredShapeFactory) {
@@ -22,7 +22,7 @@ export class ShapeViews {
 
   summary(shape: Shape): string {
     const details = [this.details(shape), this.styles(shape)].filter(value => value !== "").join(" ");
-    return ShapeViews.label(shape) + (details === "" ? "" : "  " + details);
+    return (this.present(shape).treeLabel ?? ShapeViews.label(shape)) + (details === "" ? "" : "  " + details);
   }
 
   show(shape: Shape, parent: Group | null): string {
@@ -33,6 +33,10 @@ export class ShapeViews {
       }
     }
     return lines.join("\n");
+  }
+
+  describeEdit(change: ShapeEditFeedback, fallback: string): string {
+    return this.factory.provider(change.shape.type).describeEdit?.(change) ?? fallback;
   }
 
   position(shape: Shape): string | undefined {

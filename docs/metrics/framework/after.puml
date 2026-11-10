@@ -10,52 +10,56 @@ component "src/composition/compat\nassembly" as module5
 component "src/composition/plugins\nassembly" as module6
 component "src/domain\ncore" as module7
 component "src/domain\nassembly" as module8
-component "src/extensions\ncore" as module9
-component "src/extensions/index.ts\npublic SDK" as module10
-component "src/infrastructure\nassembly" as module11
-component "src/infrastructure\ncore" as module12
-component "src/main.ts\nassembly" as module13
-component "src/plugins/builtin\nplugin" as module14
-component "src/plugins/builtin/shapes\nplugin" as module15
-component "src/plugins/dir\nplugin" as module16
-component "src/plugins/examples\nplugin" as module17
-component "src/plugins/stats\nplugin" as module18
+component "src/domain/primitives\ncore" as module9
+component "src/extensions\ncore" as module10
+component "src/extensions/index.ts\npublic SDK" as module11
+component "src/infrastructure\nassembly" as module12
+component "src/infrastructure\ncore" as module13
+component "src/main.ts\nassembly" as module14
+component "src/plugins/builtin\nplugin" as module15
+component "src/plugins/builtin/shapes\nplugin" as module16
+component "src/plugins/dir\nplugin" as module17
+component "src/plugins/examples\nplugin" as module18
+component "src/plugins/stats\nplugin" as module19
 module0 --> module7 : 33
-module0 --> module9 : 4
+module0 --> module10 : 4
 module1 --> module5 : 1
 module3 --> module5 : 4
-module3 --> module14 : 4
+module3 --> module15 : 4
 module2 --> module0 : 3
-module2 --> module9 : 4
+module2 --> module10 : 4
 module2 --> module7 : 2
 module4 --> module6 : 3
 module5 --> module0 : 2
 module5 --> module4 : 2
 module5 --> module2 : 3
-module5 --> module12 : 5
-module5 --> module9 : 1
-module4 --> module9 : 1
-module4 --> module14 : 2
+module5 --> module13 : 5
+module5 --> module10 : 1
+module4 --> module10 : 1
+module4 --> module15 : 2
 module4 --> module0 : 2
 module4 --> module2 : 2
-module4 --> module12 : 3
-module6 --> module9 : 5
-module8 --> module15 : 5
-module9 --> module7 : 8
-module9 --> module0 : 3
-module10 --> module7 : 7
-module10 --> module0 : 16
-module10 --> module2 : 3
-module10 --> module9 : 9
-module11 --> module5 : 3
-module12 --> module0 : 6
-module12 --> module7 : 10
-module12 --> module9 : 3
-module13 --> module4 : 1
-module14 --> module10 : 7
-module14 --> module15 : 5
-module15 --> module10 : 5
-module16 --> module10 : 2
-module17 --> module10 : 2
-module18 --> module10 : 2
+module4 --> module13 : 3
+module6 --> module10 : 5
+module8 --> module16 : 3
+module8 --> module9 : 2
+module9 --> module7 : 4
+module10 --> module7 : 8
+module10 --> module0 : 3
+module11 --> module7 : 7
+module11 --> module0 : 16
+module11 --> module2 : 3
+module11 --> module10 : 9
+module11 --> module9 : 2
+module12 --> module5 : 3
+module13 --> module0 : 6
+module13 --> module7 : 10
+module13 --> module10 : 3
+module14 --> module4 : 1
+module15 --> module11 : 7
+module15 --> module16 : 5
+module16 --> module11 : 5
+module17 --> module11 : 2
+module18 --> module11 : 2
+module19 --> module11 : 2
 @enduml

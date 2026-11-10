@@ -1,1 +1,1 @@
-export { Rect } from "../plugins/builtin/shapes/Rect.js";
+export { Rect } from "./primitives/Rect.js";

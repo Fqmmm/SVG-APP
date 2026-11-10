@@ -1,1 +1,1 @@
-export { Text } from "../plugins/builtin/shapes/Text.js";
+export { Text } from "./primitives/Text.js";

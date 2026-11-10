@@ -25,6 +25,17 @@ export class Group extends Shape {
     return true;
   }
 
+  // Overrides must be pure and depend only on the supplied children and the shape ID.
+  // Validation also runs during base construction and before document mutations.
+  validateChildren(_children: readonly Shape[]): void {
+  }
+
+  assertUngroupable(): void {
+    if (!this.canUngroup) {
+      throw new Error("cannot ungroup " + this.type + ": " + this.id);
+    }
+  }
+
   override get children(): readonly Shape[] {
     return Object.freeze([...this.#childNodes]);
   }

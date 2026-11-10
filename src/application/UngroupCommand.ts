@@ -12,9 +12,7 @@ export class UngroupCommand extends StructureCommand {
     if (group === undefined) {
       throw new Error("not a container: " + this.id);
     }
-    if (!group.canUngroup) {
-      throw new Error("cannot ungroup " + group.type + ": " + group.id);
-    }
+    group.assertUngroupable();
     const parent = document.parentOf(this.id);
     if (parent === null) {
       throw new Error("cannot ungroup top-level container: " + this.id);
