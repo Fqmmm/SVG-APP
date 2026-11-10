@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { ShapeFormatter } from "../../src/cli/ShapeFormatter.js";
-import { PositionFormatter } from "../../src/cli/PositionFormatter.js";
 import { TreeFormatter } from "../../src/cli/TreeFormatter.js";
 import { SvgDocument } from "../../src/domain/SvgDocument.js";
 import { Rect } from "../../src/domain/Rect.js";
@@ -11,7 +10,7 @@ import { Line } from "../../src/domain/Line.js";
 import { Text } from "../../src/domain/Text.js";
 import { Group } from "../../src/domain/Group.js";
 
-test("shape summaries use visitors for all six types and only show explicit styles", () => {
+test("shape summaries use built-in presentations for all six types and only show explicit styles", () => {
   const formatter = new ShapeFormatter();
   const values = [
     [new Rect("r", 1, 2, 3, 4, "blue"), "rect#r  x=1 y=2 w=3 h=4 fill=blue"],
@@ -47,7 +46,7 @@ test("tree draws nested branches and supports a selected subtree", () => {
 });
 test("empty tree and group positions have well-defined output", () => {
   assert.equal(new TreeFormatter().document(new SvgDocument()), "svg (800x600)");
-  assert.equal(new PositionFormatter().format(new Rect("r", 1, 2, 3, 4)), "(1,2)");
-  assert.equal(new PositionFormatter().format(new Circle("c", 5, 6, 7)), "(5,6)");
-  assert.equal(new PositionFormatter().format(new Group("g")), undefined);
+  assert.equal(new ShapeFormatter().position(new Rect("r", 1, 2, 3, 4)), "(1,2)");
+  assert.equal(new ShapeFormatter().position(new Circle("c", 5, 6, 7)), "(5,6)");
+  assert.equal(new ShapeFormatter().position(new Group("g")), undefined);
 });

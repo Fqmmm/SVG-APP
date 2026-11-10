@@ -36,9 +36,9 @@ test("SVG roundtrip preserves all shapes, nested order, geometry and explicit st
   }
   assert.deepEqual(restored.get("r").styles, {});
   assert.ok(restored.get("t").accept({
-    visitRect: () => false, visitCircle: () => false,
-    visitEllipse: () => false, visitLine: () => false, visitGroup: () => false,
-    visitText: shape => shape.content === "开始 & <结束>"
+    visitShape(shape) {
+      return shape instanceof Text && shape.content === "开始 & <结束>";
+    }
   }));
 });
 
@@ -100,8 +100,9 @@ test("XML comments and CDATA text are accepted, text whitespace and escapes surv
   const restored = new SvgParser().parse(output).document.get("t");
   assert.deepEqual(restored.styles, text.styles);
   assert.equal(restored.accept({
-    visitRect: () => "", visitCircle: () => "", visitEllipse: () => "",
-    visitLine: () => "", visitGroup: () => "", visitText: shape => shape.content
+    visitShape(shape) {
+      return shape instanceof Text ? shape.content : "";
+    }
   }), content);
   const parsed = new SvgParser().parse('<!-- comment -->' + wrap('<text id="t"><![CDATA[<内容>]]><!--skip-->&amp;</text>'));
   assert.match(new SvgSerializer().serialize(parsed.document), /&lt;内容&gt;&amp;/);
@@ -215,7 +216,8 @@ test("text containing a CDATA closing sequence is escaped and restored exactly",
   assert.match(xml, /a]]&gt;b/);
   const restored = new SvgParser().parse(xml).document.get("t");
   assert.equal(restored.accept({
-    visitRect: () => "", visitCircle: () => "", visitEllipse: () => "",
-    visitLine: () => "", visitGroup: () => "", visitText: shape => shape.content
+    visitShape(shape) {
+      return shape instanceof Text ? shape.content : "";
+    }
   }), "a]]>b");
 });

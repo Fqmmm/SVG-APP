@@ -37,7 +37,9 @@ export abstract class Shape {
     return undefined;
   }
 
-  abstract accept<R>(visitor: ShapeVisitor<R>): R;
+  accept<R>(visitor: ShapeVisitor<R>): R {
+    return visitor.visitShape(this);
+  }
 
   move(dx: number, dy: number): void {
     AttributeValidator.finite(dx, "dx");

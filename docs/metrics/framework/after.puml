@@ -1,0 +1,55 @@
+@startuml
+title framework-worktree - CLI module dependencies
+left to right direction
+component "src/application\ncore" as module0
+component "src/application\nassembly" as module1
+component "src/cli\ncore" as module2
+component "src/cli\nassembly" as module3
+component "src/composition/compat\nassembly" as module4
+component "src/composition\nassembly" as module5
+component "src/domain\ncore" as module6
+component "src/domain\nassembly" as module7
+component "src/extensions\ncore" as module8
+component "src/extensions/index.ts\npublic SDK" as module9
+component "src/infrastructure\nassembly" as module10
+component "src/infrastructure\ncore" as module11
+component "src/main.ts\nassembly" as module12
+component "src/plugins/builtin\nplugin" as module13
+component "src/plugins/builtin/shapes\nplugin" as module14
+component "src/plugins/examples\nplugin" as module15
+module0 --> module6 : 33
+module0 --> module8 : 4
+module1 --> module4 : 1
+module3 --> module4 : 4
+module3 --> module13 : 4
+module2 --> module0 : 3
+module2 --> module8 : 4
+module2 --> module6 : 2
+module4 --> module0 : 2
+module4 --> module5 : 2
+module4 --> module2 : 3
+module4 --> module11 : 5
+module4 --> module8 : 1
+module5 --> module8 : 1
+module5 --> module13 : 2
+module5 --> module0 : 2
+module5 --> module2 : 1
+module5 --> module11 : 3
+module7 --> module14 : 5
+module8 --> module6 : 8
+module8 --> module0 : 3
+module9 --> module6 : 7
+module9 --> module0 : 16
+module9 --> module2 : 3
+module9 --> module8 : 9
+module10 --> module4 : 3
+module11 --> module0 : 6
+module11 --> module6 : 10
+module11 --> module8 : 3
+module12 --> module5 : 1
+module12 --> module2 : 1
+module13 --> module9 : 7
+module13 --> module14 : 5
+module14 --> module9 : 5
+module15 --> module9 : 2
+@enduml

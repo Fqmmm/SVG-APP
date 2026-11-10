@@ -3,6 +3,7 @@ import { test } from "node:test";
 import { SessionReplay } from "./SessionReplay.js";
 import { SvgParser } from "../../src/infrastructure/SvgParser.js";
 import { SvgSerializer } from "../../src/infrastructure/SvgSerializer.js";
+import { Text } from "../../src/domain/Text.js";
 
 test("experiment section 6 replays all feedback and both trees through the real CLI", () => {
   const replay = new SessionReplay("phase8-session.cli");
@@ -25,8 +26,9 @@ test("experiment section 6 replays all feedback and both trees through the real 
     assert.equal(doc.parentOf("box")?.id, "markers");
     assert.equal(doc.indexOf("box"), 1);
     assert.equal(doc.get("title").accept({
-      visitRect: () => "", visitCircle: () => "", visitEllipse: () => "",
-      visitLine: () => "", visitGroup: () => "", visitText: shape => shape.content
+      visitShape(shape) {
+        return shape instanceof Text ? shape.content : "";
+      }
     }), "My Diagram");
   } finally {
     replay.close();

@@ -285,3 +285,13 @@ npm run test:host
 随后，大纲能显示，但点击节点会进入 SVG 图片预览。我们在 examples 工作区配置默认文本编辑器，并补测打开后的活动编辑器、选区和第 3 行位置。我重新运行后确认定位正确；单击大纲时焦点仍在左侧，切回编辑区后即可继续输入。
 
 最后，我将矩形 id 改为 newid，确认大纲更新；删除并恢复闭合标签，确认大纲先清空再恢复。自动测试与这些实际操作的结果一起记录在扩展验证文档中。
+
+### CLI 框架可扩展节点
+
+四个扩展点已接入内核：`ShapeProvider`、`Command`、`TreeDecorator` 和 `AttributeHandler`。原有图形与命令放在 `src/plugins/builtin`，默认装配集中在 `src/composition`；命令、创建和 SVG 读写共享注册表。
+
+[框架说明](Phase2/FRAMEWORK.md)列出接口职责、调用位置、缺省行为、冲突和失败处理。[首次 CLI metrics](../docs/metrics/README.md)提供与 `final` 的文件、复杂度及依赖对比，包含分类清单、采集脚本和 PlantUML 依赖图。三个 ADR 分别记录[扩展与装配边界](Phase2/adr/001-extension-boundaries.md)、[属性事务](Phase2/adr/002-attribute-transactions.md)和[开放图形协议](Phase2/adr/003-open-shapes.md)。
+
+该节点先验证框架能力；`stats`、`dir`、`box`、正式标签插件和配置加载器在后续节点完成。新增扩展的验证使用测试插件，不加入默认 CLI。
+
+框架节点的[审查处理记录](Phase2/REVIEW_RESOLUTION.md)说明各条意见的取舍。文本持久化改用独立访问器；插件边界增加反例检查；四个扩展点均有类实现，其中标签与属性示例默认关闭。metrics 已补充分类行数、具名模块图及过期校验。

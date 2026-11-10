@@ -11,7 +11,10 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "npm run build && node --test \"dist/tests/**/*.test.js\"",
-    "cli": "npm run build && node dist/src/main.js"
+    "cli": "npm run build && node dist/src/main.js",
+    "metrics": "node scripts/collect-metrics.mjs",
+    "check:boundaries": "node scripts/collect-metrics.mjs --check-boundaries",
+    "metrics:check": "node scripts/collect-metrics.mjs --verify"
   },
   "devDependencies": {
     "@types/node": "22.19.15",

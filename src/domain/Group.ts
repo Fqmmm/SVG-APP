@@ -1,5 +1,4 @@
 import { Shape } from "./Shape.js";
-import type { ShapeVisitor } from "./ShapeVisitor.js";
 import { TreeValidator } from "./TreeValidator.js";
 import { acquireTreeAccess } from "./TreeAccess.js";
 import { GroupTreeAccess } from "./GroupTreeAccess.js";
@@ -22,16 +21,16 @@ export class Group extends Shape {
     return Object.freeze({});
   }
 
+  get canUngroup(): boolean {
+    return true;
+  }
+
   override get children(): readonly Shape[] {
     return Object.freeze([...this.#childNodes]);
   }
 
   override asContainer(): Group {
     return this;
-  }
-
-  override accept<R>(visitor: ShapeVisitor<R>): R {
-    return visitor.visitGroup(this);
   }
 
   // Only one owner can hold structural access; importing the symbol cannot steal it.
