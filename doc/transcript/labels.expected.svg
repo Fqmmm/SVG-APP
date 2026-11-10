@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+<g id="n" data-kind="box">
+<rect id="n-rect" x="10" y="20" width="80" height="30" fill="#4a90d9"/>
+<text id="n-label" x="30" y="40">已处理</text>
+</g>
+</svg>

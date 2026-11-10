@@ -1,6 +1,6 @@
 # CLI 框架扩展机制
 
-本节点完成四个扩展点、默认装配、Phase 1 回归和 CLI metrics 采集。审查后的处理记录见 [REVIEW_RESOLUTION.md](REVIEW_RESOLUTION.md)。命令插件与加载器已完成，见 [COMMAND_PLUGINS.md](COMMAND_PLUGINS.md)；box 已接入，见 [BOX_PLUGIN.md](BOX_PLUGIN.md)；modified-star 按后续节点实现。
+本节点完成四个扩展点、默认装配、Phase 1 回归和 CLI metrics 采集。审查后的处理记录见 [REVIEW_RESOLUTION.md](REVIEW_RESOLUTION.md)。命令插件与加载器已完成，见 [COMMAND_PLUGINS.md](COMMAND_PLUGINS.md)；box 已接入，见 [BOX_PLUGIN.md](BOX_PLUGIN.md)；modified-star 已在配置阶段接入，见 [TREE_LABELS.md](TREE_LABELS.md)，默认代码装配随后接入。
 
 ## 模块边界
 
@@ -23,7 +23,7 @@
 
 默认 CLI 还会通过代码装配或配置加载 box 的标签和属性处理器；这与仅构造 `createDefaultFramework()` 不同。
 
-两个 examples 类是可单独注册的交付示例，分别给图形追加类型标签、处理通用样式属性；测试覆盖启用后的回调和撤销。它们默认关闭，box 包已提供正式的 `(box)` 标签与 fill/label 处理器；`modified-star` 留在后续节点。
+两个 examples 类是可单独注册的交付示例，分别给图形追加类型标签、处理通用样式属性；测试覆盖启用后的回调和撤销。它们默认关闭，box 包已提供正式的 `(box)` 标签与 fill/label 处理器；modified-star 已在配置阶段接入。
 
 ## 文本与 SVG 读写
 
@@ -55,7 +55,7 @@ npm run check:boundaries
 npm run metrics:check
 ```
 
-测试包含原有回归、仅导入 SDK 的 tile、文本往返、复合图形、类插件示例、事务回滚、错误优先级、注册冲突、帮助文本比较、违规依赖反例和 metrics 过期反例。检查点接口准备后，CLI 共 328 项测试通过。
+测试包含原有回归、仅导入 SDK 的 tile、文本往返、复合图形、类插件示例、事务回滚、错误优先级、注册冲突、帮助文本比较、违规依赖反例和 metrics 过期反例。检查点接口准备后，CLI 共 344 项测试通过。
 
 依赖检查允许插件导入其他插件或公开 SDK，拒绝它们导入装配层和私有内核模块；内核只依赖内核。该检查针对 CLI TypeScript 源文件中的静态 import 与转导出。指标及模块依赖图见 [CLI metrics](../../docs/metrics/README.md)。
 
@@ -67,3 +67,6 @@ DocumentSnapshot 比较几何、样式、注册 Provider 的文本、父级与�
 TreeDecorator 可选的 checkpoint 由装配层 CheckpointRepository 在成功读取或保存后通知。回调异常逐个报告并隔离，健康回调继续执行；成功 I/O 的路径与屏障记账不受影响。无监听者时不构建额外快照。createEditor 接收报告出口，CLI 传入自身输出通道。
 
 此准备提交不含 modified-star 包、标签配置或标签测试入口。它确实补改了渲染器与接口，不能称为首次需求下的零改动；后续插件接入以此为基线。见 [ADR 006](adr/006-content-checkpoints.md)。
+
+
+modified-star 已通过根配置接入，默认代码装配仍待下一提交。它使用上述检查点接口，实例 WeakMap 隔离各文档基线；与 (box) 标签独立并存。运行及配置阶段测试边界见 [TREE_LABELS.md](TREE_LABELS.md)。

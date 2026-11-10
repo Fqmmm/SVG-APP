@@ -21,7 +21,8 @@ component "src/plugins/builtin\nplugin" as module16
 component "src/plugins/builtin/shapes\nplugin" as module17
 component "src/plugins/dir\nplugin" as module18
 component "src/plugins/examples\nplugin" as module19
-component "src/plugins/stats\nplugin" as module20
+component "src/plugins/modified-star\nplugin" as module20
+component "src/plugins/stats\nplugin" as module21
 module0 --> module7 : 33
 module0 --> module10 : 4
 module1 --> module5 : 1
@@ -65,4 +66,5 @@ module17 --> module11 : 5
 module18 --> module11 : 2
 module19 --> module11 : 2
 module20 --> module11 : 2
+module21 --> module11 : 2
 @enduml

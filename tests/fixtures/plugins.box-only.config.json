@@ -1,0 +1,7 @@
+{
+  "plugins": [
+    { "module": "../../src/plugins/stats" },
+    { "module": "../../src/plugins/dir" },
+    { "module": "../../src/plugins/box" }
+  ]
+}

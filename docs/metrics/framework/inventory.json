@@ -1,12 +1,12 @@
 {
   "baselineRevision": "6d5239a6a29f6044be80f49ea05a6c4b417d5d9e",
-  "headRevision": "8f3aeb0915a69291a053904dc931834b1e95a88c",
+  "headRevision": "84c281c16c8081fce60a717d9f42a6d911850045",
   "generatorSha256": "54d96e38b3dfda2b6241efa18ec447f6b5be6a145e8debebdf2cdca96e6121b3",
   "artifactHashes": {
-    "files.csv": "bf8e1d0f48a2b3d4f1c43bfc43e5881eb8e580869032a07c001975fbefd6e437",
+    "files.csv": "eaf7b8b8ed20072abd898f255f86c5318209d02b633b8c4f74247c9ec0ed41ae",
     "before.puml": "a83da6887353486d644f52c42710413481ac323447647fb1e257be02568cb64d",
-    "after.puml": "8775fce41a5cab4ad843eecf57e8d5519c9380d1f5375a3c907ce927abd4b77b",
-    "summary.json": "c68827b96fd980aac89860a19d7ff7f7afdce95257bc620f19c8b4118593718d"
+    "after.puml": "11f0717416fabfec497841e8191f12aa4d7b1df6b50e324070838be521b65a64",
+    "summary.json": "a89a765a5ebafc275aab3f9c3ab50ed487ac0a587ef931e0c3ae72b298952d73"
   },
   "scope": "CLI src/**/*.ts only; excludes VSCode extension, tests, generated files",
   "before": {
@@ -6520,7 +6520,7 @@
           "src/domain/primitives/Text.ts",
           "src/extensions/DocumentSnapshot.ts"
         ],
-        "fanIn": 23,
+        "fanIn": 25,
         "fanOut": 38
       },
       {
@@ -8280,6 +8280,63 @@
         "fanOut": 1
       },
       {
+        "path": "src/plugins/modified-star/ModifiedStarDecorator.ts",
+        "role": "plugin",
+        "responsibility": "Built-in contribution: ModifiedStarDecorator",
+        "sha256": "8fd65fe033658fc5d7a96232823b25081c02aee36b6643371edf8865105807dc",
+        "lines": 21,
+        "imports": [
+          "../../extensions/index.js"
+        ],
+        "exports": [
+          "ModifiedStarDecorator"
+        ],
+        "functions": [
+          {
+            "name": "checkpoint",
+            "line": 7,
+            "complexity": 1
+          },
+          {
+            "name": "decorate",
+            "line": 11,
+            "complexity": 4
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/extensions/index.ts"
+        ],
+        "fanIn": 1,
+        "fanOut": 1
+      },
+      {
+        "path": "src/plugins/modified-star/index.ts",
+        "role": "plugin",
+        "responsibility": "Public extension SDK exports",
+        "sha256": "ee3b5e62fd2dc0ee543b7a1fe60246afa2b87e5729e0370eed942128b5a29dc8",
+        "lines": 10,
+        "imports": [
+          "../../extensions/index.js",
+          "./ModifiedStarDecorator.js"
+        ],
+        "exports": [],
+        "functions": [
+          {
+            "name": "activate",
+            "line": 5,
+            "complexity": 1
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/extensions/index.ts",
+          "src/plugins/modified-star/ModifiedStarDecorator.ts"
+        ],
+        "fanIn": 0,
+        "fanOut": 2
+      },
+      {
         "path": "src/plugins/stats/StatsCommand.ts",
         "role": "plugin",
         "responsibility": "Built-in contribution: StatsCommand",
@@ -8358,21 +8415,21 @@
       }
     ],
     "summary": {
-      "files": 124,
-      "lines": 4114,
-      "functions": 493,
-      "totalComplexity": 996,
+      "files": 126,
+      "lines": 4145,
+      "functions": 496,
+      "totalComplexity": 1002,
       "maxComplexity": 21,
-      "dependencyEdges": 317,
+      "dependencyEdges": 320,
       "linesByRole": {
         "core": 2514,
         "assembly": 569,
-        "plugin": 1031
+        "plugin": 1062
       },
       "roles": {
         "core": 59,
         "assembly": 39,
-        "plugin": 26
+        "plugin": 28
       }
     }
   }
