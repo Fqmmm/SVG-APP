@@ -1,12 +1,12 @@
 {
   "baselineRevision": "6d5239a6a29f6044be80f49ea05a6c4b417d5d9e",
-  "headRevision": "1af7baeca06f8a7cd69c59fe4581bc517ef14918",
+  "headRevision": "9559e0cd5dabbcddfcb5255109a72c02c6ae63f2",
   "generatorSha256": "54d96e38b3dfda2b6241efa18ec447f6b5be6a145e8debebdf2cdca96e6121b3",
   "artifactHashes": {
-    "files.csv": "bc0ee6cdb9a03bfe576e10f9ce343c3915f79f6d0eee62d91755283948e0eae0",
+    "files.csv": "03962bad5f32dc293a46802adb81887f2197e4d6250adf647ef50a3398809b76",
     "before.puml": "a83da6887353486d644f52c42710413481ac323447647fb1e257be02568cb64d",
     "after.puml": "326688cbada947216a1f5eebf2615349644e3e8694194f5a31a991ff9e78a654",
-    "summary.json": "28003ceebec0425056b9ae411cf326dcb0f96846215d9633a1f55f91a361e1f4"
+    "summary.json": "bc8b7fa0fd211c922f4a0a80d4093e57e4d4b5f36cadd259b9e5913ce33581d1"
   },
   "scope": "CLI src/**/*.ts only; excludes VSCode extension, tests, generated files",
   "before": {
@@ -4393,8 +4393,8 @@
         "path": "src/composition/codePlugins.ts",
         "role": "assembly",
         "responsibility": "Construct and connect dependencies: registerCodePlugins",
-        "sha256": "466e1beb3c1eace74cc67794bed91ea405ccc218d0afdbf654ce74d438debf96",
-        "lines": 16,
+        "sha256": "a2059d22fd38021f13f708d97b6a0aaf2af69d3604213e04565bc4e3e15f64bc",
+        "lines": 21,
         "imports": [
           "./ProjectDirectory.js",
           "./plugins/PluginLoader.js"
@@ -4416,6 +4416,11 @@
           {
             "name": "load",
             "line": 12,
+            "complexity": 1
+          },
+          {
+            "name": "load",
+            "line": 17,
             "complexity": 1
           }
         ],
@@ -8187,14 +8192,14 @@
     ],
     "summary": {
       "files": 122,
-      "lines": 3974,
-      "functions": 473,
-      "totalComplexity": 967,
+      "lines": 3979,
+      "functions": 474,
+      "totalComplexity": 968,
       "maxComplexity": 21,
       "dependencyEdges": 300,
       "linesByRole": {
         "core": 2440,
-        "assembly": 503,
+        "assembly": 508,
         "plugin": 1031
       },
       "roles": {

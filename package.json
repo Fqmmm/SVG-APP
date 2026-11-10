@@ -18,7 +18,7 @@
     "test:stats": "npm run build && node --test dist/tests/plugins/StatsCommand.test.js",
     "test:dir": "npm run build && node --test dist/tests/plugins/DirCommand.test.js dist/tests/plugins/DirectoryAdapter.test.js",
     "test:loader": "npm run build && node --test \"dist/tests/composition/*.test.js\"",
-    "test:box": "npm run build && node --test dist/tests/plugins/BoxPlugin.test.js dist/tests/plugins/BoxIntegration.test.js dist/tests/composition/BoxConfigAssembly.test.js"
+    "test:box": "npm run build && node --test dist/tests/plugins/BoxPlugin.test.js dist/tests/plugins/BoxIntegration.test.js dist/tests/composition/BoxConfigAssembly.test.js dist/tests/composition/BoxAssembly.test.js"
   },
   "devDependencies": {
     "@types/node": "22.19.15",

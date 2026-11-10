@@ -86,7 +86,7 @@ framework-worktree,assembly,src/cli/StructureCommands.ts,1,0,0,0,0,1
 framework-worktree,core,src/cli/Tokenizer.ts,53,2,17,11,1,0
 framework-worktree,assembly,src/cli/TreeFormatter.ts,1,0,0,0,0,1
 framework-worktree,assembly,src/composition/ProjectDirectory.ts,22,1,6,6,1,1
-framework-worktree,assembly,src/composition/codePlugins.ts,16,3,3,1,0,2
+framework-worktree,assembly,src/composition/codePlugins.ts,21,4,4,1,0,2
 framework-worktree,assembly,src/composition/compat/CommandDispatcher.ts,10,1,1,1,2,3
 framework-worktree,assembly,src/composition/compat/FileDocumentRepository.ts,11,1,3,3,1,4
 framework-worktree,assembly,src/composition/compat/Repl.ts,9,1,1,1,1,2

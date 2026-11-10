@@ -21,7 +21,7 @@
 
 注册表按实例持有数据，`all()` 返回冻结的列表副本。不同类别可以同名；同类重名拒绝注册。标签按注册顺序用一个空格连接，空字符串和 `undefined` 不增加空格。画布上下文的 `shape` 为 `undefined`。
 
-配置装配会加载 box 的标签和属性处理器；这与仅构造 `createDefaultFramework()` 不同。默认代码装配暂不包含 box，方式 A 在下一提交接入。
+默认 CLI 还会通过代码装配或配置加载 box 的标签和属性处理器；这与仅构造 `createDefaultFramework()` 不同。
 
 两个 examples 类是可单独注册的交付示例，分别给图形追加类型标签、处理通用样式属性；测试覆盖启用后的回调和撤销。它们默认关闭，box 包已提供正式的 `(box)` 标签与 fill/label 处理器；`modified-star` 留在后续节点。
 
@@ -55,6 +55,6 @@ npm run check:boundaries
 npm run metrics:check
 ```
 
-测试包含原有回归、仅导入 SDK 的 tile、文本往返、复合图形、类插件示例、事务回滚、错误优先级、注册冲突、帮助文本比较、违规依赖反例和 metrics 过期反例。当前 CLI 共 317 项测试通过。
+测试包含原有回归、仅导入 SDK 的 tile、文本往返、复合图形、类插件示例、事务回滚、错误优先级、注册冲突、帮助文本比较、违规依赖反例和 metrics 过期反例。当前 CLI 共 318 项测试通过。
 
 依赖检查允许插件导入其他插件或公开 SDK，拒绝它们导入装配层和私有内核模块；内核只依赖内核。该检查针对 CLI TypeScript 源文件中的静态 import 与转导出。指标及模块依赖图见 [CLI metrics](../../docs/metrics/README.md)。

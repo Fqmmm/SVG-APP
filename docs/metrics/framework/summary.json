@@ -19,14 +19,14 @@
   },
   "after": {
     "files": 122,
-    "lines": 3974,
-    "functions": 473,
-    "totalComplexity": 967,
+    "lines": 3979,
+    "functions": 474,
+    "totalComplexity": 968,
     "maxComplexity": 21,
     "dependencyEdges": 300,
     "linesByRole": {
       "core": 2440,
-      "assembly": 503,
+      "assembly": 508,
       "plugin": 1031
     },
     "roles": {

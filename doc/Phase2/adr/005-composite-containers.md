@@ -31,4 +31,4 @@ Rect 和 Text 是共享领域模型，公开 SDK 导出它们。内置 Provider 
 
 通用准备不包含 box 分支，可由其他复合容器复用。代价是容器校验存在纯度与构造期使用限制；接口注释和通用约束测试明确此契约。
 
-[BoxPlugin.test.ts](../../../tests/plugins/BoxPlugin.test.ts) 独立验证完整子树、属性和历史；[BoxIntegration.test.ts](../../../tests/plugins/BoxIntegration.test.ts) 验证读写、错误导入及实际命令；[BoxConfigAssembly.test.ts](../../../tests/composition/BoxConfigAssembly.test.ts) 只通过配置方式对照原始 stdout 和 SVG，代码装配另在后续提交接入。提交边界及 Git 复核命令见 [box 节点说明](../BOX_PLUGIN.md)。
+[BoxPlugin.test.ts](../../../tests/plugins/BoxPlugin.test.ts) 独立验证完整子树、属性和历史；[BoxIntegration.test.ts](../../../tests/plugins/BoxIntegration.test.ts) 验证读写、错误导入及实际命令；[BoxAssembly.test.ts](../../../tests/composition/BoxAssembly.test.ts) 比较两种装配的原始 stdout 和 SVG。提交边界及 Git 复核命令见 [box 节点说明](../BOX_PLUGIN.md)。

@@ -4,14 +4,17 @@
 
 ## 运行
 
-本提交仅通过配置接入 box，既有运行源码保持不变。在仓库根目录执行：
+在仓库根目录执行 `npm run build`，再选择一种装配方式：
 
 ```powershell
-npm run build
+# A：代码装配
+node dist/src/main.js
+
+# B：配置装配
 node dist/src/main.js --config plugins.config.json
 ```
 
-配置按相同顺序加载 stats、dir、box，共用现有 PluginLoader 的暂存注册、清单校验和失败回滚。默认代码装配仍只包含 stats、dir，方式 A 在下一提交加入。
+两种方式按相同顺序加载 stats、dir、box，共用现有 PluginLoader 的暂存注册、清单校验和失败回滚。A 只在 [codePlugins.ts](../../src/composition/codePlugins.ts) 增加一个 `loadCode` 项；B 在 [plugins.config.json](../../plugins.config.json) 增加 `./src/plugins/box`。配置方式不会执行代码装配列表。
 
 插件的 [package.json](../../src/plugins/box/package.json) 声明 `shapes: ["box"]`、`attributes: ["box-attributes"]`、`decorators: ["box-type-label"]`。main 指向本仓库的 dist 构建产物；目前与宿主一起构建和部署。
 
@@ -60,22 +63,33 @@ save flowchart-box.svg
 | 共享基础模型 | Rect/Text 实现移到 domain/primitives，经 SDK 导出；旧路径及内置模型路径保留转导出，模型身份不变 |
 | 准备项测试 | ContainerConstraints、PresentationHooks、PublicPrimitives，6 项测试 |
 
-接入分步提交，并在每一步重新采集指标、运行 npm test、typecheck、check:boundaries 和 metrics:check：
+接入按以下三个提交顺序完成，每一步只包含当时可运行的源码、测试、文档和指标：
 
 | 提交 | 归属 |
 |---|---|
-| `1af7bae refactor: prepare composite container extension contracts` | 通用契约、公开 primitives、3 个准备测试及文档；116 文件指标，301 项测试 |
-| `feat: add box shape plugin through configuration` | 新增 src/plugins/box；配置、BoxPlugin/BoxIntegration/BoxConfigAssembly；会话 golden、test:box 及文档；122 文件指标，317 项测试 |
+| `1af7bae refactor: prepare composite container extension contracts` | 上表通用准备；domain/primitives；ContainerConstraints、PresentationHooks、PublicPrimitives；通用契约文档；116 文件指标，301 项测试 |
+| `9559e0c feat: add box shape plugin through configuration` | 新增 src/plugins/box；plugins.config.json；BoxPlugin、BoxIntegration、BoxConfigAssembly；box 会话 golden、npm test:box、文档；122 文件指标，317 项测试 |
+| `feat: enable box in default code assembly` | 仅修改 codePlugins.ts 这个既有运行文件；新增 BoxAssembly；CommandAssembly 的集合与 help golden；test:box 列表、文档和重新采集的指标；318 项测试 |
 
-本提交的 BoxConfigAssembly 仅通过 --config 对照版本 B 会话的 stdout 和 SVG，不依赖默认代码装配。后续再单独修改 codePlugins.ts，新增 BoxAssembly 与 A/B 一致性检查，并按当时源码重采指标；相关测试和 test:box 列表届时一起加入。
+方式 B 的独立证据位于第二个提交。BoxConfigAssembly 只通过 `--config` 对照版本 B 会话的 stdout 和 SVG，不依赖代码装配新增 box。第三个提交才启用方式 A，并增加 A/B 同目录逐字节比较。每一步在采集当前源码指标后运行 npm test、typecheck、check:boundaries 和 metrics:check，避免把最终快照放进准备提交。
 
-当前 B 提交形成后，设其为 C，检查所有既有运行代码：
+复核提交边界：
 
 ```powershell
-git diff C^ C -- src ':(exclude)src/plugins/box'
+$boxConfigCommit = git log --format=%H --grep='^feat: add box shape plugin through configuration$' -1
+$boxCodeCommit = git log --format=%H --grep='^feat: enable box in default code assembly$' -1
+
+# B：既有运行源码的差异应为空
+git diff "$boxConfigCommit^" $boxConfigCommit -- src ':(exclude)src/plugins/box'
+
+# A：src 下只应出现 codePlugins.ts
+git diff --name-only "$boxCodeCommit^" $boxCodeCommit -- src
+
+# 从准备提交到 A 完成，内核、加载器与既有插件差异应为空
+git diff "$boxConfigCommit^" $boxCodeCommit -- src/domain src/application src/cli src/extensions src/infrastructure src/plugins/builtin src/plugins/stats src/plugins/dir src/plugins/examples src/composition/plugins src/main.ts
 ```
 
-差异应为空。原先的 box-preparation.json 工作区摘要已移除；实际 Git 差异检查包含内核、加载器、主入口和既有插件。指标只证明对应提交的源码与产物一致性。
+可在第二个提交的独立工作树重新安装依赖，运行 npm test、npm run typecheck 和 npm run test:box，复核配置方式在代码装配未接入 box 时独立成立。原先的 box-preparation.json 工作区摘要已移除；Git 差异是提交边界的证据，metrics 校验各提交自身的源码与产物一致性。
 
 ## 验证
 
@@ -91,6 +105,9 @@ npm run check:boundaries
 npm run metrics:check
 ```
 
-box 相关 16 项测试：独立插件 7 项、命令与读写集成 7 项、配置装配与禁用 2 项。CLI 全部 317 项通过，VSCode 扩展 10 项单元测试与类型检查通过；本轮未重新启动扩展宿主测试。
+box 相关 17 项测试：独立插件 7 项、命令与读写集成 7 项、配置装配与禁用 2 项、代码/配置一致性 1 项。CLI 全部 318 项通过，VSCode 扩展 10 项单元测试与类型检查通过；本轮未重新启动扩展宿主测试。
 
-[BoxConfigAssembly.test.ts](../../tests/composition/BoxConfigAssembly.test.ts) 使用临时工作目录、固定输入和初始状态，通过 --config 运行真实 CLI，逐字节比较 stdout 和保存 SVG，再读回检查统计与标题撤销。独立测试还覆盖派生 ID 冲突、多部件修改失败回滚和处理器冲突。
+[BoxAssembly.test.ts](../../tests/composition/BoxAssembly.test.ts) 在同一个临时工作目录运行 A/B，使用相同插件顺序、输入和初始状态，比较 stdout 与 SVG；第二次运行前删除第一次的输出文件并确认不存在，验证配置方式重新保存。配置方式的独立会话与读回检查见 [BoxConfigAssembly.test.ts](../../tests/composition/BoxConfigAssembly.test.ts)。独立测试还覆盖派生 ID 冲突、一次多部件修改失败的回滚以及处理器冲突。
+
+
+审查意见的采纳与保留理由见 [BOX_REVIEW_RESOLUTION.md](BOX_REVIEW_RESOLUTION.md)。

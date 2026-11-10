@@ -13,4 +13,9 @@ export async function registerCodePlugins(loader: PluginLoader): Promise<void> {
       return (await import("../plugins/dir/index.js")).default;
     },
   });
+  await loader.loadCode({ module: "./src/plugins/box", directory,
+    async load() {
+      return (await import("../plugins/box/index.js")).default;
+    },
+  });
 }
