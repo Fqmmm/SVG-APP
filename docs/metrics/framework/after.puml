@@ -16,16 +16,17 @@ component "src/extensions/index.ts\npublic SDK" as module11
 component "src/infrastructure\nassembly" as module12
 component "src/infrastructure\ncore" as module13
 component "src/main.ts\nassembly" as module14
-component "src/plugins/builtin\nplugin" as module15
-component "src/plugins/builtin/shapes\nplugin" as module16
-component "src/plugins/dir\nplugin" as module17
-component "src/plugins/examples\nplugin" as module18
-component "src/plugins/stats\nplugin" as module19
+component "src/plugins/box\nplugin" as module15
+component "src/plugins/builtin\nplugin" as module16
+component "src/plugins/builtin/shapes\nplugin" as module17
+component "src/plugins/dir\nplugin" as module18
+component "src/plugins/examples\nplugin" as module19
+component "src/plugins/stats\nplugin" as module20
 module0 --> module7 : 33
 module0 --> module10 : 4
 module1 --> module5 : 1
 module3 --> module5 : 4
-module3 --> module15 : 4
+module3 --> module16 : 4
 module2 --> module0 : 3
 module2 --> module10 : 4
 module2 --> module7 : 2
@@ -36,12 +37,12 @@ module5 --> module2 : 3
 module5 --> module13 : 5
 module5 --> module10 : 1
 module4 --> module10 : 1
-module4 --> module15 : 2
+module4 --> module16 : 2
 module4 --> module0 : 2
 module4 --> module2 : 2
 module4 --> module13 : 3
 module6 --> module10 : 5
-module8 --> module16 : 3
+module8 --> module17 : 3
 module8 --> module9 : 2
 module9 --> module7 : 4
 module10 --> module7 : 8
@@ -56,10 +57,11 @@ module13 --> module0 : 6
 module13 --> module7 : 10
 module13 --> module10 : 3
 module14 --> module4 : 1
-module15 --> module11 : 7
-module15 --> module16 : 5
-module16 --> module11 : 5
-module17 --> module11 : 2
+module15 --> module11 : 5
+module16 --> module11 : 7
+module16 --> module17 : 5
+module17 --> module11 : 5
 module18 --> module11 : 2
 module19 --> module11 : 2
+module20 --> module11 : 2
 @enduml

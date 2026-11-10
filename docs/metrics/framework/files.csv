@@ -131,7 +131,7 @@ framework-worktree,core,src/extensions/ShapeRegistry.ts,16,2,3,2,2,3
 framework-worktree,core,src/extensions/ShapeText.ts,28,3,10,5,4,2
 framework-worktree,core,src/extensions/ShapeViews.ts,67,13,28,4,3,4
 framework-worktree,core,src/extensions/TreeDecorator.ts,12,0,0,0,3,2
-framework-worktree,core,src/extensions/index.ts,42,0,0,0,18,37
+framework-worktree,core,src/extensions/index.ts,42,0,0,0,23,37
 framework-worktree,assembly,src/infrastructure/FileDocumentRepository.ts,1,0,0,0,0,1
 framework-worktree,core,src/infrastructure/RegisteredFileDocumentRepository.ts,56,3,7,4,2,3
 framework-worktree,core,src/infrastructure/RegisteredSvgParser.ts,218,16,73,12,3,9
@@ -143,6 +143,12 @@ framework-worktree,core,src/infrastructure/SvgShapeReader.ts,32,3,12,7,1,3
 framework-worktree,core,src/infrastructure/XmlReferences.ts,71,3,25,16,1,1
 framework-worktree,core,src/infrastructure/XmlText.ts,23,3,13,11,3,0
 framework-worktree,assembly,src/main.ts,3,0,0,0,0,1
+framework-worktree,plugin,src/plugins/box/Box.ts,42,12,14,3,3,2
+framework-worktree,plugin,src/plugins/box/BoxAttributes.ts,21,2,7,4,1,2
+framework-worktree,plugin,src/plugins/box/BoxId.ts,12,3,3,1,2,0
+framework-worktree,plugin,src/plugins/box/BoxProvider.ts,67,6,19,9,1,3
+framework-worktree,plugin,src/plugins/box/BoxTypeDecorator.ts,10,1,2,2,1,2
+framework-worktree,plugin,src/plugins/box/index.ts,14,1,1,1,0,4
 framework-worktree,plugin,src/plugins/builtin/DocumentCommands.ts,43,6,11,4,2,1
 framework-worktree,plugin,src/plugins/builtin/QueryCommands.ts,26,3,4,2,2,1
 framework-worktree,plugin,src/plugins/builtin/ShapeCommands.ts,119,18,30,7,2,1

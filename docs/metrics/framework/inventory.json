@@ -1,12 +1,12 @@
 {
   "baselineRevision": "6d5239a6a29f6044be80f49ea05a6c4b417d5d9e",
-  "headRevision": "27950b0e4377926929a1fdb190831dfbc4fcc1cc",
+  "headRevision": "1af7baeca06f8a7cd69c59fe4581bc517ef14918",
   "generatorSha256": "54d96e38b3dfda2b6241efa18ec447f6b5be6a145e8debebdf2cdca96e6121b3",
   "artifactHashes": {
-    "files.csv": "3c4b3abebb4df95f17ff4764056be4e38ffe587aa72ddc29d29ba3aba8e1a89f",
+    "files.csv": "bc0ee6cdb9a03bfe576e10f9ce343c3915f79f6d0eee62d91755283948e0eae0",
     "before.puml": "a83da6887353486d644f52c42710413481ac323447647fb1e257be02568cb64d",
-    "after.puml": "8d9aae5e9f0df15e25c6f79a5a5a60ad2685250ded9bccc1907121cb133dd43f",
-    "summary.json": "d162be688c9bba7464cd9b86023f160465a8e44e43aaf50f5f1bd97d121ddec2"
+    "after.puml": "326688cbada947216a1f5eebf2615349644e3e8694194f5a31a991ff9e78a654",
+    "summary.json": "28003ceebec0425056b9ae411cf326dcb0f96846215d9633a1f55f91a361e1f4"
   },
   "scope": "CLI src/**/*.ts only; excludes VSCode extension, tests, generated files",
   "before": {
@@ -6348,7 +6348,7 @@
           "src/domain/primitives/Rect.ts",
           "src/domain/primitives/Text.ts"
         ],
-        "fanIn": 18,
+        "fanIn": 23,
         "fanOut": 37
       },
       {
@@ -6797,6 +6797,267 @@
         ],
         "fanIn": 0,
         "fanOut": 1
+      },
+      {
+        "path": "src/plugins/box/Box.ts",
+        "role": "plugin",
+        "responsibility": "Built-in contribution: Box",
+        "sha256": "dcc4f98c0051871ad91ee95fac6455556f0cd2f2694a8951df2d537fe62c1dd7",
+        "lines": 42,
+        "imports": [
+          "../../extensions/index.js",
+          "./BoxId.js"
+        ],
+        "exports": [
+          "Box"
+        ],
+        "functions": [
+          {
+            "name": "type",
+            "line": 6,
+            "complexity": 1
+          },
+          {
+            "name": "canUngroup",
+            "line": 10,
+            "complexity": 1
+          },
+          {
+            "name": "frame",
+            "line": 14,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 15,
+            "complexity": 1
+          },
+          {
+            "name": "label",
+            "line": 18,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 19,
+            "complexity": 1
+          },
+          {
+            "name": "validateChildren",
+            "line": 22,
+            "complexity": 3
+          },
+          {
+            "name": "<anonymous>",
+            "line": 24,
+            "complexity": 1
+          },
+          {
+            "name": "<anonymous>",
+            "line": 25,
+            "complexity": 1
+          },
+          {
+            "name": "assertUngroupable",
+            "line": 31,
+            "complexity": 1
+          },
+          {
+            "name": "setFill",
+            "line": 35,
+            "complexity": 1
+          },
+          {
+            "name": "setLabel",
+            "line": 39,
+            "complexity": 1
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/extensions/index.ts",
+          "src/plugins/box/BoxId.ts"
+        ],
+        "fanIn": 3,
+        "fanOut": 2
+      },
+      {
+        "path": "src/plugins/box/BoxAttributes.ts",
+        "role": "plugin",
+        "responsibility": "Built-in contribution: BoxAttributes",
+        "sha256": "2aabb96147b5e452dab8ced7afb5a78b0320d504b3c248e73b2563bc687a460c",
+        "lines": 21,
+        "imports": [
+          "../../extensions/index.js",
+          "./Box.js"
+        ],
+        "exports": [
+          "BoxAttributes"
+        ],
+        "functions": [
+          {
+            "name": "handles",
+            "line": 7,
+            "complexity": 3
+          },
+          {
+            "name": "apply",
+            "line": 11,
+            "complexity": 4
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/extensions/index.ts",
+          "src/plugins/box/Box.ts"
+        ],
+        "fanIn": 1,
+        "fanOut": 2
+      },
+      {
+        "path": "src/plugins/box/BoxId.ts",
+        "role": "plugin",
+        "responsibility": "Built-in contribution: BoxId",
+        "sha256": "2b62dba4c6a7f4b257e20bcb0779225bc217cea1af1e149d7b511ca18a6a5751",
+        "lines": 12,
+        "imports": [],
+        "exports": [
+          "BoxId"
+        ],
+        "functions": [
+          {
+            "name": "<anonymous>",
+            "line": 2,
+            "complexity": 1
+          },
+          {
+            "name": "frame",
+            "line": 5,
+            "complexity": 1
+          },
+          {
+            "name": "label",
+            "line": 9,
+            "complexity": 1
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [],
+        "fanIn": 2,
+        "fanOut": 0
+      },
+      {
+        "path": "src/plugins/box/BoxProvider.ts",
+        "role": "plugin",
+        "responsibility": "Built-in contribution: BoxProvider",
+        "sha256": "6a685b165549920172ce2b5407794c3197bf56963b5b5095343615ec6258647b",
+        "lines": 67,
+        "imports": [
+          "../../extensions/index.js",
+          "./Box.js",
+          "./BoxId.js"
+        ],
+        "exports": [
+          "BoxProvider"
+        ],
+        "functions": [
+          {
+            "name": "<anonymous>",
+            "line": 10,
+            "complexity": 1
+          },
+          {
+            "name": "validateSvg",
+            "line": 19,
+            "complexity": 3
+          },
+          {
+            "name": "fromSvg",
+            "line": 30,
+            "complexity": 2
+          },
+          {
+            "name": "present",
+            "line": 39,
+            "complexity": 2
+          },
+          {
+            "name": "describeEdit",
+            "line": 47,
+            "complexity": 9
+          },
+          {
+            "name": "requireBox",
+            "line": 61,
+            "complexity": 2
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/extensions/index.ts",
+          "src/plugins/box/Box.ts",
+          "src/plugins/box/BoxId.ts"
+        ],
+        "fanIn": 1,
+        "fanOut": 3
+      },
+      {
+        "path": "src/plugins/box/BoxTypeDecorator.ts",
+        "role": "plugin",
+        "responsibility": "Built-in contribution: BoxTypeDecorator",
+        "sha256": "368b8bd3d15f1108fed8a9d91d4aa730ef6b296f0e5617390ad28ca547dde890",
+        "lines": 10,
+        "imports": [
+          "../../extensions/index.js",
+          "./Box.js"
+        ],
+        "exports": [
+          "BoxTypeDecorator"
+        ],
+        "functions": [
+          {
+            "name": "decorate",
+            "line": 7,
+            "complexity": 2
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/extensions/index.ts",
+          "src/plugins/box/Box.ts"
+        ],
+        "fanIn": 1,
+        "fanOut": 2
+      },
+      {
+        "path": "src/plugins/box/index.ts",
+        "role": "plugin",
+        "responsibility": "Public extension SDK exports",
+        "sha256": "184c96c533a9899c95615318626e4720a845f04b88d5ddc0a606c653e3a6f388",
+        "lines": 14,
+        "imports": [
+          "../../extensions/index.js",
+          "./BoxProvider.js",
+          "./BoxAttributes.js",
+          "./BoxTypeDecorator.js"
+        ],
+        "exports": [],
+        "functions": [
+          {
+            "name": "activate",
+            "line": 7,
+            "complexity": 1
+          }
+        ],
+        "forwardingOnly": false,
+        "dependencies": [
+          "src/extensions/index.ts",
+          "src/plugins/box/BoxProvider.ts",
+          "src/plugins/box/BoxAttributes.ts",
+          "src/plugins/box/BoxTypeDecorator.ts"
+        ],
+        "fanIn": 0,
+        "fanOut": 4
       },
       {
         "path": "src/plugins/builtin/DocumentCommands.ts",
@@ -7925,21 +8186,21 @@
       }
     ],
     "summary": {
-      "files": 116,
-      "lines": 3808,
-      "functions": 448,
-      "totalComplexity": 921,
+      "files": 122,
+      "lines": 3974,
+      "functions": 473,
+      "totalComplexity": 967,
       "maxComplexity": 21,
-      "dependencyEdges": 287,
+      "dependencyEdges": 300,
       "linesByRole": {
         "core": 2440,
         "assembly": 503,
-        "plugin": 865
+        "plugin": 1031
       },
       "roles": {
         "core": 58,
         "assembly": 38,
-        "plugin": 20
+        "plugin": 26
       }
     }
   }

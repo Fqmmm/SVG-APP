@@ -18,21 +18,21 @@
     }
   },
   "after": {
-    "files": 116,
-    "lines": 3808,
-    "functions": 448,
-    "totalComplexity": 921,
+    "files": 122,
+    "lines": 3974,
+    "functions": 473,
+    "totalComplexity": 967,
     "maxComplexity": 21,
-    "dependencyEdges": 287,
+    "dependencyEdges": 300,
     "linesByRole": {
       "core": 2440,
       "assembly": 503,
-      "plugin": 865
+      "plugin": 1031
     },
     "roles": {
       "core": 58,
       "assembly": 38,
-      "plugin": 20
+      "plugin": 26
     }
   }
 }

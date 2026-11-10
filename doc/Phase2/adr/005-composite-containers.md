@@ -18,8 +18,17 @@ ShapePresentation 增加可选 treeLabel，仅影响树标题；ShapeProvider �
 
 Rect 和 Text 是共享领域模型，公开 SDK 导出它们。内置 Provider 和 box 复用同一类，旧导入路径保留转导出。box 的独立测试只依赖自身插件及 SDK，不需要另一个插件激活或注册其叶子类型；完整 CLI 的叶子 SVG 读写仍由内置 Provider 提供。
 
-## 验证与后续接入
+## box 的选择
 
-本准备提交不加入具体 box 包。ContainerConstraints 验证构造、单父与跨父写入、批量替换和失败历史保护；PresentationHooks 验证自定义树标题与反馈；PublicPrimitives 验证公开模型可独立使用。CLI 301 项测试与类型检查通过，metrics 快照对应本提交的 116 个源码文件。
+- ID 固定派生为 `<id>-rect` 和 `<id>-label`，由文档对整棵新增子树统一检查冲突。冲突时不登记任何节点，不改变历史。
+- 必需组件按直接子级中的 ID 与模型类型识别，允许额外节点和子节点重排；禁止删除、移走或再包组。组件可直接接受原有几何与样式编辑。
+- 创建矩形为 `(x,y,w,h)`、fill `#4a90d9`，标题位于 `(x+20,y+h/2+5)`。这些值仅用于创建模板，缩放按原有全子树原点缩放语义执行。
+- fill 处理器只调用 Box.setFill 修改矩形；label 只调用 Box.setLabel 修改文字。既有子树快照承担撤销与失败回滚；冲突规则沿用 [ADR 002](002-attribute-transactions.md)。
+- 写出 `<g data-kind="box">` 并保留实际子节点。安装插件后严格拒绝不完整或类型错误的 box，不修补、不降级；未安装时沿用普通分组 Provider 的警告降级。降级对象再保存失去 data-kind，不承诺再次安装即可恢复。
+- `(box)` 是独立的只读 TreeDecorator，由 box 包注册；treeLabel 显示 g#id。后续 modified-star 不需知道这个标签，拼接仍按注册顺序。
 
-后续配置接入和代码装配分别提交，各自在对应源码树上重新采集指标并运行完整测试。准备提交不引用尚未加入的 box 测试脚本。
+## 结果与验证
+
+通用准备不包含 box 分支，可由其他复合容器复用。代价是容器校验存在纯度与构造期使用限制；接口注释和通用约束测试明确此契约。
+
+[BoxPlugin.test.ts](../../../tests/plugins/BoxPlugin.test.ts) 独立验证完整子树、属性和历史；[BoxIntegration.test.ts](../../../tests/plugins/BoxIntegration.test.ts) 验证读写、错误导入及实际命令；[BoxConfigAssembly.test.ts](../../../tests/composition/BoxConfigAssembly.test.ts) 只通过配置方式对照原始 stdout 和 SVG，代码装配另在后续提交接入。提交边界及 Git 复核命令见 [box 节点说明](../BOX_PLUGIN.md)。
