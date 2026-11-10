@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800">
+<g id="scene">
+<rect id="r" x="15" y="15" width="30" height="40" fill="red"/>
+<g id="n" data-kind="box">
+<rect id="n-rect" x="100" y="100" width="80" height="30" fill="#f5a623"/>
+<text id="n-label" x="120" y="120">完成</text>
+</g>
+<circle id="c" cx="50" cy="60" r="10" fill="blue"/>
+<ellipse id="e" cx="70" cy="80" rx="12" ry="6" fill="green"/>
+<text id="t" x="5" y="30">注释更新</text>
+<g id="bucket">
+<line id="l" x1="0" y1="0" x2="100" y2="100" stroke="black"/>
+</g>
+</g>
+</svg>

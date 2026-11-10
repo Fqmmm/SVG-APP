@@ -1,0 +1,66 @@
+help
+dir
+init 800 600
+canvas
+canvas 1000 800
+undo
+create g scene
+create box n 100 100 80 30 "开始" in scene
+create rect r 10 20 30 40 red in scene
+create circle c 50 60 10 blue in scene
+create ellipse e 70 80 12 6 green in scene
+create line l 0 0 100 100 black in scene
+create text t 5 30 "注释" in scene
+create g bucket in scene
+group pair r c
+tree pair
+ungroup pair
+addto bucket l
+front r
+back r
+move n 10 20
+scale n 2
+undo
+redo
+undo
+set n fill #f5a623
+set n label "完成"
+undo
+redo
+set t text "注释更新"
+delete c
+undo
+move r 5 -5
+undo
+delete n-rect
+redo
+ungroup n
+set r label nope
+stats extra
+move absent 1 2
+show n
+stats
+tree
+save assets/session.svg
+tree
+undo
+move n -10 -20
+tree n
+undo
+tree
+redo
+save
+read assets/session.svg
+tree
+set n label "再编辑"
+delete t
+stats
+undo
+undo
+tree
+save assets/final.svg
+dir
+canvas
+help
+tree scene
+stats

@@ -1,0 +1,56 @@
+{
+  "sourceCommit": "1b3a911a4c8ea59e36198565a704b3cecc8769a2",
+  "commandsPerMode": 66,
+  "totalCommands": 132,
+  "modes": [
+    "code",
+    "root-config"
+  ],
+  "expectedErrorsPerMode": 7,
+  "unexpectedErrors": 0,
+  "identicalStdout": true,
+  "identicalSvg": true,
+  "persistedGeometryAndTextVerified": true,
+  "expectedErrors": [
+    {
+      "commandNumber": 6,
+      "command": "undo",
+      "response": "error: undo not allowed after io command"
+    },
+    {
+      "commandNumber": 35,
+      "command": "delete n-rect",
+      "response": "error: missing or invalid required box component: n"
+    },
+    {
+      "commandNumber": 37,
+      "command": "ungroup n",
+      "response": "error: cannot ungroup composite shape: n"
+    },
+    {
+      "commandNumber": 38,
+      "command": "set r label nope",
+      "response": "error: unknown attribute: label"
+    },
+    {
+      "commandNumber": 39,
+      "command": "stats extra",
+      "response": "error: usage: stats"
+    },
+    {
+      "commandNumber": 40,
+      "command": "move absent 1 2",
+      "response": "error: no such shape: absent"
+    },
+    {
+      "commandNumber": 46,
+      "command": "undo",
+      "response": "error: undo not allowed after io command"
+    }
+  ],
+  "artifacts": {
+    "commands": "integration-commands.txt",
+    "stdout": "integration-expected.stdout.json",
+    "svg": "integration-expected.svg"
+  }
+}
