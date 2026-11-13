@@ -1,6 +1,6 @@
 # CLI metrics
 
-本目录保存框架、命令插件、box 与标签节点的 CLI 采集结果。基线为 `final`，当前端为工作区源码。`inventory.json` 记录基线 commit、当前 HEAD、每个源文件及采集脚本的 SHA-256，并记录其余产物的摘要。当前 HEAD 表示这份工作区所基于的提交。
+本目录保存 CLI 指标。基线为 `final`，当前快照的 107 个 CLI 源文件已逐文件核对，与重构提交 `34e981a` 一致。`inventory.json` 保存每个源文件、采集脚本和其余产物的 SHA-256。headRevision 记录采集时的 HEAD；源码所属版本以逐文件摘要核对为准。
 
 在仓库根目录运行：
 
@@ -25,7 +25,7 @@ node scripts/collect-metrics.mjs final docs/metrics/framework
 
 ## 复核后的数据
 
-| 指标 | final | 当前工作区 |
+| 指标 | final | 34e981a |
 |---|---:|---:|
 | TypeScript 源文件 | 48 | 107 |
 | 内核文件 | 47 | 62 |
@@ -39,7 +39,7 @@ node scripts/collect-metrics.mjs final docs/metrics/framework
 | 单函数最大复杂度 | 26 | 21 |
 | 内部依赖边 | 179 | 302 |
 
-文件和总行数增加，内核行数减少 35。注册协议、独立插件和兼容转导出都计入总量，因此这些数据需要结合职责迁移解读。
+相较 final，源文件增加 59 个，总行数增加 1576 行，内核行数增加 97 行。重构已移除旧路径转发文件，并将五种共享基础图形模型统一放入 domain；数量变化需要结合职责归类解读。
 
 ## 统计与检查口径
 

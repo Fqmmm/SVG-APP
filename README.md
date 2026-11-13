@@ -1,16 +1,15 @@
 # SVG CLI 编辑器
 
-源码结构与阅读顺序见 [源码目录说明](src/README.md)。当前 CLI 采用内核、插件与宿主装配的结构，Phase 2 的扩展点与加载契约见 [框架说明](doc/Phase2/FRAMEWORK.md)。
-
-一个使用 TypeScript 编写的命令行 SVG 编辑器，作为软件设计实验 Phase 1 的实现。通过命令创建和编辑图形，组织组合结构，执行撤销与重做，并读写 SVG 文件。
+一个使用 TypeScript 编写的命令行 SVG 编辑器。通过命令创建和编辑图形、组织分组、撤销和重做操作，并将结果保存为 SVG 文件。仓库还包含一个提供 SVG 文件标记和大纲导航的 VSCode 扩展。
 
 ## 功能
 
-- 创建矩形、圆、椭圆、直线、文字和组合容器。
-- 移动、缩放图形，设置几何属性、文字和样式。
-- 分组、解组、调整父容器与同级覆盖顺序。
+- 创建矩形、圆、椭圆、直线、文本，以及带标题的 box 组合图形。
+- 使用嵌套分组组织图形，整体移动或缩放。
+- 设置图形的几何属性、文字和样式，调整父容器与覆盖顺序。
 - 撤销和重做编辑操作。
 - 读写 SVG，自动补全缺失的 id。
+- 统计图形数量、查看工作目录，并在结构树中标记未保存的变化。
 - 交互式输入命令，或通过脚本批量执行。
 
 ## 快速开始
@@ -57,6 +56,17 @@ save diagram.svg
 
 `diagram.svg` 保存在当前工作目录，可以用浏览器打开。上例创建一个包含四个子节点的组，移动后通过 undo 恢复原位置。
 
+## 可选插件
+
+默认启动会加载 box、stats、dir 和未保存修改标记。也可以指定配置文件：
+
+```powershell
+npm run build
+node dist/src/main.js --config plugins.config.json
+```
+
+在 `plugins.config.json` 中删除相应项或设置 `"enabled": false`，可以停用对应插件。基础图形和原有编辑命令仍可使用。各插件的用法见 [插件使用说明](doc/Phase2/插件使用说明.md)。
+
 ## 使用说明
 
 ### 文档与查询
@@ -69,7 +79,9 @@ save diagram.svg
 | `canvas [w] [h]` | 无参数查询尺寸；修改时同时给出宽和高，图形几何保持原值 |
 | `tree [id]` | 显示文档树或指定子树 |
 | `show <id>` | 显示图形类型、父级、几何和显式样式 |
-| `help` | 显示命令语法 |
+| `stats` | 统计各类型的叶子图形数量和容器数量 |
+| `dir` | 列出当前工作目录的直接子项，无需先创建文档 |
+| `help` | 显示当前可用命令的语法 |
 
 init 清除默认文件路径；首次保存时提供路径。文件读写失败时保留当前文档、默认路径和历史。save 会创建或覆盖目标文件。
 
@@ -83,6 +95,9 @@ init 清除默认文件路径；首次保存时提供路径。文件读写失败
 | 直线 | `create line <id> <x1> <y1> <x2> <y2> [stroke]` |
 | 文字 | `create text <id> <x> <y> "content"` |
 | 组合容器 | `create g <id>` |
+| 带标题的框体 | `create box <id> <x> <y> <w> <h> "title"` |
+
+box 需要启用对应插件；默认启动已启用。它包含一个矩形和一段文字，可以整体移动、缩放和嵌套。
 
 每条 create 命令都可以追加 `in <containerId>`，将图形放入已有组；省略时放在 svg 根下。id 使用非空且无空白的字符串，在文档中唯一，大小写敏感。
 
@@ -103,13 +118,15 @@ init 清除默认文件路径；首次保存时提供路径。文件读写失败
 
 set 的公共样式为 fill、stroke、stroke-width；几何属性使用 SVG 名称，如矩形的 x、y、width、height。修改文字内容使用 `set label text "新内容"`。g 设置自身的公共样式，子节点保留各自的显式颜色。
 
+对 box 设置 `fill` 会修改内部矩形，设置 `label` 会修改标题。必要子部件不能被单独删除或移出，也不能对 box 执行 ungroup。
+
 分组、移入容器和解组会改变父级关系与节点顺序，渲染时按新的结构计算继承样式与覆盖关系。
 
 ### 撤销与重做
 
 使用 `undo` 撤销最近一次编辑，使用 `redo` 重做。每条成功编辑占一个撤销单元，包括已在边界的 front/back；新编辑清空 redo，失败编辑保留历史。
 
-成功执行 init、read、save 或修改画布尺寸后，旧历史清空，并建立历史屏障。此时 undo/redo 输出 `undo not allowed after io command`，下一次成功编辑开始新的历史。tree、show、help 和 canvas 查询保持历史状态。
+成功执行 init、read、save 或修改画布尺寸后，旧历史清空并建立撤销屏障。此时 undo/redo 报告 `undo not allowed after io command`，下一次成功编辑开始新的历史。tree、show、help、stats、dir 和 canvas 查询不改变历史状态。
 
 ### 引号与 Windows 路径
 
@@ -138,7 +155,7 @@ create text quote 20 80 "输入 \"help\" 查看命令"
 
 viewBox 使用 `0 0 width height`，尺寸与画布一致。导入的几何数值允许 px；缺省几何属性一般取 0，椭圆提供单侧半径时另一侧取相同值。stroke-width 使用无单位的非负数。
 
-transform、style/class、font-size、text-anchor、tspan、path、defs、title/desc/metadata、其他坐标系及未支持内容会报错。带 `data-kind="box"` 的 g 以普通组读入并输出提示，保存时移除标记。box 与插件加载留待后续阶段。
+transform、style/class、font-size、text-anchor、tspan、path、defs、title/desc/metadata、外部命名空间等未支持内容会报错。启用 box 插件时，带 `data-kind="box"` 的分组按 box 读回；停用插件时按普通分组导入并提示降级，再次保存会移除 box 标记。
 
 解析器检查 XML 引用、DOCTYPE、自定义实体和样式表处理指令，保存时检查 XML 字符是否合法。文件先写入同目录临时文件，再通过重命名替换目标文件。
 
@@ -170,20 +187,10 @@ Get-Content -Encoding utf8 examples/phase8-session.cli | npm run cli
 | `npm test` | 构建并运行全部测试 |
 | `npm run cli` | 构建并启动 CLI |
 
-当前 224 项测试通过，类型检查通过。测试覆盖图形行为、命令历史、树结构、SVG 编解码、文件读写和真实 CLI 会话。Chrome 视觉验证检查覆盖顺序与样式继承。具体检查过程见[质量保证手段](doc/README.md#质量保证手段)。
+`npm test` 包含单元测试和集成测试，覆盖图形编辑、撤销重做、SVG 读写、插件行为和真实 CLI 会话。
 
-## 项目结构
+## VSCode 扩展
 
-```text
-src/
-├── domain/          # 图形、组合结构、状态、校验与文档索引
-├── application/     # 编辑命令、历史、会话、工厂和文件接口
-├── cli/             # 分词、命令分发、REPL 与格式化
-├── infrastructure/  # XML/SVG 转换与磁盘读写
-└── main.ts          # 装配与启动
-tests/               # 单元测试和集成测试
-examples/            # 会话脚本与 SVG 样例
-doc/                 # 实验要求、设计文档和架构图
-```
+仓库中的 SVG App Tools 扩展会在 Explorer 中为 SVG 文件添加 `[]` 标记，并在原生 Outline 中显示元素层级。点击节点可跳转到源码，编辑 SVG 后大纲自动更新。
 
-编辑与恢复采用 Command，图形树采用 Composite，输出格式通过 Visitor 实现。模块职责、依赖方向和开发记录见[设计文档](doc/README.md)。
+安装和启动方法见 [VSCode 扩展说明](vscode-extension/README.md)。
