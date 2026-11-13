@@ -1,0 +1,1 @@
+This directory has an SVG suffix but must have no badge.

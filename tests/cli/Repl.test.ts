@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { PassThrough, Readable } from "node:stream";
 import { test } from "node:test";
-import { Repl } from "../../src/cli/Repl.js";
+import { Repl } from "../../src/composition/defaults/Repl.js";
 
 const welcome = "svg-editor 0.1 — type 'help' for commands\n";
 

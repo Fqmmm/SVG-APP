@@ -1,12 +1,13 @@
+import { SvgShapeReader } from "../../src/infrastructure/svg/SvgShapeReader.js";
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { SvgParser } from "../../src/infrastructure/SvgParser.js";
-import { SvgSerializer } from "../../src/infrastructure/SvgSerializer.js";
+import { SvgParser } from "../../src/composition/defaults/SvgParser.js";
+import { SvgSerializer } from "../../src/composition/defaults/SvgSerializer.js";
 import { SvgDocument } from "../../src/domain/SvgDocument.js";
 import { Group } from "../../src/domain/Group.js";
-import { Rect } from "../../src/domain/Rect.js";
-import { Text } from "../../src/domain/Text.js";
-import { ShapeFactory } from "../../src/application/ShapeFactory.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
+import { Text } from "../../src/domain/primitives/Text.js";
+import { ShapeFactory } from "../../src/composition/defaults/ShapeFactory.js";
 
 const wrap = (body: string, attributes = 'width="400" height="200"'): string =>
   '<svg xmlns="http://www.w3.org/2000/svg" ' + attributes + '>' + body + '</svg>';
@@ -35,9 +36,9 @@ test("SVG roundtrip preserves all shapes, nested order, geometry and explicit st
   }
   assert.deepEqual(restored.get("r").styles, {});
   assert.ok(restored.get("t").accept({
-    visitRect: () => false, visitCircle: () => false,
-    visitEllipse: () => false, visitLine: () => false, visitGroup: () => false,
-    visitText: shape => shape.content === "开始 & <结束>"
+    visitShape(shape) {
+      return shape instanceof Text && shape.content === "开始 & <结束>";
+    }
   }));
 });
 
@@ -99,8 +100,9 @@ test("XML comments and CDATA text are accepted, text whitespace and escapes surv
   const restored = new SvgParser().parse(output).document.get("t");
   assert.deepEqual(restored.styles, text.styles);
   assert.equal(restored.accept({
-    visitRect: () => "", visitCircle: () => "", visitEllipse: () => "",
-    visitLine: () => "", visitGroup: () => "", visitText: shape => shape.content
+    visitShape(shape) {
+      return shape instanceof Text ? shape.content : "";
+    }
   }), content);
   const parsed = new SvgParser().parse('<!-- comment -->' + wrap('<text id="t"><![CDATA[<内容>]]><!--skip-->&amp;</text>'));
   assert.match(new SvgSerializer().serialize(parsed.document), /&lt;内容&gt;&amp;/);
@@ -121,13 +123,13 @@ test("plain group data-kind box is downgraded with feedback while preserving its
   assert.ok(result.warnings.some(warning => warning.includes("box") && warning.includes("ordinary")));
 });
 
-test("shape factory imports XML attributes through its existing type lookup", () => {
+test("SVG reader imports attributes through the shared shape definition lookup", () => {
   const factory = new ShapeFactory();
-  const shape = factory.createFromAttributes("rect", "r", new Map([["width", "5"], ["fill", "in"]]), "");
+  const shape = new SvgShapeReader(factory).read("rect", "r", new Map([["width", "5"], ["fill", "in"]]), "");
   assert.deepEqual(shape.geometry, { x: 0, y: 0, width: 5, height: 0 });
   assert.deepEqual(shape.styles, { fill: "in" });
-  assert.throws(() => factory.createFromAttributes("path", "p", new Map(), ""), /unknown shape type/);
-  assert.throws(() => factory.createFromAttributes("rect", "r", new Map([["rx", "1"]]), ""), /unknown attribute/);
+  assert.throws(() => new SvgShapeReader(factory).read("path", "p", new Map(), ""), /unknown shape type/);
+  assert.throws(() => new SvgShapeReader(factory).read("rect", "r", new Map([["rx", "1"]]), ""), /unknown attribute/);
 });
 
 test("serialization follows current sibling order and preserves container styles without flattening", () => {
@@ -214,7 +216,8 @@ test("text containing a CDATA closing sequence is escaped and restored exactly",
   assert.match(xml, /a]]&gt;b/);
   const restored = new SvgParser().parse(xml).document.get("t");
   assert.equal(restored.accept({
-    visitRect: () => "", visitCircle: () => "", visitEllipse: () => "",
-    visitLine: () => "", visitGroup: () => "", visitText: shape => shape.content
+    visitShape(shape) {
+      return shape instanceof Text ? shape.content : "";
+    }
   }), "a]]>b");
 });

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { Rect } from "../../src/domain/Rect.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
 
 test("captured state rejects replacement of its restore method and remains reusable", () => {
   const rect = new Rect("r", 0.1, 0.2, 3, 4);

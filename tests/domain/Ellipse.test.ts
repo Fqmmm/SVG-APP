@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { Ellipse } from "../../src/domain/Ellipse.js";
+import { Ellipse } from "../../src/domain/primitives/Ellipse.js";
 
 test("Ellipse moves positions while preserving dimensions and styles", () => {
   const shape = new Ellipse("e1", 10, 20, 30, 40);

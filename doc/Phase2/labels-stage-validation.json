@@ -1,0 +1,82 @@
+{
+  "baseline": "8f3aeb0915a69291a053904dc931834b1e95a88c",
+  "scope": "Uncommitted source and test combinations in a temporary detached worktree; not Git commit evidence or documentation validation",
+  "stages": [
+    {
+      "name": "preparation",
+      "copied": [
+        "src/cli/RegisteredTreeFormatter.ts",
+        "src/composition/CheckpointRepository.ts",
+        "src/composition/createEditor.ts",
+        "src/composition/startCli.ts",
+        "src/extensions/DocumentSnapshot.ts",
+        "src/extensions/ShapeViews.ts",
+        "src/extensions/TreeDecorator.ts",
+        "src/extensions/index.ts",
+        "tests/composition/CheckpointRepository.test.ts",
+        "tests/extensions/DocumentSnapshot.test.ts"
+      ],
+      "sourceFiles": 124,
+      "sourceDigest": "45b8e87ab3d7602530028837650d881fd424fe9fa798f3b8aa1223eb85a89901",
+      "checks": {
+        "npm test": 328,
+        "npm run typecheck": "passed",
+        "npm run check:boundaries": "passed",
+        "npm run metrics:check": "passed"
+      }
+    },
+    {
+      "name": "configuration-only",
+      "copied": [
+        "src/plugins/modified-star",
+        "tests/plugins/ModifiedStar.test.ts",
+        "tests/plugins/ModifiedStarIntegration.test.ts",
+        "tests/composition/ModifiedStarConfigAssembly.test.ts",
+        "doc/Phase2/plugins.labels.config.json",
+        "doc/transcript/labels.txt",
+        "doc/transcript/labels.expected.json",
+        "doc/transcript/labels.expected.svg",
+        "plugins.config.json",
+        "tests/fixtures/plugins.box-only.config.json",
+        "tests/composition/BoxAssembly.test.ts (box-only config)",
+        "tests/composition/BoxConfigAssembly.test.ts (box-only config)",
+        "package.json (configuration-only test:labels)"
+      ],
+      "sourceFiles": 126,
+      "sourceDigest": "fc96c5cc364567e77cd607e506797003c6c1e2d6b01cb6f23aa9e7b20d6409fd",
+      "checks": {
+        "npm test": 344,
+        "npm run typecheck": "passed",
+        "npm run test:labels": 16,
+        "npm run check:boundaries": "passed",
+        "npm run metrics:check": "passed"
+      }
+    },
+    {
+      "name": "code-and-config",
+      "copied": [
+        "src/composition/codePlugins.ts",
+        "plugins.config.json",
+        "doc/transcript/box.expected.json",
+        "tests/composition/ModifiedStarAssembly.test.ts",
+        "tests/composition/CommandAssembly.test.ts",
+        "tests/composition/BoxAssembly.test.ts",
+        "tests/composition/BoxConfigAssembly.test.ts",
+        "tests/integration/SessionReplay.ts",
+        "tests/cli/StructureCommands.test.ts",
+        "tests/fixtures/plugins.none.config.json",
+        "scripts/verify-label-stages.mjs",
+        "package.json"
+      ],
+      "sourceFiles": 126,
+      "sourceDigest": "7dda73b8b7f1f737fc749ef1345760aa1da2aa4650b8dee010f71ef856f9327d",
+      "checks": {
+        "npm test": 345,
+        "npm run typecheck": "passed",
+        "npm run test:labels": 17,
+        "npm run check:boundaries": "passed",
+        "npm run metrics:check": "passed"
+      }
+    }
+  ]
+}

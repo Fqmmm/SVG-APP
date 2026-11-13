@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { Rect } from "../../src/domain/Rect.js";
-import { Circle } from "../../src/domain/Circle.js";
-import { Ellipse } from "../../src/domain/Ellipse.js";
-import { Line } from "../../src/domain/Line.js";
-import { Text } from "../../src/domain/Text.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
+import { Circle } from "../../src/domain/primitives/Circle.js";
+import { Ellipse } from "../../src/domain/primitives/Ellipse.js";
+import { Line } from "../../src/domain/primitives/Line.js";
+import { Text } from "../../src/domain/primitives/Text.js";
 
 test("shape styles preserve omitted attributes and explicit constructor colors", () => {
   assert.deepEqual(new Rect("r", 0, 0, 0, 0).styles, {});

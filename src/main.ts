@@ -1,9 +1,3 @@
-import { FileDocumentRepository } from "./infrastructure/FileDocumentRepository.js";
-import { Repl } from "./cli/Repl.js";
-import { CommandDispatcher } from "./cli/CommandDispatcher.js";
-import { EditorSession } from "./application/EditorSession.js";
+import { runCli } from "./composition/startCli.js";
 
-const session = new EditorSession(new FileDocumentRepository());
-const dispatcher = new CommandDispatcher(session);
-const repl = new Repl(process.stdin, process.stdout, dispatcher);
-await repl.run();
+await runCli({ args: process.argv.slice(2), input: process.stdin, output: process.stdout });

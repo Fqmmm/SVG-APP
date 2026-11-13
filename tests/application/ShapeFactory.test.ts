@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { ShapeFactory } from "../../src/application/ShapeFactory.js";
+import { ShapeFactory } from "../../src/composition/defaults/ShapeFactory.js";
 
 test("factory creates all six built-in shapes with validated geometry", () => {
   const factory = new ShapeFactory();

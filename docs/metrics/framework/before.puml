@@ -1,0 +1,17 @@
+@startuml
+title final - CLI module dependencies
+left to right direction
+component "src/application\ncore" as module0
+component "src/cli\ncore" as module1
+component "src/domain\ncore" as module2
+component "src/infrastructure\ncore" as module3
+component "src/main.ts\nassembly" as module4
+module0 --> module2 : 40
+module1 --> module2 : 29
+module1 --> module0 : 13
+module3 --> module0 : 4
+module3 --> module2 : 12
+module4 --> module3 : 1
+module4 --> module1 : 2
+module4 --> module0 : 1
+@enduml

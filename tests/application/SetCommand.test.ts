@@ -1,17 +1,17 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { Shape } from "../../src/domain/Shape.js";
-import { SetCommand } from "../../src/application/SetCommand.js";
-import { ScaleCommand } from "../../src/application/ScaleCommand.js";
-import { MoveCommand } from "../../src/application/MoveCommand.js";
-import { DeleteCommand } from "../../src/application/DeleteCommand.js";
-import { CommandHistory } from "../../src/application/CommandHistory.js";
+import { SetCommand } from "../../src/application/commands/shapes/SetCommand.js";
+import { ScaleCommand } from "../../src/application/commands/shapes/ScaleCommand.js";
+import { MoveCommand } from "../../src/application/commands/shapes/MoveCommand.js";
+import { DeleteCommand } from "../../src/application/commands/shapes/DeleteCommand.js";
+import { CommandHistory } from "../../src/application/session/CommandHistory.js";
 import { SvgDocument } from "../../src/domain/SvgDocument.js";
-import { Rect } from "../../src/domain/Rect.js";
-import { Circle } from "../../src/domain/Circle.js";
-import { Ellipse } from "../../src/domain/Ellipse.js";
-import { Line } from "../../src/domain/Line.js";
-import { Text } from "../../src/domain/Text.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
+import { Circle } from "../../src/domain/primitives/Circle.js";
+import { Ellipse } from "../../src/domain/primitives/Ellipse.js";
+import { Line } from "../../src/domain/primitives/Line.js";
+import { Text } from "../../src/domain/primitives/Text.js";
 import { Group } from "../../src/domain/Group.js";
 
 test("set accepts every leaf geometry key and restores exact original values", () => {

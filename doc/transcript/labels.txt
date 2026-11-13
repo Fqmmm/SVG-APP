@@ -1,0 +1,16 @@
+init 800 600
+create box n 10 20 80 30 "开始"
+tree
+save assets/labels.svg
+tree
+set n label "已处理"
+tree
+undo
+tree
+redo
+tree
+stats
+dir
+save
+read assets/labels.svg
+tree

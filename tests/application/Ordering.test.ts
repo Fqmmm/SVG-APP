@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { AddToCommand } from "../../src/application/AddToCommand.js";
-import { FrontCommand } from "../../src/application/FrontCommand.js";
-import { BackCommand } from "../../src/application/BackCommand.js";
-import { CommandHistory } from "../../src/application/CommandHistory.js";
+import { AddToCommand } from "../../src/application/commands/structure/AddToCommand.js";
+import { FrontCommand } from "../../src/application/commands/structure/FrontCommand.js";
+import { BackCommand } from "../../src/application/commands/structure/BackCommand.js";
+import { CommandHistory } from "../../src/application/session/CommandHistory.js";
 import { SvgDocument } from "../../src/domain/SvgDocument.js";
 import { Group } from "../../src/domain/Group.js";
-import { Rect } from "../../src/domain/Rect.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
 
 test("addto appends a subtree and undo restores its old parent and sibling position", () => {
   const a = new Rect("a", 1, 2, 3, 4);

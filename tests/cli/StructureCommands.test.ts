@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { CommandDispatcher } from "../../src/cli/CommandDispatcher.js";
-import { EditorSession } from "../../src/application/EditorSession.js";
+import { CommandDispatcher } from "../../src/composition/defaults/CommandDispatcher.js";
+import { EditorSession } from "../../src/application/session/EditorSession.js";
 
 test("structure command syntax and help are available with document-first errors", () => {
   const dispatcher = new CommandDispatcher();
@@ -77,7 +77,7 @@ test("failed structure commands preserve redo, state and initial barrier", () =>
 
 test("real CLI supports mixed structural editing and error recovery", () => {
   const entry = fileURLToPath(new URL("../../src/main.js", import.meta.url));
-  const result = spawnSync(process.execPath, [entry], {
+  const result = spawnSync(process.execPath, [entry, "--config", fileURLToPath(new URL("../../../tests/fixtures/plugins.none.config.json", import.meta.url))], {
     input: [
       "init", "create g p", "create rect a 1 2 3 4 in p",
       "create text b 5 6 \"开始\" in p", "group g b a", "front g", "back g",

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { Circle } from "../../src/domain/Circle.js";
+import { Circle } from "../../src/domain/primitives/Circle.js";
 
 test("Circle moves positions while preserving dimensions and styles", () => {
   const shape = new Circle("c1", 10, 20, 30);

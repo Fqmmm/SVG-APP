@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { CommandHistory } from "../../src/application/CommandHistory.js";
-import { CreateCommand } from "../../src/application/CreateCommand.js";
-import { MoveCommand } from "../../src/application/MoveCommand.js";
-import { DeleteCommand } from "../../src/application/DeleteCommand.js";
+import { CommandHistory } from "../../src/application/session/CommandHistory.js";
+import { CreateCommand } from "../../src/application/commands/shapes/CreateCommand.js";
+import { MoveCommand } from "../../src/application/commands/shapes/MoveCommand.js";
+import { DeleteCommand } from "../../src/application/commands/shapes/DeleteCommand.js";
 import { SvgDocument } from "../../src/domain/SvgDocument.js";
-import { Rect } from "../../src/domain/Rect.js";
+import { Rect } from "../../src/domain/primitives/Rect.js";
 import { Group } from "../../src/domain/Group.js";
 
 test("history undoes in reverse execution order and redoes in forward order", () => {

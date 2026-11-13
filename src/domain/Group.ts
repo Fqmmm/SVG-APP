@@ -1,5 +1,4 @@
 import { Shape } from "./Shape.js";
-import type { ShapeVisitor } from "./ShapeVisitor.js";
 import { TreeValidator } from "./TreeValidator.js";
 import { acquireTreeAccess } from "./TreeAccess.js";
 import { GroupTreeAccess } from "./GroupTreeAccess.js";
@@ -22,16 +21,27 @@ export class Group extends Shape {
     return Object.freeze({});
   }
 
+  get canUngroup(): boolean {
+    return true;
+  }
+
+  // Overrides must be pure and depend only on the supplied children and the shape ID.
+  // Validation also runs during base construction and before document mutations.
+  validateChildren(_children: readonly Shape[]): void {
+  }
+
+  assertUngroupable(): void {
+    if (!this.canUngroup) {
+      throw new Error("cannot ungroup " + this.type + ": " + this.id);
+    }
+  }
+
   override get children(): readonly Shape[] {
     return Object.freeze([...this.#childNodes]);
   }
 
   override asContainer(): Group {
     return this;
-  }
-
-  override accept<R>(visitor: ShapeVisitor<R>): R {
-    return visitor.visitGroup(this);
   }
 
   // Only one owner can hold structural access; importing the symbol cannot steal it.

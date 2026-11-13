@@ -188,3 +188,141 @@ TypeScript 开启严格检查，通过 npm run typecheck 检查类型，通过 n
 将生成的 SVG 交给本机 Chrome 无界面模式渲染，查看截图，核对图形布局、中文文字、重叠顺序和样式继承。检查对象包括[典型会话输出](../examples/phase8-demo.svg)、[中文流程图](../examples/phase8-flowchart.svg)，以及视觉对照会话生成的各组 SVG。
 
 重叠图形在执行 front 后显示在上层，执行 back 后恢复原覆盖关系；组合样式示例中，未显式设置 fill 的矩形在组内显示为蓝色，解组后显示为黑色，撤销解组后恢复蓝色。浏览器呈现与保存的节点顺序、父级关系和样式一致。
+
+# Phase 2
+
+## 第一部分：VSCode 扩展实践
+
+按[第二阶段要求](Phase2/phase_cli_2.md)，第一部分完成了独立的 VSCode 扩展 SVG App Tools：
+
+- SVG 文件标记：Explorer 中的 SVG 文件显示 [] 标记
+- VSCode 原生 Outline（大纲）展示元素层级，点击节点可以定位到源码，编辑文本后大纲会更新。
+
+扩展位于 [vscode-extension](../vscode-extension/README.md)，与后续的 CLI 分别构建和测试。示例文件是 [flowchart.svg](../vscode-extension/examples/flowchart.svg)，完整结果见[验证记录](../vscode-extension/docs/VSCode扩展验证记录.md)。
+
+### 安装依赖与启动
+
+在仓库根目录执行：
+
+```powershell
+npm --prefix vscode-extension ci
+npm --prefix vscode-extension run build
+```
+
+在 VSCode 的“运行和调试”中选择 Run SVG App Tools，按 F5 打开扩展开发窗口。也可以单独打开 vscode-extension 文件夹后使用同名配置。调试器加载子项目的扩展清单，示例工作区指向 examples。
+
+环境要求为 VSCode 1.95 及以上、Node.js 22 和 npm。本次采用本地开发模式加载扩展。examples 的工作区配置将 SVG 默认关联到文本编辑器，保证打开文件和点击大纲都进入源码视图。
+
+### 职责划分与调用过程
+
+| 实现 | 职责 |
+| --- | --- |
+| extension.ts | 创建对象，注册两个 Provider，登记文件监听与资源释放 |
+| SvgFileBadge / FileProbe | 判断 SVG 后缀和普通文件条件，文件类型查询可替换为测试实现 |
+| VsCodeFileProbe | 将 workspace.fs.stat 的类型结果转换为 FileProbe 接口 |
+| SvgFileDecorationProvider | 返回 [] 文件装饰，并通知 VSCode 文件变化 |
+| SvgOutlineParser / OutlineParser | 从 XML 文本生成带名称、子节点和源码范围的只读元素树 |
+| SvgDocumentSymbolProvider | 将元素树转换为 DocumentSymbol 和编辑器 Range |
+
+VSCode 管理 Explorer、大纲和编辑器文档，插件负责提供标记和符号数据。扩展在 onStartupFinished 时激活，通过 registerFileDecorationProvider 和 registerDocumentSymbolProvider 注册功能。之后由 VSCode 在绘制文件条目或请求大纲时调用 Provider。
+
+大纲 Provider 每次读取当前编辑器文本，使用解析结果的 UTF-16 偏移调用 document.positionAt，得到源码的行和列。DocumentSymbol.children 保存层级，range 覆盖整个元素，selectionRange 指向开始标签名。XML 不完整或起止标签不匹配时返回空大纲，文本修复后重新生成。
+
+### 文件装饰与设计模式
+
+文件标记给已有文件条目附加 badge 和 tooltip，文件名与内容保持原样。这与 Decorator 为对象附加职责的目的相近，但对象关系不同：经典装饰器持有被包装对象，实现同一接口并转发操作；本扩展注册独立的 FileDecorationProvider，由 VSCode 查询并合并显示结果，没有直接包装 Explorer 的文件对象。
+
+FileProbe 与 VsCodeFileProbe 则对应 Adapter 模式。FileProbe 是目标接口，VsCodeFileProbe 是适配器，workspace.fs.stat 是被适配 API，SvgFileBadge 是调用方。适配器处理 URI 和 FileType，调用方只需要知道文件是否为普通文件。
+
+SvgDocumentSymbolProvider 依赖 OutlineParser 接口，将元素树转换成 VSCode 文档符号。XML 解析器可以在普通 Node 进程中测试，编辑器位置转换留在 Provider 中。
+
+### Phase 1 代码复用评估
+
+| Phase 1 模块 | 评估结果 |
+| --- | --- |
+| SvgParser / SvgShapeReader | 用于导入领域文档，包含类型白名单、几何缺省值及属性校验，且没有完整元素起止范围；大纲另用能提供 token 偏移的 XML 解析库 |
+| Shape / Group / SvgDocument | 用于图形编辑和唯一 ID 管理；大纲展示源码，允许缺失或重复 id，也需要显示 CLI 未支持的元素，因此采用独立的只读元素树 |
+| TreeFormatter | 生成终端字符树；原生 Outline 接收 DocumentSymbol 和 Range，输出结构不同 |
+| 递归遍历方式 | 沿用按子节点顺序递归的组织方式，节点结构根据源码范围需求重新定义 |
+
+本次选用 @xml-tools/parser@1.0.12，保留命名空间前缀，并处理 id 中的标准及数值 XML 字符引用。解析测试覆盖注释、CDATA、引号中的大于号，以及中文、emoji、CRLF 和同一行的多个元素。
+
+### 运行演示
+
+文件标记和源码定位见下图：flowchart.svg 右侧有 []，notes.txt 和 folder.svg 目录没有标记。左下角大纲显示根、嵌套分组和叶子，无 id 的 text、circle 使用标签名。点击 rect#start 后，编辑器定位到第 3 行、第 6 列。（见右下角）
+
+![SVG 文件标记、大纲层级和第 3 行源码定位](../vscode-extension/docs/images/outline-navigation.png)
+
+把矩形 id 从 start 改为 newid 后，大纲及面包屑同步显示 rect#newid。
+
+![修改 ID 后大纲同步更新](../vscode-extension/docs/images/outline-id-update.png)
+
+删除末尾的 SVG 闭合标签后，大纲清空，编辑器仍可继续使用。
+
+![XML 不完整时大纲清空](../vscode-extension/docs/images/outline-incomplete-xml.png)
+
+恢复闭合标签后，大纲重新显示完整层级，并保留 rect#newid。
+
+![恢复闭合标签后大纲重新显示](../vscode-extension/docs/images/outline-restored.png)
+
+### 测试与验收
+
+在 vscode-extension 目录运行：
+
+```powershell
+npm test
+npm run typecheck
+npm run test:host
+```
+
+10 项单元测试检查文件过滤、启动配置、元素层级、源码范围和异常输入。8 项真实扩展宿主测试加载注册后的 Provider，检查文件类型、符号查询、取消请求、编辑更新和导航选区。宿主测试使用本机已安装的 VSCode，以及隔离的临时用户配置；逐项结果保存在 [host-tests.json](../vscode-extension/docs/host-tests.json)。
+
+本次宿主环境为 VSCode 1.145.2、Node.js v24.22.1，18 项扩展测试全部通过。CLI 的 228 项单元与集成测试、根项目和扩展的类型检查也通过。手动验收确认了文件标记、鼠标定位、ID 更新和不完整 XML 的恢复，四张截图已保存在仓库中。
+
+### 协作过程与问题修正
+
+这一部分仍由我和 Codex 协作：Codex 编写实现、测试和文档，我在扩展开发窗口中操作并核对结果。实现前先观察 VSCode 已有 Markdown 大纲的层级、展开与选择方式，再接入原生 Outline。
+
+第一次启动遇到的错误是缺少 engines.vscode。检查后发现调试器加载了仓库根目录的 CLI 清单，于是在根目录补上调试配置，将路径指向 vscode-extension，并增加两种启动方式的回归测试。
+
+随后，大纲能显示，但点击节点会进入 SVG 图片预览。因此在 examples 工作区配置默认文本编辑器，并补测打开后的活动编辑器、选区和第 3 行位置。重新运行后确认定位正确，单击大纲时焦点仍在左侧，切回编辑区后即可继续输入。
+
+最后，我将矩形 id 改为 newid，确认大纲更新；删除并恢复闭合标签，确认大纲先清空再恢复。
+
+## 第二部分：CLI 插件式重构
+
+### CLI 框架可扩展节点
+
+四个扩展点已接入内核：`ShapeProvider`、`Command`、`TreeDecorator` 和 `AttributeHandler`。原有图形与命令放在 `src/plugins/builtin`，默认装配集中在 `src/composition`；命令、创建和 SVG 读写共享注册表。
+
+[框架说明](Phase2/CLI插件扩展机制.md)列出接口职责、调用位置、缺省行为、冲突和失败处理。[首次 CLI metrics](../docs/metrics/README.md)提供与 `final` 的文件、复杂度及依赖对比，包含分类清单、采集脚本和 PlantUML 依赖图。三个 ADR 分别记录[扩展与装配边界](Phase2/adr/001-extension-boundaries.md)、[属性事务](Phase2/adr/002-attribute-transactions.md)和[开放图形协议](Phase2/adr/003-open-shapes.md)。
+
+框架节点当时先验证扩展能力，使用测试插件且不加入默认 CLI。命令与加载器、box 已在后续节点完成，见下文；modified-star 在后续标签节点完成，见下文。
+
+框架节点的[审查处理记录](Phase2/开发检查与修正记录.md)说明各条意见的取舍。文本持久化改用独立访问器；插件边界增加反例检查；四个扩展点均有类实现，其中标签与属性示例默认关闭。metrics 已补充分类行数、具名模块图及过期校验。
+
+### 命令插件完成
+
+`stats` 与 `dir` 已由独立插件包接入。stats 按深度优先顺序统计叶子类型与容器；dir 通过目录访问接口和 Node 适配器列出进程工作目录，支持隐藏项、稳定排序和读取失败后继续交互。两者都不写文档或修改撤销历史。
+
+代码装配与 `--config` 配置装配共用清单校验和暂存发布路径。双装配测试逐字比较帮助、目录、统计结果和保存的 SVG；每个命令也可单独启用或禁用。命令插件节点当时通过 295 项 CLI 测试，该节点未改动内核与既有插件源码。
+
+启动步骤、适配器角色、配置格式和验收会话见[命令插件说明](Phase2/插件使用说明.md#dir)，加载取舍见 [ADR 004](Phase2/adr/004-plugin-loading.md)。
+
+### box 接入
+
+box 已通过图形、属性和树标签扩展点接入，支持整体编辑、嵌套、撤销及带 `data-kind="box"` 的 SVG 读写。必需子部件不能删除或移走；未安装插件时按普通分组警告降级。Phase 1 版本 B 会话在两种装配方式下的 stdout 和保存文件逐字节一致。
+
+[box 使用说明](Phase2/插件使用说明.md#box)与[检查记录](Phase2/开发检查与修正记录.md)记录运行方法、17 项专项测试及框架准备与插件接入的提交边界；[ADR 005](Phase2/adr/005-composite-containers.md)说明结构约束、派生 ID、导入策略和共享模型。box 节点当时通过 318 项 CLI 测试。通用准备、配置接入与代码装配分别提交，每一步都有对应指标和测试；验证命令见节点说明。
+
+### 标签完成
+
+modified-star 与 `(box)` 标签已能同时显示。星号按当前内容与最近成功读写的内容比较，子节点修改向祖先传播；新建未保存节点立即标星，undo 回到保存内容后星号消失。两个插件互不依赖，默认按注册顺序显示 `(box) *`，禁用标签时 Phase 1 的树输出保持原样。
+
+[标签使用说明](Phase2/插件使用说明.md#modified-star)与[检查记录](Phase2/开发检查与修正记录.md)提供运行方法、A/B 会话证据、17 项专项测试和通用准备的提交边界；[ADR 006](Phase2/adr/006-content-checkpoints.md)记录保存点、祖先传播和标签顺序。CLI 当前 345 项测试通过。
+
+### Phase 1 → Phase 2 迭代报告
+
+[迭代报告](Phase2/迭代报告.md)汇总固定映射到注册式扩展的变化、四个扩展点、独立 VSCode 扩展、实际提交边界和指标对比。[架构图](Phase2/diagram/phase1-phase2-architecture@2x.png)及[可编辑 SVG](Phase2/diagram/phase1-phase2-architecture.svg)记录 final 与功能集成节点 1b3a911 的架构关系。报告的最终对比基准已更新为重构后的 `34e981a`，对应指标和目录依赖见 metrics 中的快照与 PlantUML。
+
+报告附有可重放的 66 条命令会话，两种装配共验证 132 条命令，并核对输出、最终 SVG 和模型内容。345 项 CLI 测试及 VSCode 扩展的 10 项单元测试分别验证；具体范围和框架准备阶段的取舍见报告。

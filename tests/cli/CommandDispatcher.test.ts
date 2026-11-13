@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { CommandDispatcher } from "../../src/cli/CommandDispatcher.js";
-import { EditorSession } from "../../src/application/EditorSession.js";
+import { CommandDispatcher } from "../../src/composition/defaults/CommandDispatcher.js";
+import { EditorSession } from "../../src/application/session/EditorSession.js";
 
 test("help works before init while document commands report the prescribed error", () => {
   const dispatcher = new CommandDispatcher();

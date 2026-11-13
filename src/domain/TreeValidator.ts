@@ -32,7 +32,9 @@ export class TreeValidator {
     references.add(shape);
     ids.add(shape.id);
     nodes.push(shape);
-    for (const child of childrenOf(shape)) {
+    const children = childrenOf(shape);
+    shape.asContainer()?.validateChildren(children);
+    for (const child of children) {
       this.collect(child, references, ids, nodes, childrenOf);
     }
   }

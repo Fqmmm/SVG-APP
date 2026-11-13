@@ -1,0 +1,8 @@
+{
+  "name": "@svgframe/plugin-dir",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "../../../dist/src/plugins/dir/index.js",
+  "contributes": { "commands": ["dir"] }
+}

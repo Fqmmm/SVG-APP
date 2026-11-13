@@ -4,7 +4,7 @@ import { copyFileSync, mkdtempSync, mkdirSync, readFileSync, rmSync } from "node
 import { tmpdir } from "node:os";
 import { join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { SvgParser } from "../../src/infrastructure/SvgParser.js";
+import { SvgParser } from "../../src/composition/defaults/SvgParser.js";
 import type { SvgDocument } from "../../src/domain/SvgDocument.js";
 
 export class SessionReplay {
@@ -18,7 +18,7 @@ export class SessionReplay {
         copyFileSync(this.example(fixture), join(this.directory, "examples", fixture));
       }
       const entry = fileURLToPath(new URL("../../src/main.js", import.meta.url));
-      const result = spawnSync(process.execPath, [entry], {
+      const result = spawnSync(process.execPath, [entry, "--config", fileURLToPath(new URL("../../../tests/fixtures/plugins.none.config.json", import.meta.url))], {
         cwd: this.directory, input: readFileSync(this.example(script), "utf8"),
         encoding: "utf8", timeout: 10_000,
       });

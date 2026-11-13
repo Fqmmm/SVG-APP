@@ -1,0 +1,40 @@
+{
+  "name": "svg-app-tools",
+  "displayName": "SVG App Tools",
+  "description": "SVG file badges and native document outline for the SVG-APP coursework.",
+  "version": "0.1.0",
+  "publisher": "svg-app-lab",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "type": "commonjs",
+  "main": "./dist/src/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "categories": [
+    "Other"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "npm run build && node --test \"dist/tests/unit/**/*.test.js\"",
+    "test:host": "npm run build && node scripts/run-host-tests.cjs",
+    "vscode:prepublish": "npm run build"
+  },
+  "dependencies": {
+    "@xml-tools/parser": "1.0.12"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.15",
+    "@types/vscode": "1.95.0",
+    "typescript": "5.9.3"
+  }
+}

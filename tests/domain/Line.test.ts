@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { Line } from "../../src/domain/Line.js";
+import { Line } from "../../src/domain/primitives/Line.js";
 
 test("Line moves positions while preserving dimensions and styles", () => {
   const shape = new Line("l1", 10, 20, 30, 40);

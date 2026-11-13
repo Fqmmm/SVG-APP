@@ -1,0 +1,38 @@
+{
+  "before": {
+    "files": 48,
+    "lines": 2558,
+    "functions": 334,
+    "totalComplexity": 643,
+    "maxComplexity": 26,
+    "dependencyEdges": 179,
+    "linesByRole": {
+      "core": 2549,
+      "assembly": 9,
+      "plugin": 0
+    },
+    "roles": {
+      "core": 47,
+      "assembly": 1,
+      "plugin": 0
+    }
+  },
+  "after": {
+    "files": 107,
+    "lines": 4134,
+    "functions": 497,
+    "totalComplexity": 1003,
+    "maxComplexity": 21,
+    "dependencyEdges": 302,
+    "linesByRole": {
+      "core": 2646,
+      "assembly": 557,
+      "plugin": 931
+    },
+    "roles": {
+      "core": 62,
+      "assembly": 22,
+      "plugin": 23
+    }
+  }
+}
